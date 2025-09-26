@@ -1,5 +1,4 @@
 // IMAGE TESTING
-
 tileClass.imagetest = new Tile({
     COLOR: "white",
     IMAGE: "/round.png",

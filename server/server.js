@@ -2,23 +2,8 @@
 console.log("Starting up...");
 console.log("Importing modules...\n");
 
-const path = require('path');
-const fs = require('fs');
-let express;
-let expressWs;
-let minify;
-let cors;
-// Attempt to get the HTTP Express server instance.
-try {
-    express = require("express");
-    expressWs = require("express-ws");
-    minify = require("express-minify");
-    cors = require("cors");
-} catch (e) { // If we did not get the packages, then warn the user.
-    console.warn("Package's are not correctly installed! To install all of the packages, run 'npm install' in the terminal to solve the problem.");
-    console.warn("Process terminated.");
-    process.exit(1);
-}
+const path = require("path");
+const fs = require("fs");
 
 const { Worker } = require("worker_threads");
 
@@ -26,8 +11,8 @@ const { Worker } = require("worker_threads");
 Error.stackTraceLimit = Infinity;
 
 // Load environment variables from .env using a custom dotenv loader
-const dotenv = require('./lib/dotenv.js');
-const envContent = fs.readFileSync(path.join(__dirname, './.env')).toString();
+const dotenv = require("./lib/dotenv.js");
+const envContent = fs.readFileSync(path.join(__dirname, "./.env")).toString();
 const environment = dotenv(envContent);
 
 // Set each environment variable in process.env
@@ -38,6 +23,10 @@ for (const key in environment) {
 // Load all necessary modules and files via the loader
 const GLOBAL = require("./loaders/loader.js");
 
+// Load definitions and tile definitions
+new definitionCombiner({ groups: fs.readdirSync(path.join(__dirname, './lib/definitions/groups')), addonsFolder: path.join(__dirname, './lib/definitions/tankAddons') }).loadDefinitions();
+GLOBAL.loadRooms(true);
+
 // Optionally load all mockups if enabled in configuration
 if (Config.LOAD_ALL_MOCKUPS) global.loadAllMockups();
 
@@ -45,90 +34,191 @@ if (Config.LOAD_ALL_MOCKUPS) global.loadAllMockups();
 console.log(`Loader successfully loaded all files. Info: [ Created Date: ${GLOBAL.creationDate} Created Time: ${GLOBAL.creationTime} ]`);
 
 // Define the public directory for static files
-const publicRoot = path.join(__dirname, "../public/");
+const publicRoot = path.join(__dirname, "../public/"),
+mimeSet = {
+    js: "application/javascript",
+    json: "application/json",
+    css: "text/css",
+    html: "text/html",
+    md: "text/markdown",
+    //"png": "image/png",
+};
 
-let server; // HTTP + Express server instance
+let wsServer; // WebSocket server instance
+let server; // HTTP server instance
+
+// Attempt to create a WebSocket server instance using the 'ws' package
+try {
+    const WebSocketServer = require("ws").WebSocketServer;
+    wsServer = new WebSocketServer({ noServer: true });
+} catch (err) {
+    throw new Error(
+        "Package 'ws' is not installed! To install it, run 'npm install ws' in the terminal."
+    );
+}
 
 // Log a warning if Access-Control-Allow-Origin is enabled
-if (c.allowAccessControlAllowOrigin && c.LOGS) {
+if (Config.allowAccessControlAllowOrigin && Config.LOGS) {
     util.warn("'Access-Control-Allow-Origin' is enabled, which allows any server/client to access it.");
 }
 
-// Create an HTTP Express server to handle both API and static file requests
+// Create an HTTP server to handle both API and static file requests
+server = require("http").createServer((req, res) => {
+    let readString = ""; // Response content for API endpoints
+    let ok = true; // Flag to indicate whether we use default API response
+    let serversIP = [];
 
-server = express();
-server.use(express.json());
-expressWs(server);
-server.use(minify());
+    // Set CORS headers if enabled in the configuration or allow only the children servers.
+    for (let server of global.servers) if (server.ip !== Config.host && server.ip) {
+        let http = server.ip.startsWith("localhost") ? `http://${server.ip}` : `https://${server.ip}`;
+        serversIP.push(http);
+    };
+    if (Config.allowAccessControlAllowOrigin || serversIP.includes(req.headers.origin)) {
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    }
 
-// Set CORS headers if enabled in the configuration
-if (c.allowAccessControlAllowOrigin) server.use(cors());
-// Get our index html.
-server.use(express.static(publicRoot));
-// Serve a list of active servers (excluding hidden ones)
-server.get("/getServers.json", function(request, response) {
-    response.send(JSON.stringify(servers.filter(s => s && !s.hidden).map(server => ({
-        ip: server.ip,
-        players: server.players,
-        maxPlayers: server.maxPlayers,
-        id: server.id,
-        region: server.region,
-        gameMode: server.gameMode
-    }))));
-});
-server.get("/getTotalPlayers", function(request, response) {
-    let countPlayers = 0;
-    servers.forEach(s => {
-        countPlayers += s.players;
-    });
-    response.send(JSON.stringify(countPlayers));
+    // Handle specific API endpoints based on the request URL
+    switch (req.url) {
+        case "/getServers.json": {
+            // Serve a list of active servers (excluding hidden ones)
+            readString = JSON.stringify(servers.filter((s) => s && !s.hidden).map((server) => ({
+                    ip: server.ip,
+                    players: server.players,
+                    maxPlayers: server.maxPlayers,
+                    id: server.id,
+                    region: server.region,
+                    gameMode: server.gameMode,
+                }))
+            );
+        } break;
+        case "/getTotalPlayers": {
+            let countPlayers = 0;
+            servers.forEach((s) => {
+                countPlayers += s.players;
+            });
+            readString = JSON.stringify(countPlayers);
+        } break;
+        case "/api/sendPlayer": {
+            ok = false;
+            let body = "";
+            req.on("data", c => body += c);
+            req.on("end", () => {
+                let json = null;
+                try {
+                    json = JSON.parse(body);
+              } catch { }
+                  if (json) {
+                      if (json.key === process.env.API_KEY) {
+                            let { id, name, definition, score, level, skillcap, skill, points, killCount } = json;
+                            global.travellingPlayers.push({ id, name, definition, score, level, skillcap, skill, points, killCount });
+                            res.writeHead(200);
+                            res.end("OK");
+                        } else {
+                            res.writeHead(403);
+                            res.end("Access Denied");
+                        }
+                    } else {
+                        res.writeHead(400);
+                        res.end("Invalid JSON body");
+                    }
+            });
+        } break;
+        case "/portalPermission": {
+            ok = false;
+            let sserver = [];
+            if (Config.ALLOW_SERVER_TRAVEL && global.launchedOnMainServer) {
+                for (let i = 0; i < global.servers.length; i++) {
+                    let server = global.servers[i];
+                    if (server.gameManager) sserver.push(server);
+                }
+                res.writeHead(200);
+                res.end(JSON.stringify(sserver.map((server) => ({
+                    ip: server.ip,
+                    players: server.players,
+                    gameMode: server.gameMode,
+                }))));
+            } else {
+                res.writeHead(404);
+                res.end("Denied.");
+            }
+        } break;
+        case "/isOnline": {
+            readString = "true";
+        } break;
+        default: {
+            // For all other routes, serve static files from the public directory
+            ok = false;
+            let fileToGet = path.join(publicRoot, req.url);
+
+            // If the requested file doesn't exist or isn't a file, default to the INDEX_HTML file
+            if (!fs.existsSync(fileToGet) || !fs.lstatSync(fileToGet).isFile()) {
+                fileToGet = path.join(publicRoot, Config.INDEX_HTML);
+            }
+
+            // Determine the file's MIME type based on its extension and serve the file stream
+            const extension = fileToGet.split(".").pop();
+            res.writeHead(200, { "Content-Type": mimeSet[extension] || "text/html" });
+            fs.createReadStream(fileToGet).pipe(res);
+        } break;
+    }
+
+    // If an API endpoint was handled, send the JSON response
+    if (ok) {
+        res.writeHead(200);
+        res.end(readString);
+    }
 });
 
 // Loads a game server
-function loadGameServer(host, gamemode, region, properties, glitchMode = false) {
-    // If glitch mode is enabled, create the game server directly without a worker thread
-    if (glitchMode) {
-        const GameServer = require("./game.js").gameServer;
-        new GameServer(c.host, c.port, gamemode, region, properties, false);
-        return;
-    }
-    // If multi-port support is not allowed (e.g., on Glitch), throw an error
-    if (c.host.endsWith("glitch.me")) {
-        throw new Error("Glitch does not support multi ports! Please enable glitch mode (c.GLITCH_MODE) to solve this error.");
-    }
+function loadGameServer(loadViaMain = false, host, port, gamemode, region, webProperties, properties) {
     // Determine the new server index and initialize an empty object in the global servers array
-    let index = global.servers.length;
-    global.servers.push({});
+    if (!loadViaMain) {
+        let index = global.servers.length;
+        global.servers.push({});
 
-    // Create a new worker thread to load the game server asynchronously
-    let worker = new Worker("./server/serverLoader.js", {
-        workerData: {
-            host,
-            port: c.port + index + 1, // Increment port for each server
-            gamemode,
-            region,
-            properties
-        }
-    });
+        // Create a new worker thread to load the game server asynchronously
+        let worker = new Worker("./server/serverLoader.js", {
+            workerData: {
+                host,
+                port: port, // Increment port for each server
+                gamemode,
+                region,
+                webProperties,
+                properties
+            }
+        });
 
-    // Listen for messages from the worker to update the server's status
-    worker.on("message", message => {
-        const flag = message.shift();
-        switch (flag) {
-            case false:
-                // Initial load: store server details
-                global.servers[index] = message.shift();
-                break;
-            case true:
-                // Update: change the server's player count
-                global.servers[index].players = message.shift();
-                break;
-            case "doneLoading":
-                // Once loading is complete, trigger the server loaded callback
-                onServerLoaded();
-                break;
-        }
-    });
+        // Listen for messages from the worker to update the server's status
+        worker.on("message", message => {
+            const flag = message.shift();
+            switch (flag) {
+                case false:
+                    // Initial load: store server details
+                    global.servers[index] = message.shift();
+                    break;
+                case true:
+                    // Update: change the server's player count
+                    global.servers[index].players = message.shift();
+                    break;
+                case "doneLoading":
+                    // Once loading is complete, trigger the server loaded callback
+                    onServerLoaded();
+                    break;
+            }
+        });
+    } else {
+        global.servers.push({ loadedViaMainServer: true });
+        setTimeout(() => { // Space it a little out.
+            if (global.launchedOnMainServer) {
+                console.warn("Only one server can be loaded via through the main server!\nProcess terminated.");
+                process.exit(1);
+            }
+            global.launchedOnMainServer = true;
+            new (require("./game.js").gameServer)(Config.host, Config.port, gamemode, region, webProperties, properties, false);
+        }, 10)
+    }
 }
 
 // Server Loaded Callback
@@ -138,113 +228,48 @@ global.onServerLoaded = () => {
     // Once all servers are loaded, log the status and routing table
     if (loadedServers >= global.servers.length) {
         util.saveToLog("Servers up", "All servers booted up.", 0x37F554);
-        if (c.LOGS) {
+        if (Config.LOGS) {
             util.log("Dumping endpoint -> gamemode routing table");
             for (const game of global.servers) {
-                console.log("> " + `${c.host}/#${game.id}`.padEnd(40, " ") + " -> " + game.gameMode);
+                console.log("> " + `${Config.host}/#${game.id}`.padEnd(40, " ") + " -> " + game.gameMode);
             }
             console.log("\n");
         }
         let serverStartEndTime = performance.now();
         console.log("Server loaded in " + util.rounder(serverStartEndTime, 4) + " milliseconds.");
-        console.log("[WEB SERVER + EXPRESS] Server listening on port", Config.port);
+        console.log("[WEB SERVER] Server listening on port", Config.port);
     }
 };
 
 // Start the HTTP Server & Load Game Servers
 server.listen(Config.port, () => {
-    // If running in glitch mode, load a single game server
-    if (Config.GLITCH_MODE) {
-        loadGameServer(false, ["teams"], "local", {
-            hidden: false,
-            gameSpeed: 1,
-            runSpeed: 1.5,
-            maxPlayers: 10,
-            serverID: 'local',
-            TILE_WIDTH: 450,
-            TILE_HEIGHT: 450,
-            ENABLE_FOOD: true,
-            FOOD_CAP: 70,
-            FOOD_CAP_NEST: 15,
-            ENEMY_CAP_NEST: 10,
-            FOOD_MAX_GROUP_TOTAL: 6,
-            BOTS: 0,
-        }, true); // glitchMode enabled
-        return;
-    }
-    /* HOST, GAMEMODE, REGION, { SERVER PROPERTIES } */
-    loadGameServer("localhost:3001", ["ffa"], "local", {
-        hidden: false,
-        gameSpeed: 1,
-        runSpeed: 1.5,
-        maxPlayers: 10,
-        serverID: 'localsb',
-        TILE_WIDTH: 420,
-        TILE_HEIGHT: 420,
-        ENABLE_FOOD: false,
-        FOOD_CAP: 10,
-        FOOD_CAP_NEST: 3,
-        ENEMY_CAP_NEST: 1,
-        FOOD_MAX_GROUP_TOTAL: 2,
-        BOTS: 20,
-    }); /* HOST, GAMEMODE, REGION, { SERVER PROPERTIES } */
-    /*loadGameServer("localhost:3002", ["teams", "domination"], "local", { 
-        hidden: false,
-        gameSpeed: 1,
-        runSpeed: 1.5,
-        maxPlayers: 10,
-        serverID: 'loc1',
-        TILE_WIDTH: 420,
-        TILE_HEIGHT: 420,
-        ENABLE_FOOD: true,
-        FOOD_CAP: 70,
-        FOOD_CAP_NEST: 15,
-        ENEMY_CAP_NEST: 10,
-        FOOD_MAX_GROUP_TOTAL: 6,
-        BOTS: 0,
-     });*/ /* HOST, GAMEMODE, REGION, { SERVER PROPERTIES } */
-     /*loadGameServer("localhost:3003", ["mothership"], "local", {
-        hidden: false,
-        gameSpeed: 1,
-        runSpeed: 1.5,
-        maxPlayers: 10,
-        serverID: 'loc2',
-        TILE_WIDTH: 420,
-        TILE_HEIGHT: 420,
-        ENABLE_FOOD: true,
-        FOOD_CAP: 70,
-        FOOD_CAP_NEST: 15,
-        ENEMY_CAP_NEST: 10,
-        FOOD_MAX_GROUP_TOTAL: 6,
-        BOTS: 100,
-     });*/ /* HOST, GAMEMODE, REGION, { SERVER PROPERTIES } */
-     /*loadGameServer("localhost:3004", ["siege_blitz"], "local", { 
-        hidden: false,
-        gameSpeed: 1,
-        runSpeed: 1.5,
-        maxPlayers: 10,
-        serverID: 'loc3',
-        TILE_WIDTH: 470,
-        TILE_HEIGHT: 470,
-        ENABLE_FOOD: true,
-        FOOD_CAP: 70,
-        FOOD_CAP_NEST: 15,
-        ENEMY_CAP_NEST: 10,
-        FOOD_MAX_GROUP_TOTAL: 6,
-        BOTS: 0,
-    });*/
+    Config.SERVERS.forEach(server => {
+        // Load all the servers.
+        loadGameServer(
+            server.LOAD_ON_MAINSERVER, 
+            server.HOST,
+            server.PORT,
+            server.GAMEMODE, 
+            server.REGION, 
+            { id: server.SERVER_ID, maxPlayers: server.MAX_PLAYERS }, 
+            server.PROPERTIES
+        );
+    })
 });
 
 // Upgrade HTTP connections to WebSocket connections if applicable
-server.ws('/', (ws, req) => {
-    // In glitch mode, pass the connection to the first server's game manager
-    if (Config.GLITCH_MODE) {
-        global.servers[0].gameManager.socketManager.connect(ws, req);
-    } else {
-        // Otherwise, close the WebSocket connection
-        ws.close();
-    }
-})
+server.on("upgrade", (req, socket, head) => {
+    wsServer.handleUpgrade(req, socket, head, (ws) => {
+        if (global.launchedOnMainServer) {
+            for (let i = 0; i < global.servers.length; i++) {
+                let server = global.servers[i];
+                if (server.gameManager) server.gameManager.socketManager.connect(ws, req);
+            }
+        } else {
+            ws.close();
+        }
+    });
+});
 
 // Set up a loop to periodically call Bun's garbage collector if available
 let bunLoop = setInterval(() => {
@@ -257,4 +282,4 @@ let bunLoop = setInterval(() => {
 }, 1000);
 
 // Log that the web server has been initialized if logging is enabled
-if (c.LOGS) console.log("Web Server initialized.");
+if (Config.LOGS) console.log("Web Server initialized.");

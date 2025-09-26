@@ -1,64 +1,73 @@
 let fs = require('fs'),
-    path = require('path'),
-    groups = fs.readdirSync(path.join(__dirname, './groups')),
-    definitionCount = 0,
-    definitionGroupsLoadStart = performance.now();
+    path = require('path');
 
-if (c.LOGS) console.log(`Loading ${groups.length} groups...`);
 
-for (let filename of groups) {
-    if (c.LOGS) console.log(`Loading group: ${filename}`);
-    require('./groups/' + filename);
-}
+class definitionCombiner {
+    constructor(data) {
+        this.groupLoc = data.groups;
+        this.tankAddonLoc = data.addonsFolder;
+    }
 
-let definitionGroupsLoadEnd = performance.now();
-console.log("Loaded definitions in " + util.rounder(definitionGroupsLoadEnd - definitionGroupsLoadStart, 3) + " milliseconds. \n");
-
-if (c.LOGS) console.log(`Loading addons...`);
-
-function processAddonFolder(directory) {
-    let folder = fs.readdirSync(directory);
-    for (let filename of folder) {
-        let filepath = directory + `/${filename}`;
-        let isDirectory = fs.statSync(filepath).isDirectory();
-        if (isDirectory) {
-            processAddonFolder(filepath);
+    loadDefinitions(log = true, includeGameAddons = true, definitionCount = 0, definitionGroupsLoadStart = performance.now()) {
+        if (Config.LOGS && log) console.log(`Loading ${this.groupLoc.length} groups...`);
+        // Load all the groups
+        for (let filename of this.groupLoc) {
+            if (Config.LOGS && log) console.log(`Loading group: ${filename}`);
+            require('./groups/' + filename);
         }
 
-        if (!filename.endsWith('.js')) continue;
-        
-        if (c.LOGS) console.log(`Loading addon: ${filename}`);
-        let result = require(filepath);
-        if ('function' === typeof result) {
-            result({ Class, Config, Events });
+        let definitionGroupsLoadEnd = performance.now();
+        if (Config.LOGS && log) console.log("Loaded definitions in " + util.rounder(definitionGroupsLoadEnd - definitionGroupsLoadStart, 3) + " milliseconds. \n");
+
+        // Now we can load the tank addons
+        if (Config.LOGS && log) console.log(`Loading addons...`);
+        this.loadAddons(this.tankAddonLoc, log);
+
+        // Calculate the length.
+        definitionCount = Object.keys(Class).length;
+
+        let addonsLoadEnd = performance.now();
+        if (Config.LOGS && log) console.log("Loaded addons in " + util.rounder(addonsLoadEnd - definitionGroupsLoadEnd, 3) + " milliseconds. \n");
+
+        // Also include the other addons if needed!
+        if (includeGameAddons) this.loadAddons(path.join(__dirname, '../../Game/addons'), log, "game addon");
+
+        let gameaddonsLoadEnd = performance.now();
+        if (Config.LOGS && log) console.log("Loaded game addons in " + util.rounder(gameaddonsLoadEnd - addonsLoadEnd, 3) + " milliseconds. \n");
+
+        if (Config.LOGS && log) console.log(`Combined ${this.groupLoc.length} definition groups and ${loadedAddons.length} addons into ${definitionCount} definitions!\n`);
+
+        // Get each class a unique index
+        let i = 0;
+        for (let key in Class) {
+            if (!Class.hasOwnProperty(key)) continue;
+            Class[key].index = i++;
         }
-        loadedAddons.push(filename.slice(0, -3));
     }
-}
-processAddonFolder(path.join(__dirname, './addons'));
-definitionCount = Object.keys(Class).length;
 
-let addonsLoadEnd = performance.now();
-console.log("Loaded addons in " + util.rounder(addonsLoadEnd - definitionGroupsLoadEnd, 3) + " milliseconds. \n");
-
-// "Flattening" refers to removing PARENT attributes and applying the parents' attributes to the definition themselves, if not overwritten later on.
-if (Config.flattenDefintions) {
-    console.log(`Flattening ${definitionCount} definitions...`);
-    
-    let flattened = {};
-    for (let key in Class) {
-        let output = {};
-        util.flattenDefinition(output, Class[key]);
-        flattened[key] = output;
+    loadAddons(directory, logs = true, overrideLoadTextLog = false) {
+        // Take the folder
+        let folder = fs.readdirSync(directory);
+        // And check every file in it
+        for (let filename of folder) {
+            // Create this file its own filepath
+            let filepath = directory + `/${filename}`;
+            let isDirectory = fs.statSync(filepath).isDirectory();
+            // If we are fooled, and it's a folder, restart it's court
+            if (isDirectory) {
+                this.loadAddons(filepath);
+            }
+            // Now we don't want any html files in!
+            if (!filename.endsWith('.js')) continue;
+            if (Config.LOGS && logs) console.log(`Loading ${overrideLoadTextLog ? overrideLoadTextLog : "addon"}: ${filename}`);
+            // Compile the addons
+            let result = require(filepath);
+            if ('function' === typeof result) {
+                result({ Class, Config, Events });
+            }
+            global.loadedAddons.push(filename.slice(0, -3));
+        }
     }
-    Class = flattened;
-    console.log("Definitions flattened in " + (performance.now() - addonsLoadEnd) + " milliseconds. \n");
-}
+};
 
-console.log(`Combined ${groups.length} definition groups and ${loadedAddons.length} addons into ${definitionCount} ${Config.flattenDefintions ? 'flattened ' : ''}definitions!\n`);
-// Index the definitions
-let i = 0;
-for (let key in Class) {
-    if (!Class.hasOwnProperty(key)) continue;
-    Class[key].index = i++;
-}
+module.exports = { definitionCombiner };

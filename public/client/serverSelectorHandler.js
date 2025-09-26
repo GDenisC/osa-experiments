@@ -34,7 +34,7 @@ global.loadServerSelector = (serverData, text) => {
       },
     };
 
-    // If you dont want have a server filter, just dont run this function.
+    // If you don't want to have a server filter, just don't run this function.
     initializeFilter();
 
     servers.forEach(async (server) => {
@@ -50,7 +50,7 @@ global.loadServerSelector = (serverData, text) => {
             tr.appendChild(td1);
             tr.appendChild(td2);
             tr.appendChild(td3);
-            server.featured && tr.classList.add("featured"); // make the text yellow if its featured.
+            server.featured && tr.classList.add("featured"); // make the text yellow if it's featured.
             tr.onclick = () => {
                 if (myServer.classList.contains("selected")) {
                     myServer.classList.remove("selected");

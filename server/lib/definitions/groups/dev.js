@@ -186,7 +186,7 @@ Class.rogues = menu("Rogues", "darkGrey", 6)
 Class.rammers = menu("Rammers", "aqua")
 Class.rammers.PROPS = [
     {
-        POSITION: [21.5, 0, 0, 360, -1],
+        POSITION: [21.5, 0, 0, 360, 0],
         TYPE: "smasherBody",
     }
 ]
@@ -194,7 +194,7 @@ Class.terrestrials = menu("Terrestrials", "orange", 7)
 Class.celestials = menu("Celestials", "lightGreen", 9)
 Class.eternals = menu("Eternals", "veryLightGrey", 11)
 Class.devBosses = menu("Developers", "lightGreen", 4)
-Class.devBosses.UPGRADE_COLOR = "rainbow"
+Class.devBosses.UPGRADE_COLOR = "rainbow";
 Class.retiredDevBosses = menu("Retired Developers", "#000000", 3)
 Class.retiredDevBosses.UPGRADE_COLOR = "#000000"
 
@@ -1441,7 +1441,7 @@ Class.ihdtiBolt3 = {
 }
 Class.itHurtsDontTouchIt = {
     PARENT: "genericFlail",
-    LABEL: "It hurts dont touch it",
+    LABEL: "It hurts don't touch it",
     DANGER: 7,
     TURRETS: [{
         POSITION: [6, 10, 0, 0, 190, 0],
@@ -1570,7 +1570,7 @@ Class.developer.UPGRADES_TIER_0 = ["tanks", "bosses", "spectator", "levels", "te
         Class.dominators.UPGRADES_TIER_0 = ["destroyerDominator", "gunnerDominator", "trapperDominator"]
         Class.sanctuaries.UPGRADES_TIER_0 = ["sanctuaryTier1", "sanctuaryTier2", "sanctuaryTier3", "sanctuaryTier4", "sanctuaryTier5", "sanctuaryTier6"]
 
-    Class.bosses.UPGRADES_TIER_0 = ["sentries", "elites", "mysticals", "nesters", "rogues", "rammers", "terrestrials", "celestials", "eternals", /*"devBosses"*/]
+    Class.bosses.UPGRADES_TIER_0 = ["sentries", "elites", "mysticals", "nesters", "rogues", "rammers", "terrestrials", "celestials", "eternals", "devBosses"]
         Class.sentries.UPGRADES_TIER_0 = ["sentrySwarm", "sentryGun", "sentryTrap", "shinySentrySwarm", "shinySentryGun", "shinySentryTrap", "sentinelMinigun", "sentinelLauncher", "sentinelCrossbow"]
         Class.elites.UPGRADES_TIER_0 = ["eliteDestroyer", "eliteGunner", "eliteSprayer", "eliteBattleship", "eliteSpawner", "eliteTrapGuard", "eliteSpinner", "eliteSkimmer", "legionaryCrasher", "guardian", "defender", "sprayerLegion", "deltas"]
         Class.deltas.UPGRADES_TIER_0 = ["deltaDestroyer", "deltaGunner", "deltaSprayer", "deltaBattleship"]
@@ -1581,8 +1581,8 @@ Class.developer.UPGRADES_TIER_0 = ["tanks", "bosses", "spectator", "levels", "te
         Class.terrestrials.UPGRADES_TIER_0 = ["ares", "gersemi", "ezekiel", "eris", "selene"]
         Class.celestials.UPGRADES_TIER_0 = ["paladin", "freyja", "zaphkiel", "nyx", "theia", "atlas", "rhea", "julius", "genghis", "napoleon"]
         Class.eternals.UPGRADES_TIER_0 = ["ragnarok", "kronos"]
-        Class.devBosses.UPGRADES_TIER_0 = ["retiredDevBosses", "zephiBoss", "dogeiscutBoss", "toothlessBoss", "AEMKShipBoss", "helenaBoss"]
-            Class.retiredDevBosses.UPGRADES_TIER_0 = ["taureonBoss", "trplnrBoss", "frostBoss"]
+        // Class.devBosses.UPGRADES_TIER_0 = ["retiredDevBosses", "zephiBoss", "dogeiscutBoss", "toothlessBoss", "AEMKShipBoss", "helenaBoss"]
+        //     Class.retiredDevBosses.UPGRADES_TIER_0 = ["taureonBoss", "trplnrBoss", "frostBoss"]
 
     Class.testing.UPGRADES_TIER_0 = ["diamondShape", "miscTest", "mmaTest", "vulnturrettest", "onTest", "alphaGunTest", "strokeWidthTest", "testLayeredBoss", "tooltipTank", "turretLayerTesting", "bulletSpawnTest", "propTest", "weaponArrayTest", "radialAutoTest", "makeAutoTest", "imageShapeTest", "screenShakeTest", "turretStatScaleTest", "auraBasic", "auraHealer", "weirdAutoBasic", "ghoster", "gunBenchmark", "switcheroo", ["developer", "developer"], "armyOfOne", "vanquisher", "mummifier"]
     

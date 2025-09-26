@@ -1,10 +1,9 @@
 class Tag {
-    constructor(gameManager) {
-        this.gameManager = gameManager;
+    constructor() {
         this.won = false;
         this.canStart = false;
         this.teams = null;
-        c.TAG_DATA = {
+        Config.TAG_DATA = {
             getData: () => this.teams,
             initAndStart: () => {
                 this.canStart = true;
@@ -12,9 +11,9 @@ class Tag {
             resetAndStop: () => {
                 this.canStart = false;
                 this.won = false;
-                this.teams = Array(this.gameManager.gameSettings.TEAMS).fill(0);
+                this.teams = Array(Config.TEAMS).fill(0);
             },
-            redefineTeams: () => { this.teams = Array(this.gameManager.gameSettings.TEAMS).fill(0); },
+            redefineTeams: () => { this.teams = Array(Config.TEAMS).fill(0); },
             addToTeam: (team) => {
                 this.teams[team - 1]++;
                 this.checkWin();
@@ -25,18 +24,18 @@ class Tag {
             },
             addPlayer: entity => {
                 let team = -entity.team;
-                c.TAG_DATA.addToTeam(team);
+                Config.TAG_DATA.addToTeam(team);
                 entity.on("dead", ({ killers }) => {
-                  c.TAG_DATA.removeFromTeam(team);
+                  Config.TAG_DATA.removeFromTeam(team);
                   let players = killers.filter(entity => entity.isPlayer || entity.isBot);
                   if (players.length) entity.socket.rememberedTeam = players[0].team;
                 });
             },
             addBot: entity => {
                 let team = -entity.team;
-                c.TAG_DATA.addToTeam(team);
+                Config.TAG_DATA.addToTeam(team);
                 entity.on("dead", ({ killers }) => {
-                  c.TAG_DATA.removeFromTeam(team);
+                  Config.TAG_DATA.removeFromTeam(team);
                   let killer = killers.filter(entity => entity.isPlayer || entity.isBot);
                   if (killer.length) global.nextTagBotTeam = killer[0].team;
                 });
@@ -44,7 +43,7 @@ class Tag {
         }
     }
     checkWin() {
-        if (this.won || !this.canStart || !this.gameManager.clients.length) return;
+        if (this.won || !this.canStart || !global.gameManager.clients.length) return;
         let bestTeam = -1;
         for (let i = 0; i < this.teams.length; i++) {
           if (this.teams[i] > (this.teams[bestTeam] || -1)) {
@@ -53,7 +52,7 @@ class Tag {
         }
         if (!this.teams.every((team, i) => i === bestTeam || team === 0) || this.teams[bestTeam] < 5) return;
         this.won = true;
-        this.gameManager.socketManager.broadcast(
+        global.gameManager.socketManager.broadcast(
           `${
             ["BLUE", "GREEN", "RED", "PURPLE", "YELLOW", "ORANGE", "BROWN", "CYAN"][
               bestTeam
@@ -61,12 +60,11 @@ class Tag {
           } has won the game!`
         );
         setTimeout(() => {
-          this.gameManager.closeArena();
+          global.gameManager.closeArena();
         }, 3e3);
     }
     redefine(theshit) {
-        this.gameManager = theshit;
-        c.TAG_DATA.redefineTeams();
+        Config.TAG_DATA.redefineTeams();
     }
 }
 

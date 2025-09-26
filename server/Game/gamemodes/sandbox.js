@@ -1,6 +1,5 @@
 class Sandbox {
-    constructor(gameManager) {
-        this.gameManager = gameManager;
+    constructor() {
         this.clients = gameManager.clients;
     }
     update() {
@@ -13,10 +12,9 @@ class Sandbox {
             this.xgrid -= 20;
             this.ygrid -= 20;
         }
-        if (!this.gameManager.room.settings.sandbox.do_not_change_arena_size) this.gameManager.updateBounds(this.xgrid * 30, this.ygrid * 30)
+        if (!global.gameManager.room.settings.sandbox.do_not_change_arena_size) global.gameManager.updateBounds(this.xgrid * 30, this.ygrid * 30)
     }
     redefine(theshit) {
-        this.gameManager = theshit;
         this.clients = theshit.clients;
         this.xgrid = theshit.room.xgrid;
         this.ygrid = theshit.room.ygrid;

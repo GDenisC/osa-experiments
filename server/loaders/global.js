@@ -1,21 +1,24 @@
 // Global Variables (These must come before we import from the modules folder.)
 let EventEmitter = require('events');
+const HashGrid = require('../lib/hashgrid.js');
 global.Events = new EventEmitter();
-global.c = require("../config.js");
-global.Config = c;
+global.Config = require("../config.js");
 
 global.ran = require("../lib/random.js");
 global.util = require("../lib/util.js");
-global.hshg = require("../lib/hshg.js");
 global.mazeGenerator = require("../miscFiles/mazeGenerator.js");
-global.grid = new hshg.HSHG(32);
+global.grid = new HashGrid(7);
 global.protocol = require("../lib/fasttalk.js");
 global.cannotRespawn = false;
 global.mockupData = [];
-global.entities = [];
+global.entities = new Map();
+global.targetableEntities = new Map();
+global.unspawnableTeam = [];
+global.walls = [];
 global.entitiesToAvoid = [];
 global.servers = [];
 global.chats = {};
+global.travellingPlayers = [];
 global.fps = "Unknown";
 
 global.loadedAddons = [];
@@ -37,7 +40,7 @@ global.getSpawnableArea = (team, gameManager) => {
 
 }
 global.teamNames = ["BLUE", "GREEN", "RED", "PURPLE", "YELLOW", "ORANGE", "BROWN", "CYAN"],
-    global.teamColors = [10, 11, 12, 15, 25, 26, 27, 28];
+global.teamColors = [10, 11, 12, 15, 25, 26, 27, 28];
 global.getTeamName = team => ["BLUE", "GREEN", "RED", "PURPLE", "YELLOW", "ORANGE", "BROWN", "CYAN", , "DREADNOUGHTS"][-team - 1] ?? "An unknown team";
 global.getTeamColor = (team, fixMode = false) => {
     let color = ([10, 11, 12, 15, 25, 26, 27, 28, , 4][-team - 1] ?? 3);
@@ -45,9 +48,9 @@ global.getTeamColor = (team, fixMode = false) => {
     return color;
 }
 global.isPlayerTeam = team => /*team < 0 && */team > -11;
-global.getWeakestTeam = (gameManager) => {
+global.getWeakestTeam = () => {
     let teamcounts = {};
-    for (let i = -gameManager.gameSettings.TEAMS; i < 0; i++) {
+    for (let i = -Config.TEAMS; i < 0; i++) {
         if (global.defeatedTeams.includes(i)) continue;
         teamcounts[i] = 0;
     }
@@ -60,12 +63,12 @@ global.getWeakestTeam = (gameManager) => {
         }
     }
     teamcounts = Object.entries(teamcounts).map(([teamId, amount]) => {
-        let weight = teamId in gameManager.gameSettings.TEAM_WEIGHTS ? gameManager.gameSettings.TEAM_WEIGHTS[teamId] : 1;
+        let weight = teamId in Config.TEAM_WEIGHTS ? Config.TEAM_WEIGHTS[teamId] : 1;
         return [teamId, amount / weight];
     });
     let lowestTeamCount = Math.min(...teamcounts.map(x => x[1])),
         entries = teamcounts.filter(a => a[1] == lowestTeamCount);
-    return parseInt(!entries.length ? -Math.ceil(Math.random() * gameManager.gameSettings.TEAMS) : ran.choose(entries)[0]);
+    return parseInt(!entries.length ? -Math.ceil(Math.random() * Config.TEAMS) : ran.choose(entries)[0]);
 };
 
 global.loopThrough = function(array, callback = () => {}) {
@@ -137,6 +140,7 @@ global.bringToLife = (() => {
         }
 
         // Controllers
+        logs.though.set();
         for (let i = 0, len = my.controllers.length; i < len; i++) {
             const AI = my.controllers[i];
             const a = AI.think(b);
@@ -149,6 +153,7 @@ global.bringToLife = (() => {
                 if (a.power != null && (b.power == null || AI.acceptsFromTop)) b.power = a.power;
             }
         }
+        logs.though.mark();
 
         my.control.target = b.target == null ? my.control.target : b.target;
         my.control.goal = b.goal || { x: my.x, y: my.y };
@@ -164,10 +169,10 @@ global.bringToLife = (() => {
 
         // Guns and turrets
         if (my.guns) {
-            for (let gun of my.guns) gun.live();
+            for (let gun of my.guns.values()) gun.live();
         }
         if (my.turrets) {
-            for (let turret of my.turrets) turret.life();
+            for (let turret of my.turrets.values()) turret.life();
         }
 
         // Refresh body attributes if needed
@@ -214,14 +219,16 @@ global.defineSplit = (() => {
         if (set.GUNS != null) {
             let newGuns = [];
             for (let i = 0; i < set.GUNS.length; i++) {
-                newGuns.push(new Gun(my, set.GUNS[i], my.gameManager));
+                newGuns.push(new Gun(my, set.GUNS[i]));
             }
-            my.guns.push(...newGuns);
+            for (let guns of newGuns) {
+                my.guns.set(guns.id, guns);
+            }
         }
         if (set.TURRETS != null) {
             for (let i = 0; i < set.TURRETS.length; i++) {
                 let def = set.TURRETS[i],
-                    o = new Entity(my, my.master, my.gameManager),
+                    o = new Entity(my, my.master),
                     turretDanger = false,
                     type = Array.isArray(def.TYPE) ? def.TYPE : [def.TYPE];
                 for (let j = 0; j < type.length; j++) {
@@ -235,7 +242,7 @@ global.defineSplit = (() => {
         if (set.PROPS != null) {
             for (let i = 0; i < set.PROPS.length; i++) {
                 let def = set.PROPS[i],
-                    o = new Prop(def.POSITION, my, my.gameManager),
+                    o = new Prop(def.POSITION, my.master, true),
                     type = Array.isArray(def.TYPE) ? def.TYPE : [def.TYPE];
                 for (let j = 0; j < type.length; j++) {
                     o.define(type[j]);
@@ -256,7 +263,7 @@ global.defineSplit = (() => {
             my.addController(toAdd);
         }
         if (set.BATCH_UPGRADES != null) my.batchUpgrades = set.BATCH_UPGRADES;
-        for (let i = 0; i < c.MAX_UPGRADE_TIER; i++) {
+        for (let i = 0; i < Config.MAX_UPGRADE_TIER; i++) {
             let tierProp = 'UPGRADES_TIER_' + i;
             if (set[tierProp] != null && emitEvent) {
                 for (let j = 0; j < set[tierProp].length; j++) {
@@ -271,7 +278,7 @@ global.defineSplit = (() => {
                     }
                     my.upgrades.push({
                         class: trueUpgrades,
-                        level: c.TIER_MULTIPLIER * i,
+                        level: Config.TIER_MULTIPLIER * i,
                         index: index.substring(0, index.length - 1),
                         tier: i,
                         branch,
@@ -311,7 +318,7 @@ global.handleBatchUpgradeSplit = (() => {
             }
             my.upgrades.push({
                 class: upgradeClass,
-                level: c.TIER_MULTIPLIER * upgradeTier,
+                level: Config.TIER_MULTIPLIER * upgradeTier,
                 index: upgradeIndex.substring(0, upgradeIndex.length - 1),
                 tier: upgradeTier,
                 branch: 0,
@@ -358,7 +365,7 @@ global.Tile = class Tile {
         if ("object" !== typeof this.args) {
             throw new Error("First argument has to be an object!");
         }
-
+        this.visibleOnBlackout = args.VISIBLE_FROM_BLACKOUT ?? false;
         this.color = args.COLOR;
         this.data = args.DATA || {};
         if ("object" !== typeof this.data) {
@@ -395,6 +402,34 @@ global.flatten = (output, definition) => {
     return output;
 };
 
+global.makeHitbox = wall => {
+    const _size = wall.size + 4;
+    //calculate the relative corners
+    let relativeCorners = [
+            Math.atan2(    _size,     _size) + wall.angle,
+            Math.atan2(0 - _size,     _size) + wall.angle,
+            Math.atan2(0 - _size, 0 - _size) + wall.angle,
+            Math.atan2(    _size, 0 - _size) + wall.angle
+        ],
+        distance = Math.sqrt(_size ** 2 + _size ** 2);
+
+    //convert 4 corners into 4 lines
+    for (let i = 0; i < 4; i++) {
+        relativeCorners[i] = {
+            x: distance * Math.sin(relativeCorners[i]),
+            y: distance * Math.cos(relativeCorners[i])
+        };
+    }
+
+    wall.hitbox = [
+        [relativeCorners[0], relativeCorners[1]],
+        [relativeCorners[1], relativeCorners[2]],
+        [relativeCorners[2], relativeCorners[3]],
+        [relativeCorners[3], relativeCorners[0]]
+    ];
+    wall.hitboxRadius = distance;
+}
+
 global.wallTypes = [
     { color: 16, label: 'Wall',    alpha: 1, class: 'wall' },
     { color: 12, label: 'deadly',  alpha: 1, class: 'wall' },
@@ -417,20 +452,23 @@ global.becomeBulletChildren = (socket, player, exit, newgui) => {
         a.bulletparent = a;
         a.settings.connectChildrenOnCamera = true;
         a.settings.persistsAfterDeath = true;
+
         let newchildren = player.body.bulletchildren,
-          removedchildren = player.body.bulletchildren
+            removedchildren = player.body.bulletchildren;
+
         newchildren = newchildren.filter((e) => e.id !== a.id && e !== null && e.master === a.master);
         removedchildren = newchildren.filter((e) => e.master !== a.master);
         a.bulletchildren = newchildren;
         removedchildren.forEach((e) => {
-          e.master = e;
-          e.destroy();
+            e.master = e;
+            e.destroy();
         })
         a.bulletchildren.forEach((e) => {
-          e.source = a;
-          e.bulletparent = a;
-          e.parent = a;
+            e.source = a;
+            e.bulletparent = a;
+            e.parent = a;
         })
+
         let become = a;
         become.controllers = [];
         player.body = become;

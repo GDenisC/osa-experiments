@@ -32,12 +32,12 @@ let c16 = new Uint8Array(u16.buffer)
  * Instead of operating on a string, the data is put onto a Uint8Array, which makes it much faster.
  * The type indicators are also made shorter, changing from 1 byte to 4 bits, and special compressions for 0 and 1 and type repeats are also added, which reduced bandwidth usage.
  * 
- * The algorithm compresses an array of JavaScript numbers and strings into a single packets. Booleans are automatically casted to 0 and 1.
+ * The algorithm compresses an array of JavaScript numbers and strings into a single packets. Booleans are automatically cast to 0 and 1.
  * Each packet consists of two main parts: the header codes, and the data.
- * The header codes are 4 bit each, and there must be an even number of them.
- * In a packet, the header code always start and end with code 15 (0b1111). The actual headers are put between them. The starting code allows the client to instantly check to see which version of the protocol is used, and fall back if necessary. The encding codes allows the client to signal the start of the data section. Since there must be an even number of header codes, if there is an odd number of headers, there will be two code 15s at the end instead of only one.
+ * The header codes are 4 bits each, and there must be an even number of them.
+ * In a packet, the header code always starts and ends with code 15 (0b1111). The actual headers are put between them. The starting code allows the client to instantly check to see which version of the protocol is used, and fall back if necessary. The encding codes allows the client to signal the start of the data section. Since there must be an even number of header codes, if there is an odd number of headers, there will be two code 15s at the end instead of only one.
  * 
- * When the data is being compressed, each element of the array is labeled to one of 12 types, which is the first 12 header codes in the table above. If more than 3 header codes of the same type is used, they are compressed into shorter blocks to indicate repeats.
+ * When the data is being compressed, each element of the array is labeled to one of 12 types, which is the first 12 header codes in the table above. If more than 3 header codes of the same type are used, they are compressed into shorter blocks to indicate repeats.
  */
 
 let encode = message => {

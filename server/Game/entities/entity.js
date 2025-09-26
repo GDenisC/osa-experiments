@@ -2,11 +2,111 @@ let EventEmitter = require('events');
 global.entitiesIdLog = 0;
 const forceTwiggle = ["autospin", "turnWithSpeed", "spin", "fastspin", "veryfastspin", "withMotion", "smoothWithMotion", "looseWithMotion"];
 const { combineStats } = require('../../lib/definitions/facilitators.js');
+class Prop { // Used for split upgrades only
+    constructor(position, bond) {
+        this.guns = [];
+        this.id = entitiesIdLog++;
+        this.color = new Color(16);
+        this.borderless = false;
+        this.drawFill = true;
+        this.strokeWidth = 1;
+
+        // Bind prop
+        this.bond = bond;
+        this.bond.props.set(this.id, this);
+        // Get my position.
+        if (Array.isArray(position)) {
+            position = {
+                SIZE: position[0],
+                X: position[1],
+                Y: position[2],
+                ANGLE: position[3],
+                LAYER: position[4]
+            };
+        }
+        position.SIZE ??= 10;
+        position.X ??= 0;
+        position.Y ??= 0;
+        position.ANGLE ??= 0;
+        position.LAYER ??= 0;
+        let _off = new Vector(position.X, position.Y);
+        this.bound = {
+            size: position.SIZE / 20,
+            angle: position.ANGLE * Math.PI / 180,
+            direction: _off.direction,
+            offset: _off.length / 10,
+            layer: position.LAYER
+        };
+        // Initalize.
+        this.facing = 0;
+        this.x = 0;
+        this.y = 0;
+        this.size = 1;
+        this.realSize = 1;
+        this.settings = {};
+        this.settings.mirrorMasterAngle = true;
+        this.upgrades = [];
+        this.turrets = [];
+        this.props = [];
+    }
+    define(def) {
+        let set = ensureIsClass(def);
+
+        if (set.PARENT != null) {
+            if (Array.isArray(set.PARENT)) {
+                for (let i = 0; i < set.PARENT.length; i++) {
+                    this.define(set.PARENT[i], false);
+                }
+            } else {
+                this.define(set.PARENT, false);
+            }
+        }
+        if (set.index != null) this.index = set.index.toString();
+        if (set.SHAPE != null) {
+            this.shape = typeof set.SHAPE === "number" ? set.SHAPE : 0;
+            this.shapeData = set.SHAPE;
+        }
+        this.imageInterpolation = set.IMAGE_INTERPOLATION != null ? set.IMAGE_INTERPOLATION : 'bilinear'
+        if (set.COLOR != null) {
+            this.color.interpret(set.COLOR);
+        }
+        if (set.STROKE_WIDTH != null) this.strokeWidth = set.STROKE_WIDTH
+        if (set.BORDERLESS != null) this.borderless = set.BORDERLESS;
+        if (set.DRAW_FILL != null) this.drawFill = set.DRAW_FILL;
+        if (set.GUNS != null) {
+            let newGuns = [];
+            for (let i = 0; i < set.GUNS.length; i++) {
+                newGuns.push(new Gun(this, set.GUNS[i]));
+            }
+            this.guns = newGuns;
+        }
+    }
+    camera() {
+        return {
+            type: 0x01,
+            id: this.id,
+            index: this.index,
+            size: this.size,
+            realSize: this.realSize,
+            facing: this.facing,
+            angle: this.bound.angle,
+            direction: this.bound.direction,
+            offset: this.bound.offset,
+            sizeFactor: this.bound.size,
+            mirrorMasterAngle: this.settings.mirrorMasterAngle,
+            layer: this.bound.layer,
+            color: this.color.compiled,
+            strokeWidth: this.strokeWidth,
+            borderless: this.borderless,
+            drawFill: this.drawFill,
+            guns: this.guns.map((gun) => gun.getPhotoInfo()),
+            turrets: this.turrets,
+        };
+    }
+}
 class Entity extends EventEmitter {
-    constructor(position, master, gameManager) {
+    constructor(position, master) {
         super();
-        gameManager = ensureIsManager(gameManager);
-        this.gameManager = gameManager;
         if (!master) master = this;
         this.isGhost = false;
         this.killCount = { solo: 0, assists: 0, bosses: 0, polygons: 0, killers: [] };
@@ -28,14 +128,12 @@ class Entity extends EventEmitter {
         this.isInGrid = false;
         this.removeFromGrid = () => {
             if (this.isInGrid) {
-                grid.removeObject(this);
                 this.isInGrid = false;
             }
         };
         this.addToGrid = () => {
             if (!this.collidingBond && this.bond != null) return;
             if (!this.isInGrid) {
-                grid.addObject(this);
                 this.isInGrid = true;
             }
         };
@@ -51,9 +149,9 @@ class Entity extends EventEmitter {
         this.skill = new Skill();
         this.health = new HealthType(1, 'static', 0);
         this.shield = new HealthType(0, 'dynamic');
-        this.guns = [];
-        this.turrets = [];
-        this.props = [];
+        this.guns = new Map();
+        this.turrets = new Map();
+        this.props = new Map();
         this.upgrades = [];
         this.skippedUpgrades = [];
         this.settings = {};
@@ -63,7 +161,8 @@ class Entity extends EventEmitter {
         this.bulletchildren = [];
         this.color = new Color(16);
         this.glow = { radius: null, color: new Color(-1).compiled, alpha: 1, recursion: 1 }
-        this.confinement = { xMin: 0, xMax: this.gameManager.room.width, yMin: 0, yMax: this.gameManager.room.height };
+        this.confinement = { xMin: 0, xMax: global.gameManager.room.width, yMin: 0, yMax: global.gameManager.room.height };
+        this.firingArc = [0, 360];
         this.necro = () => {};
         // Define it
         this.SIZE = 1;
@@ -97,58 +196,25 @@ class Entity extends EventEmitter {
         this.team = this.id;
         this.team = master.team;
         // This is for collisions
-        this.updateAABB = () => {};
-        this.AABB_savedSize = 0;
+        this.minX = 0;
+        this.minY = 0;
+        this.maxX = 0;
+        this.maxY = 0;
         this.collidingBond = false;
         // Optimized AABB calculation and update
-        this.getAABB = (() => {
-            const data = {
-                min: [0, 0],
-                max: [0, 0],
-                active: false,
-                size: 0
-            };
-            this.updateAABB = (active) => {
-                if (!this.collidingBond && this.bond != null) return 0;
-                if (!active) {
-                    data.active = false;
-                    return 0;
-                }
-                // Calculate bounds only if needed
-                const realSize = this.realSize + 5;
-                const vx = this.velocity.x + this.accel.x;
-                const vy = this.velocity.y + this.accel.y;
-                // Use Math.min/max once per coordinate by calculating intermediate values
-                const minX = this.x < this.x + vx ? this.x : this.x + vx;
-                const minY = this.y < this.y + vy ? this.y : this.y + vy;
-                const x1 = minX - realSize;
-                const y1 = minY - realSize;
-                const x2 = (this.x > this.x + vx ? this.x : this.x + vx) + realSize;
-                const y2 = (this.y > this.y + vy ? this.y : this.y + vy) + realSize;
-                
-                const size = x2 - x1 > y2 - y1 ? x2 - x1 : y2 - y1;
-                const sizeDiff = this.AABB_savedSize / size;
-                
-                // Update data in-place
-                data.min[0] = x1;
-                data.min[1] = y1;
-                data.max[0] = x2;
-                data.max[1] = y2;
-                data.active = true;
-                data.size = size;
-                
-                // Only update grid if size changed significantly
-                if (sizeDiff > Math.SQRT2 || sizeDiff < Math.SQRT1_2) {
-                    this.removeFromGrid();
-                    this.addToGrid();
-                    this.AABB_savedSize = size;
-                }
-            };
-            return () => data;
-        })();
-        this.updateAABB(true);
-        entities.push(this);
-        for (let v of this.gameManager.views) v.add(this);
+        this.updateAABB = (active) => {
+            if (!active || (!this.collidingBond && this.bond != null)) {
+                this.isInGrid = false;
+            } else {
+                this.isInGrid = true;
+                this.minX = this.x - this.size;
+                this.minY = this.y - this.size;
+                this.maxX = this.x + this.size;
+                this.maxY = this.y + this.size;
+            }
+        };
+        entities.set(this.id, this);
+        for (let v of global.gameManager.views) v.add(this);
     }
 
     life() { bringToLife(this); }
@@ -189,26 +255,27 @@ class Entity extends EventEmitter {
             ];
         } else {
             player.body.controllers = [
-                new ioTypes.nearestDifferentMaster(player.body, {}, this.gameManager),
+                new ioTypes.nearestDifferentMaster(player.body, {}, global.gameManager),
                 new ioTypes.mapTargetToGoal(player.body),
             ];
         }
         player.body.name = player.body.label;
         player.body.underControl = false;
-        let fakeBody = new Entity({ x: player.body.x, y: player.body.y }, false, this.gameManager);
+        let fakeBody = new Entity({ x: player.body.x, y: player.body.y });
         fakeBody.passive = true;
         fakeBody.underControl = true;
         player.body = fakeBody;
         player.body.kill();
     }
 
-    define(defs, emitEvent = true, overwriteindex = true) {
+    define(defs, emitEvent = true, overwriteindex = true, overrideDefs = true) {
         if (!Array.isArray(defs)) defs = [defs];
 
         // Define all primary stats
         let set = ensureIsClass(defs[0]);
+        this.props.clear();
         this.store = {};
-        for (let gun of this.guns) gun.store = {};
+        for (let gun of this.guns.values()) gun.store = {};
         if (set.PARENT != null) {
             if (Array.isArray(set.PARENT)) {
                 for (let i = 0; i < set.PARENT.length; i++) {
@@ -249,7 +316,7 @@ class Entity extends EventEmitter {
                 for (let i = 0; i < set.CONTROLLERS.length; i++) {
                     let io = set.CONTROLLERS[i];
                     if ("string" == typeof io) io = [io];
-                    toAdd.push(new ioTypes[io[0]](this, io[1], this.gameManager));
+                    toAdd.push(new ioTypes[io[0]](this, io[1], global.gameManager));
                     addedSuccess = true;
                 }
                 this.addController(toAdd);
@@ -259,7 +326,15 @@ class Entity extends EventEmitter {
             }
         }
         if (set.IGNORED_BY_AI != null) this.ignoredByAi = set.IGNORED_BY_AI;
-        if (set.MOTION_TYPE != null) this.motionType = set.MOTION_TYPE;
+        if (set.MOTION_TYPE != null) {
+            this.motionType = set.MOTION_TYPE;
+            if (Array.isArray(this.motionType)) {
+                this.motionTypeArgs = this.motionType[1];
+                this.motionType = this.motionType[0];
+            } else {
+                this.motionTypeArgs = {};
+            }
+        }
         if (set.FACING_TYPE != null) {
             this.facingType = set.FACING_TYPE;
             if (Array.isArray(this.facingType)) {
@@ -269,6 +344,7 @@ class Entity extends EventEmitter {
                 this.facingTypeArgs = {};
             }
         };
+        if (set.NO_COLLISIONS) this.settings.no_collisions = set.NO_COLLISIONS;
         if (set.MIRROR_MASTER_ANGLE != null) this.settings.mirrorMasterAngle = set.MIRROR_MASTER_ANGLE
         if (set.DRAW_HEALTH != null) this.settings.drawHealth = set.DRAW_HEALTH;
         if (set.DRAW_SELF != null) this.settings.drawShape = set.DRAW_SELF;
@@ -297,6 +373,7 @@ class Entity extends EventEmitter {
         if (set.DAMAGE_CLASS != null) this.settings.damageClass = set.DAMAGE_CLASS;
         if (set.BUFF_VS_FOOD != null) this.settings.buffVsFood = set.BUFF_VS_FOOD;
         if (set.CAN_BE_ON_LEADERBOARD != null) this.settings.leaderboardable = set.CAN_BE_ON_LEADERBOARD;
+        if (set.RENDER_ON_LEADERBOARD != null) this.settings.renderOnLeaderboard = set.RENDER_ON_LEADERBOARD;
         if (set.INTANGIBLE != null) this.intangibility = set.INTANGIBLE;
         if (set.IS_SMASHER != null) this.settings.reloadToAcceleration = set.IS_SMASHER;
         if (set.STAT_NAMES != null) this.settings.skillNames = {
@@ -323,11 +400,11 @@ class Entity extends EventEmitter {
         if (set.DRAW_FILL != null) this.drawFill = set.DRAW_FILL;
         if (set.TEAM != null) {
             this.team = set.TEAM;
-            if (!this.gameManager.socketManager.players.length) {
+            if (!global.gameManager.socketManager.players.length) {
                 const _entity = this;
-                for (let i = 0; i < this.gameManager.socketManager.players.length; i++) {
-                    if (this.gameManager.socketManager.players[i].body.id == _entity.id) {
-                        this.gameManager.socketManager.players[i].team = -_entity.team;
+                for (let i = 0; i < global.gameManager.socketManager.players.length; i++) {
+                    if (global.gameManager.socketManager.players[i].body.id == _entity.id) {
+                        global.gameManager.socketManager.players[i].team = -_entity.team;
                     }
                 }
             }
@@ -350,7 +427,7 @@ class Entity extends EventEmitter {
         if (set.ARENA_CLOSER != null) this.isArenaCloser = set.ARENA_CLOSER, this.ac = set.ARENA_CLOSER;
         if (set.BRANCH_LABEL != null) this.branchLabel = set.BRANCH_LABEL;
         if (set.BATCH_UPGRADES != null) this.batchUpgrades = set.BATCH_UPGRADES;
-        for (let i = 0; i < c.MAX_UPGRADE_TIER; i++) {
+        for (let i = 0; i < Config.MAX_UPGRADE_TIER; i++) {
             let tierProp = 'UPGRADES_TIER_' + i;
             if (set[tierProp] != null && emitEvent) {
                 for (let j = 0; j < set[tierProp].length; j++) {
@@ -365,7 +442,7 @@ class Entity extends EventEmitter {
                     }
                     this.upgrades.push({
                         class: trueUpgrades,
-                        level: c.TIER_MULTIPLIER * i,
+                        level: Config.TIER_MULTIPLIER * i,
                         index: index.substring(0, index.length - 1),
                         tier: i,
                         branch: 0,
@@ -399,11 +476,14 @@ class Entity extends EventEmitter {
         if (set.VALUE != null) this.skill.score = Math.max(this.skill.score, set.VALUE * this.squiggle);
         if (set.ALT_ABILITIES != null) this.abilities = set.ALT_ABILITIES;
         if (set.GUNS != null) {
+            this.guns.clear();
             let newGuns = [];
             for (let i = 0; i < set.GUNS.length; i++) {
-                newGuns.push(new Gun(this, set.GUNS[i], this.gameManager));
+                newGuns.push(new Gun(this, set.GUNS[i]));
             }
-            this.guns = newGuns;
+            for (let guns of newGuns) {
+                this.guns.set(guns.id, guns);
+            }
         }
         if (set.CONNECT_CHILDREN_ON_CAMERA) this.settings.connectChildrenOnCamera = true;
         if (set.GUN_STAT_SCALE) this.gunStatScale = set.GUN_STAT_SCALE;
@@ -433,6 +513,7 @@ class Entity extends EventEmitter {
             if (set.BODY.DENSITY != null) this.DENSITY = set.BODY.DENSITY;
             if (set.BODY.STEALTH != null) this.STEALTH = set.BODY.STEALTH;
             if (set.BODY.PUSHABILITY != null) this.PUSHABILITY = set.BODY.PUSHABILITY;
+            if (set.BODY.KNOCKBACK != null) this.KNOCKBACK = set.BODY.KNOCKBACK;
             if (set.BODY.HETERO != null) this.heteroMultiplier = set.BODY.HETERO;
             this.refreshBodyAttributes();
         }
@@ -449,11 +530,11 @@ class Entity extends EventEmitter {
         }
         if (set.ON_MINIMAP != null) this.allowedOnMinimap = set.ON_MINIMAP;
         if (set.TURRETS != null) {
-            for (let i = 0; i < this.turrets.length; i++) this.turrets[i].destroy();
-            this.turrets = [];
+            for (let turret of this.turrets.values()) turret.destroy();
+            this.turrets.clear();
             for (let i = 0; i < set.TURRETS.length; i++) {
                 let def = set.TURRETS[i],
-                    o = new Entity(this, this.master, this.gameManager.mockup ? "mockup" : this.gameManager),
+                    o = new Entity(this, this.master),
                     turretDanger = false,
                     type = Array.isArray(def.TYPE) ? def.TYPE : [def.TYPE];
                 for (let j = 0; j < type.length; j++) {
@@ -463,17 +544,6 @@ class Entity extends EventEmitter {
                 if (!turretDanger) o.define({ DANGER: 0 });
                 o.collidingBond = def.VULNERABLE;
                 o.bindToMaster(def.POSITION, this, def.VULNERABLE);
-            }
-        }
-        if (set.PROPS != null) {
-            this.props = [];
-            for (let i = 0; i < set.PROPS.length; i++) {
-                let def = set.PROPS[i],
-                    o = new Prop(def.POSITION, this, this.gameManager),
-                    type = Array.isArray(def.TYPE) ? def.TYPE : [def.TYPE];
-                for (let j = 0; j < type.length; j++) {
-                    o.define(type[j]);
-                }
             }
         }
         if (set.ON != null) {
@@ -526,19 +596,27 @@ class Entity extends EventEmitter {
         if (emitEvent) {
             this.emit('define', { body: this, set });
         }
-        this.defs = [];
-        for (let def of defs) this.defs.push(def);
+        if (overrideDefs) {
+            this.defs = [];
+            for (let def of defs) this.defs.push(def);
+        }
 
         for (let branch = 1; branch < defs.length; branch++) defineSplit(defs, branch, set, this, emitEvent); // Define additional stats for other split upgrades
         // Batch upgrades
         if (this.batchUpgrades && emitEvent) handleBatchUpgradeSplit(this); // Batch upgrades
+
+        // Make the entity targetable if they aren't a bullet, etc.
+        const checkIfTargetAble = ["bullet", "drone", "swarm", "trap", "wall", "food", "unknown"];
+        if (!checkIfTargetAble.includes(this.type)) {
+            targetableEntities.set(this.id, this);
+        } else targetableEntities.delete(this.id);
     }
 
     refreshBodyAttributes() {
         let speedReduce = Math.pow(this.size / (this.coreSize || this.SIZE), 1);
-        this.acceleration = (1 * this.gameManager.runSpeed * this.ACCELERATION) / speedReduce;
+        this.acceleration = (1 * global.gameManager.runSpeed * this.ACCELERATION) / speedReduce;
         if (this.settings.reloadToAcceleration) this.acceleration *= this.skill.acl;
-        this.topSpeed = (1 * this.gameManager.runSpeed * this.SPEED * this.skill.mob) / speedReduce;
+        this.topSpeed = (1 * global.gameManager.runSpeed * this.SPEED * this.skill.mob) / speedReduce;
         if (this.settings.reloadToAcceleration) this.topSpeed /= Math.sqrt(this.skill.acl);
         this.health.set(((this.settings.healthWithLevel ? 2 * this.level : 0) + this.HEALTH) * this.skill.hlt * 1);
         this.health.resist = 1 - 1 / Math.max(1, this.RESIST + this.skill.brst);
@@ -549,6 +627,7 @@ class Entity extends EventEmitter {
         this.density = 1 * (1 + 0.08 * this.level) * this.DENSITY;
         this.stealth = 1 * this.STEALTH;
         this.pushability = 1 * this.PUSHABILITY;
+        this.knockback = this.KNOCKBACK ?? false;
         this.sizeMultiplier = 1;
         this.recoilMultiplier = this.RECOIL_MULTIPLIER * 1;
     }
@@ -558,7 +637,7 @@ class Entity extends EventEmitter {
     bindToMaster(position, bond, isInvulnerable) {
         this.bond = bond;
         this.source = bond;
-        this.bond.turrets.push(this);
+        this.bond.turrets.set(this.id, this);
         this.skill = this.bond.skill;
         this.label = this.bond.label + " " + this.label;
         this.ignoredByAi = true;
@@ -566,8 +645,9 @@ class Entity extends EventEmitter {
         if (!isInvulnerable) {
             this.removeFromGrid();
             this.skipLife = true;
+            targetableEntities.delete(this.id);
         }
-        if (isInvulnerable) this.on('dead', () => { util.remove(this.master.turrets, this.master.turrets.indexOf(this)) })
+        if (isInvulnerable) this.on('dead', () => { this.master.turrets.delete(this.id); })
         this.settings.drawShape = false;
         // Get my position.
         if (Array.isArray(position)) position = { SIZE: position[0], X: position[1], Y: position[2], ANGLE: position[3], ARC: position[4], LAYER: position[5] };
@@ -588,7 +668,7 @@ class Entity extends EventEmitter {
     }
 
     get level() {
-        return Math.min(this.levelCap ?? c.LEVEL_CAP, this.skill.level);
+        return Math.min(this.levelCap ?? Config.LEVEL_CAP, this.skill.level);
     }
     get size() {
         return this.bond == null ? (this.coreSize || this.SIZE) * this.sizeMultiplier * (1 + this.level / 45) : this.bond.size * this.bound.size;
@@ -600,14 +680,14 @@ class Entity extends EventEmitter {
         return this.size * lazyRealSizes[Math.floor(Math.abs(this.shape))];
     }
     get xMotion() {
-        return (this.velocity.x + this.accel.x) / this.gameManager.roomSpeed;
+        return (this.velocity.x + this.accel.x) / global.gameManager.roomSpeed;
     }
     get yMotion() {
-        return (this.velocity.y + this.accel.y) / this.gameManager.roomSpeed;
+        return (this.velocity.y + this.accel.y) / global.gameManager.roomSpeed;
     }
     set gunStatScale(gunStatScale) {
         if (!Array.isArray(gunStatScale)) gunStatScale = [gunStatScale];
-        for (let gun of this.guns) {
+        for (let gun of this.guns.values()) {
             if (!gun.shootSettings) continue;
             gun.shootSettings = combineStats([gun.shootSettings, ...gunStatScale]);
             gun.trueRecoil = gun.shootSettings.recoil;
@@ -615,15 +695,11 @@ class Entity extends EventEmitter {
         }
     }
 
-    camera(tur = false) {
-        // Combine and sort turrets and props
-        const turretsAndProps = this.turrets.concat(this.props);
-        if (turretsAndProps.length > 1) {
-            turretsAndProps.sort((a, b) => a.bound.layer - b.bound.layer);
-        }
-        
+    camera(tur = false) {        
         // Get bound data
-        const boundData = this.bond != null ? {
+        const turretsAndProps = Array.from(this.turrets).concat(Array.from(this.props));
+        turretsAndProps.sort((a, b) => a[1].bound.layer - b[1].bound.layer);
+        const boundData = this.bound != null ? {
             direction: this.bound.direction,
             angle: this.bound.angle,
             offset: this.bound.offset,
@@ -633,7 +709,7 @@ class Entity extends EventEmitter {
         
         // Calculate type value more efficiently
         const typeValue = tur * 0x01 + (this.settings.drawHealth ? 0x02 : 0) + 
-                          ((this.type === "tank" && this.displayName) ? 0x04 : 0);
+                          (((this.type === "tank" || this.type === "miniboss") && this.displayName) ? 0x04 : 0);
         
         // Determine layer value more efficiently
         const layerValue = this.layerID || (this.bond != null ? this.bound.layer : 
@@ -670,10 +746,10 @@ class Entity extends EventEmitter {
             strokeWidth: this.strokeWidth,
             borderless: this.borderless,
             drawFill: this.drawFill,
-            name: (this.nameColor || "#FFFFFF") + this.name,
-            score: this.skill.score,
-            guns: this.guns.map(gun => gun.getPhotoInfo()),
-            turrets: turretsAndProps.map(turret => turret.camera(true)),
+            name: (this.nameColor || "#ffffff") + this.name,
+            score: this.settings.scoreLabel || this.skill.score,
+            guns: Array.from(this.guns).map(gun => gun[1].getPhotoInfo()),
+            turrets: turretsAndProps.map(turret => turret[1].camera(true)),
         };
         
         // Process child camera connections if needed
@@ -704,16 +780,16 @@ class Entity extends EventEmitter {
     }
 
     isBeingViewed(addToNearby = true) {
-        let boolean = checkIfInView(false, addToNearby, this.gameManager.clients, this);
+        let boolean = checkIfInView(false, addToNearby, global.gameManager.clients, this);
         return boolean;
     }
 
     syncTurrets() {
-        for (let i = 0; i < this.guns.length; i++) this.guns[i].syncChildren();
-        for (let i = 0; i < this.turrets.length; i++) {
-            this.turrets[i].skill = this.skill;
-            this.turrets[i].refreshBodyAttributes();
-            this.turrets[i].syncTurrets();
+        for (let gun of this.guns.values()) gun.syncChildren();
+        for (let turret of this.turrets.values()) {
+            turret.skill = this.skill;
+            turret.refreshBodyAttributes();
+            turret.syncTurrets();
         }
     }
     skillUp(stat) {
@@ -726,8 +802,8 @@ class Entity extends EventEmitter {
         return suc;
     }
     syncSkillsToGuns() {
-        for (let i = 0; i < this.guns.length; i++) this.guns[i].syncChildren();
-        for (let i = 0; i < this.turrets.length; i++) this.turrets[i].syncTurrets();
+        for (let gun of this.guns.values()) gun.syncChildren();
+        for (let turret of this.turrets.values()) turret.syncTurrets();
     }
 
     refreshSkills() { this.skill.update(); this.syncSkillsToGuns(); }
@@ -757,7 +833,7 @@ class Entity extends EventEmitter {
                 def = ensureIsClass(def);
                 if (def.TOOLTIP != null && def.TOOLTIP.length > 0) this.sendMessage(def.TOOLTIP);
             }
-            for (let instance of entities) {
+            for (let instance of entities.values()) {
                 if (instance.settings.clearOnMasterUpgrade && instance.master.id === this.id) instance.kill();
             }
             this.skill.update();
@@ -777,7 +853,7 @@ class Entity extends EventEmitter {
         let g = { x: this.control.goal.x - this.x, y: this.control.goal.y - this.y },
             gactive = (g.x !== 0 || g.y !== 0),
             engine = { x: 0, y: 0, },
-            a = this.acceleration / this.gameManager.roomSpeed;
+            a = this.acceleration / global.gameManager.roomSpeed;
         switch (this.motionType) {
             case 'glide':
                 this.maxSpeed = this.topSpeed;
@@ -799,7 +875,7 @@ class Entity extends EventEmitter {
                 if (gactive && l > this.size) {
                     let desiredxspeed = this.topSpeed * g.x / l,
                         desiredyspeed = this.topSpeed * g.y / l,
-                        turning = Math.sqrt((this.topSpeed * Math.max(1, this.range) + 1) / a);
+                        turning = Math.sqrt((this.topSpeed * Math.max(1, this.motionTypeArgs.turnVelocity ?? this.range) + 1) / a);
                     engine = {
                         x: (desiredxspeed - this.velocity.x) / Math.max(5, turning),
                         y: (desiredyspeed - this.velocity.y) / Math.max(5, turning),
@@ -824,7 +900,21 @@ class Entity extends EventEmitter {
                             x: (desiredxspeed - this.velocity.x) * a,
                             y: (desiredyspeed - this.velocity.y) * a,
                         };
+                    } else if (this.motionTypeArgs.keepSpeed) {
+                        if (this.velocity.length < this.topSpeed) {
+                            engine = {
+                                x: this.velocity.x * a / 20,
+                                y: this.velocity.y * a / 20,
+                            };
+                        }
                     } else this.maxSpeed = 0;
+                } else if (this.motionTypeArgs.keepSpeed) {
+                    if (this.velocity.length < this.topSpeed) {
+                        engine = {
+                            x: this.velocity.x * a / 20,
+                            y: this.velocity.y * a / 20,
+                        };
+                    }
                 } else this.maxSpeed = 0;
                 break;
             case 'drift':
@@ -871,24 +961,24 @@ class Entity extends EventEmitter {
             } else {
                 givenangle = this.firingArc[0];
             }
-            this.facing += util.loopSmooth(this.facing, givenangle, 4 / this.gameManager.runSpeed);
+            this.facing += util.loopSmooth(this.facing, givenangle, 4 / global.gameManager.runSpeed);
         }
         switch (this.facingType) {
             case "spin":
-                this.facing += (this.facingTypeArgs.speed ?? 0.05) / this.gameManager.runSpeed;
+                this.facing += (this.facingTypeArgs.speed ?? 0.05) / global.gameManager.runSpeed;
                 break;
             case "spinWhenIdle":
-                if (t && this.control.fire) this.facing = Math.atan2(t.y, t.x); else this.facing += (this.facingTypeArgs.speed ?? 0.05) / this.gameManager.runSpeed;
+                if (t && this.control.fire) this.facing = Math.atan2(t.y, t.x); else this.facing += (this.facingTypeArgs.speed ?? 0.05) / global.gameManager.runSpeed;
                 break;
             case 'turnWithSpeed':
-                this.facing += this.velocity.length / 90 * Math.PI / this.gameManager.roomSpeed;
+                this.facing += this.velocity.length / 90 * Math.PI / global.gameManager.roomSpeed;
                 break;
             case 'withMotion':
                 this.facing = this.velocity.direction;
                 break;
             case 'smoothWithMotion':
             case 'looseWithMotion':
-                this.facing += util.loopSmooth(this.facing, this.velocity.direction, 4 / this.gameManager.roomSpeed);
+                this.facing += util.loopSmooth(this.facing, this.velocity.direction, 4 / global.gameManager.roomSpeed);
                 break;
             case 'withTarget':
             case 'toTarget':
@@ -906,7 +996,7 @@ class Entity extends EventEmitter {
             case 'looseWithTarget':
             case 'looseToTarget':
             case 'smoothToTarget':
-                this.facing += util.loopSmooth(this.facing, Math.atan2(t.y, t.x), 4 / this.gameManager.roomSpeed);
+                this.facing += util.loopSmooth(this.facing, Math.atan2(t.y, t.x), 4 / global.gameManager.roomSpeed);
                 break;
             case "noFacing":
                 if (this.lastSavedFacing !== this.facing) this.facing = this.facingTypeArgs.angle ?? 0;
@@ -916,13 +1006,18 @@ class Entity extends EventEmitter {
                 defaultBound();
                 break;
             case "spinOnFire":
-                if (t && this.control.fire) this.facing += util.loopSmooth(this.facing, this.facing += 1, 4 / this.gameManager.runSpeed); else defaultBound();
+                if (t && this.control.fire) this.facing += util.loopSmooth(this.facing, this.facing += 1, 4 / global.gameManager.runSpeed); else defaultBound();
+                break;
+            case "manual":
+                if ((this.facingTypeArgs.angle ?? 0) !== this.facing) {
+                    this.facing = this.facingTypeArgs.angle;
+                }
                 break;
         }
         // Loop
         const TAU = 2 * Math.PI
         this.facing = (this.facing % TAU + TAU) % TAU;
-        this.vfacing = util.angleDifference(oldFacing, this.facing) * this.gameManager.roomSpeed;
+        this.vfacing = util.angleDifference(oldFacing, this.facing) * global.gameManager.roomSpeed;
     }
 
     takeSelfie() {
@@ -951,15 +1046,15 @@ class Entity extends EventEmitter {
         nullVector(this.accel);
         // Apply motion
         this.stepRemaining = 1;
-        this.x += this.stepRemaining * this.velocity.x / this.gameManager.roomSpeed;
-        this.y += this.stepRemaining * this.velocity.y / this.gameManager.roomSpeed;
+        this.x += this.stepRemaining * this.velocity.x / global.gameManager.roomSpeed;
+        this.y += this.stepRemaining * this.velocity.y / global.gameManager.roomSpeed;
     }
 
     friction() {
         var motion = this.velocity.length,
             excess = motion - this.maxSpeed;
         if (excess > 0 && this.damp) {
-            var k = this.damp / this.gameManager.roomSpeed,
+            var k = this.damp / global.gameManager.roomSpeed,
                 drag = excess / (k + 1),
                 finalvelocity = this.maxSpeed + drag;
             this.velocity.x = finalvelocity * this.velocity.x / motion;
@@ -977,10 +1072,22 @@ class Entity extends EventEmitter {
             return 0;
         }
         if (!this.settings.canGoOutsideRoom) {
-            this.accel.x -= Math.min(this.x - this.realSize + this.gameManager.room.width / 2 + 50, 0) * c.ROOM_BOUND_FORCE / this.gameManager.roomSpeed;
-            this.accel.x -= Math.max(this.x + this.realSize - this.gameManager.room.width / 2 - 50, 0) * c.ROOM_BOUND_FORCE / this.gameManager.roomSpeed;
-            this.accel.y -= Math.min(this.y - this.realSize + this.gameManager.room.height / 2 + 50, 0) * c.ROOM_BOUND_FORCE / this.gameManager.roomSpeed;
-            this.accel.y -= Math.max(this.y + this.realSize - this.gameManager.room.height / 2 - 50, 0) * c.ROOM_BOUND_FORCE / this.gameManager.roomSpeed;
+            if (Config.ARENA_TYPE === "circle") {
+                let centerPoint = {
+                    x: global.gameManager.room.width - global.gameManager.room.width,
+                    y: global.gameManager.room.height - global.gameManager.room.height,
+                }, dist = util.getDistance(this, centerPoint);
+                if (dist > global.gameManager.room.width - global.gameManager.room.width / 2) {
+                    let strength = (dist - global.gameManager.room.width / 2) * Config.ROOM_BOUND_FORCE / (Config.runSpeed * 350);
+                    this.x = util.lerp(this.x, centerPoint.x, strength);
+                    this.y = util.lerp(this.y, centerPoint.y, strength);
+                }
+            } else {
+                this.accel.x -= Math.min(this.x - this.realSize + global.gameManager.room.width / 2 + 50, 0) * Config.ROOM_BOUND_FORCE / global.gameManager.roomSpeed;
+                this.accel.x -= Math.max(this.x + this.realSize - global.gameManager.room.width / 2 - 50, 0) * Config.ROOM_BOUND_FORCE / global.gameManager.roomSpeed;
+                this.accel.y -= Math.min(this.y - this.realSize + global.gameManager.room.height / 2 + 50, 0) * Config.ROOM_BOUND_FORCE / global.gameManager.roomSpeed;
+                this.accel.y -= Math.max(this.y + this.realSize - global.gameManager.room.height / 2 - 50, 0) * Config.ROOM_BOUND_FORCE / global.gameManager.roomSpeed;
+            }
         }
     }
 
@@ -991,10 +1098,10 @@ class Entity extends EventEmitter {
         }
         // Life-limiting effects
         if (this.settings.diesAtRange) {
-            this.range -= 1 / this.gameManager.roomSpeed;
+            this.range -= 1 / global.gameManager.roomSpeed;
             if (this.range < 0) this.kill();
         }
-        if (this.settings.diesAtLowSpeed && !this.collisionArray.length && this.velocity.length < this.topSpeed / 2) this.health.amount -= this.health.getDamage(1 / this.gameManager.roomSpeed);
+        if (this.settings.diesAtLowSpeed && !this.collisionArray.length && this.velocity.length < this.topSpeed / 2) this.health.amount -= this.health.getDamage(1 / global.gameManager.roomSpeed);
         // Shield regen and damage
         if (this.shield.max) {
             if (this.damageReceived) {
@@ -1012,14 +1119,15 @@ class Entity extends EventEmitter {
         this.damageReceived = 0;
 
         // Check for death
-        if (this.isDead()) {
-            for (let i = 0; i < this.guns.length; i++) {
-                let gun = this.guns[i];
+        if (this.readyToDie) return 1;
+        if (this.isDead() && !this.readyToDie) {
+            this.readyToDie = true;
+            for (let gun of this.guns.values()) {
                 if (gun.shootOnDeath && gun.body != null) gun.spawnBullets();
             }
 
             // NO MEMORY LEAKS!
-            for (let i = 0; i < this.turrets.length; i++) this.turrets[i].kill();
+            for (let turret of this.turrets.values()) turret.kill();
             // Legacy death function
             if (this.onDeath) this.onDeath();
             // Initalize message arrays
@@ -1089,7 +1197,7 @@ class Entity extends EventEmitter {
                 killText = killText.slice(0, -4) + "killed you with ";
             }
             // Broadcast
-            if (this.settings.broadcastMessage) this.gameManager.socketManager.broadcast(this.settings.broadcastMessage);
+            if (this.settings.broadcastMessage) global.gameManager.socketManager.broadcast(this.settings.broadcastMessage);
             if (this.settings.defeatMessage) {
                 let text = util.addArticle(this.label, true);
                 if (notJustFood) {
@@ -1123,7 +1231,7 @@ class Entity extends EventEmitter {
             if (killText === "You have been kille") killText = "You have died a stupid death";
             if (!this.dontSendDeathMessage) this.sendMessage(killText + ".");
             // If I'm the leader, broadcast it:
-            if (this.id === this.gameManager.room.topPlayerID) {
+            if (this.id === global.gameManager.room.topPlayerID) {
                 let usurptText = this.name === "" ? "The leader" : this.name;
                 if (notJustFood) {
                     usurptText += " has been usurped by";
@@ -1136,7 +1244,7 @@ class Entity extends EventEmitter {
                 } else {
                     usurptText += " fought a polygon... and the polygon won.";
                 }
-                this.gameManager.socketManager.broadcast(usurptText);
+                global.gameManager.socketManager.broadcast(usurptText);
             }
             this.emit('dead', { body: this, killers });
             // Kill it
@@ -1147,6 +1255,13 @@ class Entity extends EventEmitter {
 
     protect() {
         entitiesToAvoid.push(this); this.isProtected = true;
+    }
+    
+    say(message, duration = Config.CHAT_MESSAGE_DURATION) {
+        if (!chats[this.id]) {
+            chats[this.id] = [];
+        }
+        chats[this.id].unshift({ message, expires: Date.now() + duration });
     }
 
     sendMessage(message) { } // Dummy
@@ -1161,21 +1276,22 @@ class Entity extends EventEmitter {
         // Remove from the protected entities list
         if (this.isProtected) util.remove(entitiesToAvoid, entitiesToAvoid.indexOf(this));
         // Remove from minimap
-        let i = this.gameManager.minimap.findIndex(entry => { return entry[0] === this.id; });
-        if (i != -1) util.remove(this.gameManager.minimap, i);
+        let i = global.gameManager.minimap.findIndex(entry => { return entry[0] === this.id; });
+        if (i != -1) util.remove(global.gameManager.minimap, i);
         // Remove this from views
-        this.gameManager.views.forEach(v => v.remove(this));
-        // Remove bullet from bullet list if needed and the only reason it exists is for bacteria.
+        global.gameManager.views.forEach(v => v.remove(this));
+        // Remove bullet from bullet list if needed, and the only reason it exists is for bacteria.
         if (this.bulletparent != null) util.remove(this.bulletparent.bulletchildren, this.bulletparent.bulletchildren.indexOf(this))
         // Remove from parent lists if needed
         if (this.parent != null) util.remove(this.parent.children, this.parent.children.indexOf(this));
         // Kill all of its children
-        entities.forEach(instance => {
+        for (const instance of entities.values()) {
             if (instance.source.id === this.id) {
                 if (instance.settings.persistsAfterDeath) {
                     instance.source = instance;
                 } else if (this.master.label !== "Bacteria") {
                     instance.kill();
+                    targetableEntities.delete(instance.id);
                 }
             }
             if (instance.parent && instance.parent.id === this.id) {
@@ -1185,16 +1301,20 @@ class Entity extends EventEmitter {
                 if (this.master.label !== "Bacteria") {
                     instance.kill();
                     instance.master = instance;
+                    targetableEntities.delete(instance.id);
                 }
             }
-        });
+        };
         // Remove everything bound to it
-        this.turrets.forEach(t => t.destroy());
-        // Remove from the collision grid
+        for (const turret of this.turrets.values()) {
+            turret.destroy();
+        }
         this.removeFromGrid();
         this.isGhost = true;
+        entities.delete(this.id);
+        targetableEntities.delete(this.id);
     }
 
     isDead() { return this.health.amount <= 0; }
 }
-module.exports = { Entity };
+module.exports = { Entity, Prop };

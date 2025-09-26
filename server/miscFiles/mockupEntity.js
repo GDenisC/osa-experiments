@@ -108,7 +108,7 @@ class MockupEntityProp {
             angle: position.ANGLE * Math.PI / 180,
             direction: _off.direction,
             offset: _off.length / 10,
-            layer: position.LAYER
+            layer: position.LAYER,
         };
         // Initalize.
         this.facing = 0;
@@ -116,6 +116,7 @@ class MockupEntityProp {
         this.y = 0;
         this.size = 1;
         this.realSize = 1;
+        this.isProp = true;
         this.settings = {};
         this.settings.mirrorMasterAngle = true;
         this.upgrades = [];
@@ -250,6 +251,7 @@ class MockupEntity {
         this.settings.ratioEffects = set.RATIO_EFFECTS ?? true;
         this.settings.motionEffects = set.MOTION_EFFECTS ?? true;
         this.sendAllMockups = set.SEND_ALL_MOCKUPS ?? false;
+        if (set.VISIBLE_ON_BLACKOUT) this.visibleOnBlackout = set.VISIBLE_ON_BLACKOUT;
         if (set.REROOT_UPGRADE_TREE) this.rerootUpgradeTree = set.REROOT_UPGRADE_TREE;
         if (Array.isArray(this.rerootUpgradeTree)) {
             let finalRoot = "";
@@ -286,12 +288,12 @@ class MockupEntity {
             }
         }
         else if (set.LEVEL != null) level = set.LEVEL;
-        this.size = (set.SIZE ?? 1) * (set.VARIES_IN_SIZE ? ran.randomRange(0.8, 1.2) : 1) * (1 + Math.min(set.LEVEL_CAP ?? c.LEVEL_CAP, level) / 45);
+        this.size = (set.SIZE ?? 1) * (set.VARIES_IN_SIZE ? ran.randomRange(0.8, 1.2) : 1) * (1 + Math.min(set.LEVEL_CAP ?? Config.LEVEL_CAP, level) / 45);
         this.realSize = util.rounder(this.size * lazyRealSizes[Math.floor(Math.abs(this.shape))]);
         this.size = util.rounder(this.size);
         if (set.BRANCH_LABEL != null) this.branchLabel = set.BRANCH_LABEL;
         if (set.BATCH_UPGRADES != null) this.batchUpgrades = set.BATCH_UPGRADES;
-        for (let i = 0; i < c.MAX_UPGRADE_TIER; i++) {
+        for (let i = 0; i < Config.MAX_UPGRADE_TIER; i++) {
             let tierProp = 'UPGRADES_TIER_' + i;
             if (set[tierProp] != null) {
                 for (let j = 0; j < set[tierProp].length; j++) {
@@ -306,7 +308,7 @@ class MockupEntity {
                     }
                     this.upgrades.push({
                         class: trueUpgrades,
-                        level: c.TIER_MULTIPLIER * i,
+                        level: Config.TIER_MULTIPLIER * i,
                         index: index.substring(0, index.length - 1),
                         tier: i,
                         branch: 0,
@@ -333,7 +335,7 @@ class MockupEntity {
                 }
             }
             if (set.BATCH_UPGRADES != null) this.batchUpgrades = set.BATCH_UPGRADES;
-            for (let i = 0; i < c.MAX_UPGRADE_TIER; i++) {
+            for (let i = 0; i < Config.MAX_UPGRADE_TIER; i++) {
                 let tierProp = 'UPGRADES_TIER_' + i;
                 if (set[tierProp] != null) {
                     for (let j = 0; j < set[tierProp].length; j++) {
@@ -348,7 +350,7 @@ class MockupEntity {
                         }
                         this.upgrades.push({
                             class: trueUpgrades,
-                            level: c.TIER_MULTIPLIER * i,
+                            level: Config.TIER_MULTIPLIER * i,
                             index: index.substring(0, index.length - 1),
                             tier: i,
                             branch: 0,

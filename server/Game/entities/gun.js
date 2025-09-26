@@ -3,10 +3,8 @@ let EventEmitter = require('events'),
     events,
     init = g => events = g.events;
 class Gun extends EventEmitter {
-    constructor(body, info, gameManager) {
+    constructor(body, info) {
         super();
-        gameManager = ensureIsManager(gameManager);
-        this.gameManager = gameManager;
         this.id = entitiesIdLog++;
         this.ac = false;
         this.lastShot = { time: 0, power: 0 };
@@ -57,7 +55,7 @@ class Gun extends EventEmitter {
             this.independentChildren = info.PROPERTIES.INDEPENDENT_CHILDREN == null ? false : info.PROPERTIES.INDEPENDENT_CHILDREN;
             this.borderless = info.PROPERTIES.BORDERLESS == null ? false : info.PROPERTIES.BORDERLESS;
             this.drawFill = info.PROPERTIES.DRAW_FILL == null ? true : info.PROPERTIES.drawFill;
-            this.spawnOffset = info.PROPERTIES.SPAWN_OFFSET == null ? c.bulletSpawnOffset : info.PROPERTIES.SPAWN_OFFSET;
+            this.spawnOffset = info.PROPERTIES.SPAWN_OFFSET == null ? Config.bulletSpawnOffset : info.PROPERTIES.SPAWN_OFFSET;
             this.destroyOldestChild = info.PROPERTIES.DESTROY_OLDEST_CHILD == null ? false : info.PROPERTIES.DESTROY_OLDEST_CHILD;
             this.shootOnDeath = (info.PROPERTIES.SHOOT_ON_DEATH == null) ? false : info.PROPERTIES.SHOOT_ON_DEATH;
             if (info.PROPERTIES.COLOR != null) {
@@ -118,7 +116,7 @@ class Gun extends EventEmitter {
     recoil() {
         if (this.motion || this.position) {
             // Simulate recoil
-            this.motion -= (0.25 * this.position) / this.gameManager.roomSpeed;
+            this.motion -= (0.25 * this.position) / global.gameManager.roomSpeed;
             this.position += this.motion;
             if (this.position < 0) {
                 // Bouncing off the back
@@ -132,7 +130,7 @@ class Gun extends EventEmitter {
         if (this.canShoot && !this.body.settings.hasNoRecoil) {
             // Apply recoil to motion
             if (this.motion > 0) {
-                let recoilForce = (-this.position * this.trueRecoil * this.body.recoilMultiplier * 1.08 / this.body.size) / this.gameManager.roomSpeed;
+                let recoilForce = (-this.position * this.trueRecoil * this.body.recoilMultiplier * 1.08 / this.body.size) / global.gameManager.roomSpeed;
                 this.body.accel.x += recoilForce * Math.cos(this.recoilDir);
                 this.body.accel.y += recoilForce * Math.sin(this.recoilDir);
             }
@@ -182,7 +180,7 @@ class Gun extends EventEmitter {
     }
 
     spawnBullets(useWhile, shootPermission) {
-        // Find gun's current angle position and length
+        // Find gun's current angle, position and length
         let angle1 = this.direction + this.angle + this.body.facing,
             angle2 = this.angle + this.body.facing,
             gunlength = this.length + this.spawnOffset * this.width * this.settings.size / 2,
@@ -230,7 +228,7 @@ class Gun extends EventEmitter {
                 this.destroyOldest();
             }
         }
-        // Dont shoot when invuln/not active
+        // don't shoot when invuln/not active
         if (this.body.master.invuln || !this.body.master.activation.check()) {
             shootPermission = false;
         }
@@ -239,7 +237,7 @@ class Gun extends EventEmitter {
         }
         // Cycle up if we should
         if (shootPermission || !this.waitToCycle) {
-            let speed = this.fixedReload ? this.gameManager.roomSpeed : this.gameManager.runSpeed;
+            let speed = this.fixedReload ? global.gameManager.roomSpeed : global.gameManager.runSpeed;
             if (this.cycle < 1) {
                 this.cycle += 1 / (this.settings.reload * speed * (this.calculator == "necro" || this.calculator == "fixed reload" ? 1 : sk.rld));
             }
@@ -250,12 +248,12 @@ class Gun extends EventEmitter {
         ) {
             if (this.body.settings.hasNoReloadDelay) return (
                 this.spawnBullets(true, shootPermission),
-                this.cycle = !this.waitToCycle - this.delay
+                this.cycle = 0
               )
             if (this.cycle >= 1) {
                 this.spawnBullets(true, shootPermission);
             } // If we're not shooting, only cycle up to where we'll have the proper firing delay
-        } else if (this.cycle > !this.waitToCycle - this.delay) {
+        } else if (this.cycle > !this.waitToCycle - this.delay && !this.body.settings.hasNoReloadDelay) {
             this.cycle = !this.waitToCycle - this.delay;
         }
     }
@@ -304,7 +302,7 @@ class Gun extends EventEmitter {
         }
         spread *= Math.PI / 180;
         // Find speed
-        let vecLength = (this.negRecoil ? -1 : 1) * this.settings.speed * this.gameManager.runSpeed * sk.spd * (1 + shudder),
+        let vecLength = (this.negRecoil ? -1 : 1) * this.settings.speed * global.gameManager.runSpeed * sk.spd * (1 + shudder),
           vecAngle = this.angle + this.body.facing + spread,
           s = new Vector(
             vecLength * Math.cos(vecAngle),
@@ -329,10 +327,10 @@ class Gun extends EventEmitter {
             var o;
             switch (this.noentitylimit) {
                 case true:
-                    o = new Entity(spawnOffset, false, this.gameManager);
+                    o = new Entity(spawnOffset);
                     break;
                 default:
-                    o = new bulletEntity(spawnOffset, false, this.gameManager);
+                    o = new bulletEntity(spawnOffset);
                     break;
             }
             this.bulletInitIndependent(o);
@@ -349,10 +347,10 @@ class Gun extends EventEmitter {
         var o;
         switch (this.noentitylimit) {
             case true:
-                o = new Entity(spawnOffset, this.master.master, this.gameManager);
+                o = new Entity(spawnOffset, this.master.master);
                 break;
             default:
-                o = new bulletEntity(spawnOffset, this.master.master, this.gameManager);
+                o = new bulletEntity(spawnOffset, this.master.master);
                 break;
         }
         o.velocity = s;
@@ -577,7 +575,7 @@ class Gun extends EventEmitter {
     }
     getTracking() {
         return {
-            speed: this.gameManager.runSpeed * ((this.bulletStats == 'master') ? this.body.skill.spd : this.bulletStats.spd) * 
+            speed: global.gameManager.runSpeed * ((this.bulletStats == 'master') ? this.body.skill.spd : this.bulletStats.spd) * 
                 this.settings.maxSpeed * 
                 this.bulletBodyStats.SPEED,
             range:  Math.sqrt((this.bulletStats == 'master') ? this.body.skill.spd : this.bulletStats.spd) * 
@@ -591,6 +589,7 @@ class Gun extends EventEmitter {
             ...this.lastShot, 
             color: this.color.compiled,
             alpha: this.alpha,
+            strokeWidth: this.strokeWidth,
             borderless: this.borderless, 
             drawFill: this.drawFill, 
             drawAbove: this.drawAbove,

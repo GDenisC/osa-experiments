@@ -472,7 +472,7 @@ exports.makeTurret = (type, options = {}) => {
     - canRepel: whether or not the auto turret can fire backwards with secondary fire
     - limitFov: whether or not the auto turret should bother to try to limit its FOV arc
     - hasAI: whether or not the auto turret can think and shoot on its own
-    - extraStats: array of stats to append onto the shoot settings of all of the turret's guns
+    - extraStats: array of stats to append onto the shoot settings of all the turret's guns
     - label: turret label
     - color: turret color
     - fov: turret FOV
@@ -873,6 +873,9 @@ exports.makeRarities = (type) => {
         const pn = `${rarities[i]}${ct}`;
         Class[pn] = exports.makeRare(`${type}`, [i]);
     }
+}
+exports.calcAspect = (oWidth /*Original*/ , eWidth /*expected*/ ) => {
+    return eWidth / oWidth
 }
 
 //merry Christmas

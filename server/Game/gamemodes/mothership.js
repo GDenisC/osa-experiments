@@ -1,9 +1,8 @@
 class Mothership {
-    constructor(gameManager) {
-        this.gameManager = gameManager;
+    constructor() {
         this.choices = ["mothership"];
         this.defineProperties();
-        c.MOTHERSHIP_DATA = {
+        Config.MOTHERSHIP_DATA = {
             getData: () => this.globalMotherships,
         }
     };
@@ -20,32 +19,32 @@ class Mothership {
 
     spawn() {
         let locs = [{
-            x: this.gameManager.room.width * 0.1 - this.gameManager.room.width / 2,
-            y: this.gameManager.room.height * 0.1 - this.gameManager.room.height / 2,
+            x: global.gameManager.room.width * 0.1 - global.gameManager.room.width / 2,
+            y: global.gameManager.room.height * 0.1 - global.gameManager.room.height / 2,
         }, {
-            x: this.gameManager.room.width * 0.9 - this.gameManager.room.width / 2,
-            y: this.gameManager.room.height * 0.9 - this.gameManager.room.height / 2,
+            x: global.gameManager.room.width * 0.9 - global.gameManager.room.width / 2,
+            y: global.gameManager.room.height * 0.9 - global.gameManager.room.height / 2,
         }, {
-            x: this.gameManager.room.width * 0.9 - this.gameManager.room.width / 2,
-            y: this.gameManager.room.height * 0.1 - this.gameManager.room.height / 2,
+            x: global.gameManager.room.width * 0.9 - global.gameManager.room.width / 2,
+            y: global.gameManager.room.height * 0.1 - global.gameManager.room.height / 2,
         }, {
-            x: this.gameManager.room.width * 0.1 - this.gameManager.room.width / 2,
-            y: this.gameManager.room.height * 0.9 - this.gameManager.room.height / 2,
+            x: global.gameManager.room.width * 0.1 - global.gameManager.room.width / 2,
+            y: global.gameManager.room.height * 0.9 - global.gameManager.room.height / 2,
         }, {
-            x: this.gameManager.room.width * 0.9 - this.gameManager.room.width / 2,
-            y: this.gameManager.room.height * 0.5 - this.gameManager.room.height / 2,
+            x: global.gameManager.room.width * 0.9 - global.gameManager.room.width / 2,
+            y: global.gameManager.room.height * 0.5 - global.gameManager.room.height / 2,
         }, {
-            x: this.gameManager.room.width * 0.1 - this.gameManager.room.width / 2,
-            y: this.gameManager.room.height * 0.5 - this.gameManager.room.height / 2,
+            x: global.gameManager.room.width * 0.1 - global.gameManager.room.width / 2,
+            y: global.gameManager.room.height * 0.5 - global.gameManager.room.height / 2,
         }, {
-            x: this.gameManager.room.width * 0.5 - this.gameManager.room.width / 2,
-            y: this.gameManager.room.height * 0.9 - this.gameManager.room.height / 2,
+            x: global.gameManager.room.width * 0.5 - global.gameManager.room.width / 2,
+            y: global.gameManager.room.height * 0.9 - global.gameManager.room.height / 2,
         }, {
-            x: this.gameManager.room.width * 0.5 - this.gameManager.room.width / 2,
-            y: this.gameManager.room.height * 0.1 - this.gameManager.room.height / 2,
+            x: global.gameManager.room.width * 0.5 - global.gameManager.room.width / 2,
+            y: global.gameManager.room.height * 0.1 - global.gameManager.room.height / 2,
         }].sort(() => 0.5 - Math.random());
-        for (let i = 0; i < this.gameManager.gameSettings.TEAMS; i++) {
-            let o = new Entity(locs[i], false, this.gameManager),
+        for (let i = 0; i < Config.TEAMS; i++) {
+            let o = new Entity(locs[i]),
                 team = -i - 1;
             o.define(ran.choose(this.choices));
             o.define({ ACCEPTS_SCORE: false, VALUE: 643890 });
@@ -53,7 +52,7 @@ class Mothership {
             o.team = team;
             o.name = "Mothership";
             o.isMothership = true;
-            o.controllers.push(new ioTypes.nearestDifferentMaster(o, {}, this.gameManager), new ioTypes.mapTargetToGoal(o));
+            o.controllers.push(new ioTypes.nearestDifferentMaster(o, {}, global.gameManager), new ioTypes.mapTargetToGoal(o));
             o.refreshBodyAttributes();
             this.motherships.push([o.id, team]);
             this.globalMotherships.push(o);
@@ -64,11 +63,11 @@ class Mothership {
     };
 
     death(entity, team) {
-        this.gameManager.socketManager.broadcast(getTeamName(team) + "'s mothership has been killed!");
-        if (this.gameManager.arenaClosed) return;
+        global.gameManager.socketManager.broadcast(getTeamName(team) + "'s mothership has been killed!");
+        if (global.gameManager.arenaClosed) return;
         global.defeatedTeams.push(team);
-        let newTeam = getWeakestTeam(this.gameManager);
-        for (let e of entities) {
+        let newTeam = getWeakestTeam(global.gameManager);
+        for (let e of entities.values()) {
             if (e.team == team && e.isPlayer) {
                 e.sendMessage("Your team has been eliminated.");
                 e.socket.rememberedTeam = newTeam;
@@ -81,13 +80,16 @@ class Mothership {
     };
 
     winner(teamId) {
-        this.gameManager.socketManager.broadcast(getTeamName(teamId) + " has won the game!");
-        setTimeout(() => { this.gameManager.closeArena() }, 3000);
+        global.gameManager.socketManager.broadcast(getTeamName(teamId) + " has won the game!");
+        setTimeout(() => { global.gameManager.closeArena() }, 3000);
     };
 
     loop() {
         if (this.teamWon) return;
-        let aliveNow = this.motherships.map(entry => [...entry, entities.find(entity => entity.id === entry[0])]);
+        let aliveNow = this.motherships.map(([id, data]) => {
+            const entity = entities.get(id);
+            return [id, data, entity];
+        });
         aliveNow = aliveNow.filter(entry => {
             if (!entry[2] || entry[2].isDead()) return false;
             return true;
@@ -101,10 +103,6 @@ class Mothership {
 
     reset() {
         this.defineProperties();
-    };
-
-    redefine(theshit) {
-        this.gameManager = theshit;
     };
 }
 

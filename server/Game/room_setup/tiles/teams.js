@@ -1,9 +1,9 @@
-let spawnPermanentBaseProtector = (loc, team, gameManager) => {
-    let o = new Entity(loc, false, gameManager);
+let spawnPermanentBaseProtector = (loc, team) => {
+    let o = new Entity(loc);
     o.define('baseProtector');
     o.team = team;
     o.color.base = getTeamColor(team);
-    o.on('dead', () => spawnPermanentBaseProtector(loc, team, gameManager));
+    o.on('dead', () => spawnPermanentBaseProtector(loc, team));
 },
 teamCheck = (tile, team) => {
     for (let i = 0; i < tile.entities.length; i++) {
@@ -26,9 +26,10 @@ tileClass.base1 = new Tile({
 })
 tileClass.baseprotected1 = new Tile({
     COLOR: "blue",
-    INIT: (tile, room, gameManager) => {
+    VISIBLE_FROM_BLACKOUT: true,
+    INIT: (tile, room) => {
         teamRoomCheck(tile, TEAM_BLUE, room),
-        spawnPermanentBaseProtector(tile.loc, TEAM_BLUE, gameManager);
+        spawnPermanentBaseProtector(tile.loc, TEAM_BLUE);
     },
     TICK: tile => teamCheck(tile, TEAM_BLUE)
 })
@@ -41,9 +42,10 @@ tileClass.base2 = new Tile({
 })
 tileClass.baseprotected2 = new Tile({
     COLOR: "green",
-    INIT: (tile, room, gameManager) => {
+    VISIBLE_FROM_BLACKOUT: true,
+    INIT: (tile, room) => {
         teamRoomCheck(tile, TEAM_GREEN, room),
-        spawnPermanentBaseProtector(tile.loc, TEAM_GREEN, gameManager);
+        spawnPermanentBaseProtector(tile.loc, TEAM_GREEN);
     },
     TICK: tile => teamCheck(tile, TEAM_GREEN)
 })
@@ -56,9 +58,10 @@ tileClass.base3 = new Tile({
 })
 tileClass.baseprotected3 = new Tile({
     COLOR: "red",
-    INIT: (tile, room, gameManager) => {
+    VISIBLE_FROM_BLACKOUT: true,
+    INIT: (tile, room) => {
         teamRoomCheck(tile, TEAM_RED, room),
-        spawnPermanentBaseProtector(tile.loc, TEAM_RED, gameManager);
+        spawnPermanentBaseProtector(tile.loc, TEAM_RED);
     },
     TICK: tile => teamCheck(tile, TEAM_RED)
 })
@@ -71,9 +74,10 @@ tileClass.base4 = new Tile({
 })
 tileClass.baseprotected4 = new Tile({
     COLOR: "magenta",
-    INIT: (tile, room, gameManager) => {
+    VISIBLE_FROM_BLACKOUT: true,
+    INIT: (tile, room) => {
         teamRoomCheck(tile, TEAM_PURPLE, room),
-        spawnPermanentBaseProtector(tile.loc, TEAM_PURPLE, gameManager);
+        spawnPermanentBaseProtector(tile.loc, TEAM_PURPLE);
     },
     TICK: tile => teamCheck(tile, TEAM_PURPLE)
 })

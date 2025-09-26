@@ -1,21 +1,21 @@
 let placeRoids = (defs, tile, room, gameManager) => {
-  for (let [def, amount] of defs) {
-    def = ensureIsClass(def);
-    let checkRadius = 10 + def.SIZE;
-    for (; amount; amount--) {
-      let i = 200,
-        position = {};
-      do {
-        position = tile.randomInside();
-      } while (i-- && dirtyCheck(position, checkRadius, gameManager));
-      let o = new Entity(position, false, gameManager);
-      o.team = -101;
-      o.facing = ran.randomAngle();
-      o.define(def);
-      o.protect();
-      o.life();
+    for (let [def, amount] of defs) {
+        def = ensureIsClass(def);
+        let checkRadius = 10 + def.SIZE;
+        for (; amount; amount--) {
+            let i = 200,
+                position = {};
+            do {
+                position = tile.randomInside();
+            } while (i-- && dirtyCheck(position, checkRadius, gameManager));
+            let o = new Entity(position);
+            o.team = -101;
+            o.facing = ran.randomAngle();
+            o.define(def);
+            o.protect();
+            o.life();
+        }
     }
-  }
 };
 
 tileClass.rock = new Tile({

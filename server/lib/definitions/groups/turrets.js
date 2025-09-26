@@ -811,29 +811,28 @@ Class.baseSwarmTurret = makeTurret({
         {
             POSITION: [5, 4.5, 0.6, 7, 2, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.baseProtector]),
-                TYPE: "swarm",
+                SHOOT_SETTINGS: combineStats([g.swarm, g.baseProtector, {speed: 0.5}]),
+                TYPE: "baseSwarmTurret_swarm",
                 STAT_CALCULATOR: "swarm",
             },
         },
         {
             POSITION: [5, 4.5, 0.6, 7, -2, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.baseProtector]),
-                TYPE: "swarm",
+                SHOOT_SETTINGS: combineStats([g.swarm, g.baseProtector, {speed: 0.5}]),
+                TYPE: "baseSwarmTurret_swarm",
                 STAT_CALCULATOR: "swarm",
             },
         },
         {
-            POSITION: [5, 4.5, 0.6, 7.5, 0, 0, 0.50],
+            POSITION: [5, 4.5, 0.6, 7.5, 0, 0, 0.75],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.baseProtector]),
-                TYPE: ["swarm", { INDEPENDENT: true, AI: { LIKES_SHAPES: true }}],
-                STAT_CALCULATOR: "swarm",
+                SHOOT_SETTINGS: combineStats([g.swarm, g.baseProtector, {speed: 0.4}]),
+                TYPE: "baseSwarmTurret_swarm",
             },
         },
     ],
-}, {label: "Protector", independent: true, fov: 1, aiSettings: {NO_LEAD: true, IGNORE_SHAPES: true}})
+}, {label: "Protector", independent: true, fov: 0.8, aiSettings: { NO_LEAD: true, CHASE: true }})
 Class.antiTankMachineGunArm = {
     PARENT: "genericTank",
     COLOR: "grey",

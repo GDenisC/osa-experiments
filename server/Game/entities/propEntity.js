@@ -1,10 +1,5 @@
 class Prop {
-    constructor(position, bond, gameManager) {
-        if (!gameManager) {
-            console.error(`No game manager detected! Please check your code.`);
-            throw new Error("No game manager detected!");
-        }
-        this.gameManager = gameManager;
+    constructor(position, bond) {
         this.guns = [];
         this.color = new Color(16);
         this.borderless = false;
@@ -75,7 +70,7 @@ class Prop {
         if (set.GUNS != null) {
             let newGuns = [];
             for (let i = 0; i < set.GUNS.length; i++) {
-                newGuns.push(new Gun(this, set.GUNS[i], this.gameManager));
+                newGuns.push(new Gun(this, set.GUNS[i]));
             }
             this.guns = newGuns;
         }

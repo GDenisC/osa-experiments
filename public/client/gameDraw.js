@@ -1,4 +1,5 @@
 import { config } from "./config.js";
+import { util } from "./util.js";
 import { gui } from "./socketinit.js";
 
 var gameDraw = {
@@ -11,23 +12,33 @@ var gameDraw = {
     hex2decimal: (h) => {
         return parseInt(h, 16);
     }, // convert a hex value to decimal
-    mixColors: (color_2, color_1, weight = 0.5) => {
-        if (weight === 1) return color_1;
-        if (weight === 0) return color_2;
-        var col = "#";
-        for (var i = 1; i <= 6; i += 2) {
-            // loop through each of the 3 hex pairs—red, green, and blue, skip the '#'
-            var v1 = gameDraw.hex2decimal(color_1.substr(i, 2)), // extract the current pairs
-                v2 = gameDraw.hex2decimal(color_2.substr(i, 2)),
-                // combine the current pairs from each source color, according to the specified weight
-                val = gameDraw.decimal2hex(Math.floor(v2 + (v1 - v2) * weight));
-            while (val.length < 2) {
-                val = "0" + val;
-            } // prepend a '0' if val results in a single digit
-            col += val; // concatenate val to our new color string
+    mixColors: (function () {
+        const mixCache = new Map();
+        const intCache = new Map();
+        return function mixColor(hex1, hex2, mix = 0.5) {
+            let c1 = intCache.get(hex1);
+            if (c1 === undefined) {
+                c1 = parseInt(hex1.slice(1), 16);
+                intCache.set(hex1, c1);
+            }
+            let c2 = intCache.get(hex2);
+            if (c2 === undefined) {
+                c2 = parseInt(hex2.slice(1), 16);
+                intCache.set(hex2, c2);
+            }
+            const key = c1 * (1 << 29) + c2 * (1 << 5) + Math.round(mix * 31);
+            if (mixCache.has(key)) {
+                return mixCache.get(key);
+            }
+            const r1 = (c1 >> 16) & 0xFF;
+            const g1 = (c1 >> 8) & 0xFF;
+            const b1 = c1 & 0xFF;
+            const result = ((1 << 24) | (((r1 + (((c2 >> 16) & 0xFF) - r1) * mix) | 0) << 16) | (((g1 + (((c2 >> 8) & 0xFF) - g1) * mix) | 0) << 8) | ((b1 + ((c2 & 0xFF) - b1) * mix) | 0));
+            const hex = '#' + (result & 0xFFFFFF).toString(16).padStart(6, '0');
+            mixCache.set(key, hex);
+            return hex;
         }
-        return col; // PROFIT!
-    },
+    })(),
 
     hslToRgb: (h, s, l) => {
         let r, g, b;
@@ -247,235 +258,89 @@ var gameDraw = {
         animatedMagenta: true,
     },
     getColor: (colorNumber) => {
+        if (colorNumber == undefined || colorNumber == null) return gameDraw.color.black;
         if (colorNumber[0] == '#') return colorNumber;
+        if (util.isNumeric(colorNumber)) colorNumber = parseInt(colorNumber);
         switch (colorNumber) {
+            case 0:
+            case "teal":
+            case "legendary":
+                return gameDraw.color.teal;
+            case 1:
+            case "shiny":
+            case "lightGreen":
+                return gameDraw.color.lgreen;
+            case 2:
+            case "triangle":
+            case "orange":
+                return gameDraw.color.orange;
 
-            // polygons & other entities
-            case "6":
+            // Neutral team/Arena closer color
+            case 3:
+            case "neutral":
+            case "yellow":
+                return gameDraw.color.yellow;
+
+            case 4:
+            case "hexagon":
+            case "aqua":
+                return gameDraw.color.aqua;
+            case 5:
+            case "crasher":
+            case "pink":
+                return gameDraw.color.pink;
+            case 6:
             case "egg":
             case "circle":
             case "veryLightGrey":
             case "veryLightGray":
                 return gameDraw.color.vlgrey;
-            case "13":
-            case "square":
-            case "gold":
-                return gameDraw.color.gold;
-            case "2":
-            case "triangle":
-            case "orange":
-                return gameDraw.color.orange;
-            case "14":
-            case "pentagon":
-            case "purple":
-                return gameDraw.color.purple;
-            case "4":
-            case "hexagon":
-            case "aqua":
-                return gameDraw.color.aqua;
-            case "5":
-            case "crasher":
-            case "pink":
-                return gameDraw.color.pink;
-            case "1":
-            case "shiny":
-            case "lightGreen":
-                return gameDraw.color.lgreen;
-            case "0":
-            case "legendary":
-            case "teal":
-                return gameDraw.color.teal;
-            case "7":
+
+            // Wall color
+            case 7:
             case "wall":
             case "lightGrey":
             case "lightGray":
                 return gameDraw.color.lgrey;
 
-            // teams
-            case "3":
-            case "neutral":
-            case "yellow":
-                return gameDraw.color.yellow;
-            case "10":
-            case "blue":
-                return gameDraw.color.blue;
-            case "11":
-            case "green":
-                return gameDraw.color.green;
-            case "12":
-            case "red":
-                return gameDraw.color.red;
-            case "15":
-            case "magenta":
-                return gameDraw.color.magenta;
-            case "25":
-            case "mustard":
-                return gameDraw.color.mustard;
-            case "26":
-            case "tangerine":
-                return gameDraw.color.tangerine;
-            case "27":
-            case "brown":
-                return gameDraw.color.brown;
-            case "28":
-            case "cyan":
-            case "turquoise":
-                return gameDraw.color.cyan;
-
-            // shades of grey/gray
-            case "8":
-            case "pureWhite":
-                return gameDraw.color.guiwhite;
-            case "18":
-            case "white":
-                return gameDraw.color.white;
-            case "16":
-            case "grey":
-            case "gray":
-                return gameDraw.color.grey;
-            case "17":
-            case "darkGrey":
-            case "darkGray":
-                return gameDraw.color.dgrey;
-            case "9":
-            case "black":
-                return gameDraw.color.black;
-            case "19":
-            case "pureBlack":
-                return gameDraw.color.guiblack;
-
-            // lgbt
-            case "lesbian":
-                return gameDraw.animatedColor.lesbian;
-            case "rainbow":
-            case "36":
-            case "gay":
-                return gameDraw.animatedColor.gay;
-            case "bi":
-                return gameDraw.animatedColor.bi;
-            case "37":
-            case "trans":
-                return gameDraw.animatedColor.trans;
-
-            // police
-            case "20":
-            case "flashBlueRed":
-                return gameDraw.animatedColor.blue_red;
-            case "21":
-            case "flashBlueGrey":
-            case "flashBlueGray":
-                return gameDraw.animatedColor.blue_grey;
-            case "22":
-            case "flashGreyBlue":
-            case "flashGrayBlue":
-                return gameDraw.animatedColor.grey_blue;
-            case "23":
-            case "flashRedGrey":
-            case "flashRedGray":
-                return gameDraw.animatedColor.red_grey;
-            case "24":
-            case "flashGreyRed":
-            case "flashGrayRed":
-                return gameDraw.animatedColor.grey_red;
-
-            // infinity gems
-            case "30":
-            case "powerGem":
-            case "powerStone":
-                return "#a913cf";
-            case "31":
-            case "spaceGem":
-            case "spaceStone":
-                return "#226ef6";
-            case "32":
-            case "realityGem":
-            case "realityStone":
-                return "#ff1000";
-            case "33":
-            case "soulGem":
-            case "soulStone":
-                return "#ff9000";
-            case "34":
-            case "timeGem":
-            case "timeStone":
-                return "#00e00b";
-            case "35":
-            case "mindGem":
-            case "mindStone":
-                return "#ffd300";
-
-            // seasonal rocks
-            case "pumpkinStem":
-                return "#654321";
-            case "pumpkinBody":
-                return "#e58100";
-            case "tree":
-                return "#267524";
-
-            // unsorted
-            case "nest":
-            case "lavender":
-                return gameDraw.color.lavender;
-            case "42":
-            case "animatedMagenta":
-                return gameDraw.animatedColor.magenta;
-
-            // Client / other
-            case "border":
-                return gameDraw.mixColors(gameDraw.color.white, gameDraw.color.guiblack, 1 / 3);
-        }
-        /*switch (colorNumber) {
-            case 0:
-            case "teal":
-            case "aqua":
-                return gameDraw.color.teal;
-            case 1:
-            case "lightGreen":
-                return gameDraw.color.lgreen;
-            case 2:
-            case "orange":
-                return gameDraw.color.orange;
-            case 3:
-            case "yellow":
-                return gameDraw.color.yellow;
-            case 4:
-            case "lavender":
-                return gameDraw.color.lavender;
-            case 5:
-            case "pink":
-                return gameDraw.color.pink;
-            case 6:
-            case "veryLightGrey":
-            case "veryLightGray":
-                return gameDraw.color.vlgrey;
-            case 7:
-            case "lightGrey":
-            case "lightGray":
-                return gameDraw.color.lgrey;
+            // Pure white color
             case 8:
             case "pureWhite":
                 return gameDraw.color.guiwhite;
+            
             case 9:
             case "black":
                 return gameDraw.color.black;
+
+            // Team Blue
             case 10:
             case "blue":
                 return gameDraw.color.blue;
+            
+            // Team green
             case 11:
             case "green":
                 return gameDraw.color.green;
+
+            // Team red
             case 12:
             case "red":
                 return gameDraw.color.red;
+            
             case 13:
+            case "square":
             case "gold":
                 return gameDraw.color.gold;
             case 14:
+            case "pentagon":
             case "purple":
                 return gameDraw.color.purple;
+
+            // Team purple
             case 15:
             case "magenta":
                 return gameDraw.color.magenta;
+
             case 16:
             case "grey":
             case "gray":
@@ -490,30 +355,42 @@ var gameDraw = {
             case 19:
             case "pureBlack":
                 return gameDraw.color.guiblack;
+
+            // Police colors
             case 20:
             case "animatedBlueRed":
+            case "flashBlueRed":
                 return gameDraw.animatedColor.blue_red;
             case 21:
             case "animatedBlueGrey":
             case "animatedBlueGray":
+            case "flashBlueGrey":
+            case "flashBlueGray":
                 return gameDraw.animatedColor.blue_grey;
             case 22:
             case "animatedGreyBlue":
             case "animatedGrayBlue":
+            case "flashGreyBlue":
+            case "flashGrayBlue":
                 return gameDraw.animatedColor.grey_blue;
             case 23:
             case "animatedRedGrey":
             case "animatedRedGray":
+            case "flashRedGrey":
+            case "flashRedGray":
                 return gameDraw.animatedColor.red_grey;
             case 24:
             case "animatedGreyRed":
             case "animatedGrayRed":
+            case "flashGreyRed":
+            case "flashGrayRed":
                 return gameDraw.animatedColor.grey_red;
+
+            // Extra teams color
             case 25:
             case "mustard":
                 return gameDraw.color.mustard;
             case 26:
-            case "darkOrange":
             case "tangerine":
                 return gameDraw.color.tangerine;
             case 27:
@@ -523,9 +400,14 @@ var gameDraw = {
             case "cyan":
             case "turquoise":
                 return gameDraw.color.cyan;
+            
+            // Gender Color Lesbian
             case 29:
+            case "lesbian":
             case "animatedLesbian":
                 return gameDraw.animatedColor.lesbian;
+
+            // infinity gem colors
             case 30:
             case "powerGem":
             case "powerStone":
@@ -550,95 +432,69 @@ var gameDraw = {
             case "mindGem":
             case "mindStone":
                 return "#ffd300";
+    
+            // LGBT Colors
             case 36:
+            case "gay":
             case "rainbow":
                 return gameDraw.animatedColor.gay;
             case 37:
-            case "animatedTrans":
+            case "trans":
                 return gameDraw.animatedColor.trans;
             case 38:
+            case "bi":
             case "animatedBi":
                 return gameDraw.animatedColor.bi;
+
+            // Helloween colors
             case 39:
             case "pumpkinStem":
                 return "#654321";
             case 40:
             case "pumpkinBody":
                 return "#e58100";
+
+
             case 41:
             case "tree":
                 return "#267524";
+            case 42:
+            case "animatedMagenta":
+                return gameDraw.animatedColor.magenta;
+
+            // Client / other
+            case "nest":
+            case "lavender":
+                return gameDraw.color.lavender;
+            case "border":
+                return gameDraw.mixColors(gameDraw.color.white, gameDraw.color.guiblack, 1 / 3);
             default:
                 return "#00000000";
-        }*/
+        }
     },
     getColorDark: (givenColor) => {
         let dark = config.graphical.neon ? gameDraw.color.white : gameDraw.color.black;
         if (config.graphical.darkBorders) return dark;
+        // Ensure givenColor is a valid hex string
+        if (typeof givenColor !== "string" || !givenColor.startsWith("#") || givenColor.length !== 7) {
+            // Try to resolve it using getColor
+            givenColor = gameDraw.getColor(givenColor);
+            // If still not valid, fallback to black
+            if (typeof givenColor !== "string" || !givenColor.startsWith("#") || givenColor.length !== 7) {
+                return "#000000";
+            }
+        }
         return gameDraw.mixColors(givenColor, dark, gameDraw.color.border);
     },
-    getZoneColor: (cell, real) => {
-        if (cell == '#') return cell;
-        switch (cell) {
-            case "blue":
-            case "bas1":
-            case "bab1":
-            case "bap1":
-            case "dom1":
-                return gameDraw.color.blue;
-            case "green":
-            case "bas2":
-            case "bab2":
-            case "bap2":
-            case "dom2":
-                return gameDraw.color.green;
-            case "red":
-            case "bas3":
-            case "bap3":
-            case "bab3":
-            case "dom3":
-            case "boss":
-                return gameDraw.color.red;
-            case "purple":
-            case "bas4":
-            case "bab4":
-            case "bap4":
-            case "dom4":
-                return gameDraw.color.magenta;
-            case "bas5":
-            case "bab5":
-            case "bap5":
-            case "dom5":
-                return "#C49608";
-            case "bas6":
-            case "bab6":
-            case "bap6":
-            case "dom6":
-                return "#EC7B0F";
-            case "bas7":
-            case "bab7":
-            case "bap7":
-            case "dom7":
-                return "#895918";
-            case "bas8":
-            case "bab8":
-            case "bap8":
-            case "dom8":
-                return "#13808E";
-            case "pureBlack":
-            case "port":
-                return gameDraw.color.guiblack;
-            case "nest":
-                return real ? gameDraw.color.purple : gameDraw.color.lavender;
-            case "gold":
-            case "dom0":
-                return gameDraw.color.gold;
-            case "none":
-                return real ? gameDraw.mixColors(gameDraw.color.white, gameDraw.color.guiblack, 1 / 3) : gameDraw.color.guiblack;
-            case "white":
-            default:
-                return real ? gameDraw.color.white : gameDraw.color.lgrey;
+    getBorderColor: (givenColor) => {
+        // Defensive: ensure givenColor is a valid hex string
+        if (typeof givenColor !== "string" || !givenColor.startsWith("#") || givenColor.length !== 7) {
+            givenColor = gameDraw.getColor(givenColor);
+            if (typeof givenColor !== "string" || !givenColor.startsWith("#") || givenColor.length !== 7) {
+                return "#000000";
+            }
         }
+        return gameDraw.getColorDark(givenColor);
     },
     setColor: (context, givenColor) => {
         if (config.graphical.neon) {

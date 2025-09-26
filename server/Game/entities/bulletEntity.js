@@ -1,9 +1,5 @@
-let EventEmitter = require('events');
-class bulletEntity extends EventEmitter { // Basically an (Entity) but with heavy limitations to improve performance.
-    constructor(position, master, gameManager) {
-        super();
-        gameManager = ensureIsManager(gameManager);
-        this.gameManager = gameManager;
+class bulletEntity { // Basically an (Entity) but with heavy limitations to improve performance.
+    constructor(position, master) {
         if (!master) master = this;
         this.isGhost = false;
         this.killCount = { solo: 0, assists: 0, bosses: 0, polygons: 0, killers: [] };
@@ -23,13 +19,11 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
         this.isInGrid = false;
         this.removeFromGrid = () => {
             if (this.isInGrid) {
-                grid.removeObject(this);
                 this.isInGrid = false;
             } 
         };
         this.addToGrid = () => {
             if (!this.isInGrid) {
-                grid.addObject(this);
                 this.isInGrid = true;
             }
         };
@@ -44,7 +38,7 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
         this.y = position.y;
         this.settings = {};
         this.aiSettings = {};
-        this.guns = [];
+        this.guns = new Map();
         this.children = [];
         this.bulletchildren = [];
         this.glow = { radius: null, color: new Color(-1).compiled, alpha: 1, recursion: 1 };
@@ -63,64 +57,34 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
         this.alphaRange = [0, 1];
         this.velocity = new Vector(0, 0);
         this.accel = new Vector(0, 0);
+        this.damp = 0.05;
         this.SIZE = 1;
         this.sizeMultiplier = 1;
+        this.firingArc = [0, 360];
         // Get a new unique id
         this.id = entitiesIdLog++;
         this.team = this.id;
         this.team = master.team;
-        this.updateAABB = () => {};
-        this.AABB_savedSize = 0;
+        // This is for collisions
+        this.minX = 0;
+        this.minY = 0;
+        this.maxX = 0;
+        this.maxY = 0;
         this.collidingBond = false;
         // Optimized AABB calculation and update
-        this.getAABB = (() => {
-            const data = {
-                min: [0, 0],
-                max: [0, 0],
-                active: false,
-                size: 0
-            };
-            this.updateAABB = (active) => {
-                if (!this.collidingBond && this.bond != null) return 0;
-                if (!active) {
-                    data.active = false;
-                    return 0;
-                }
-                // Calculate bounds only if needed
-                const realSize = this.realSize + 5;
-                const vx = this.velocity.x + this.accel.x;
-                const vy = this.velocity.y + this.accel.y;
-                // Use Math.min/max once per coordinate by calculating intermediate values
-                const minX = this.x < this.x + vx ? this.x : this.x + vx;
-                const minY = this.y < this.y + vy ? this.y : this.y + vy;
-                const x1 = minX - realSize;
-                const y1 = minY - realSize;
-                const x2 = (this.x > this.x + vx ? this.x : this.x + vx) + realSize;
-                const y2 = (this.y > this.y + vy ? this.y : this.y + vy) + realSize;
-                
-                const size = x2 - x1 > y2 - y1 ? x2 - x1 : y2 - y1;
-                const sizeDiff = this.AABB_savedSize / size;
-                
-                // Update data in-place
-                data.min[0] = x1;
-                data.min[1] = y1;
-                data.max[0] = x2;
-                data.max[1] = y2;
-                data.active = true;
-                data.size = size;
-                
-                // Only update grid if size changed significantly
-                if (sizeDiff > Math.SQRT2 || sizeDiff < Math.SQRT1_2) {
-                    this.removeFromGrid();
-                    this.addToGrid();
-                    this.AABB_savedSize = size;
-                }
-            };
-            return () => data;
-        })();
-        this.updateAABB(true);
-        entities.push(this);
-        for (let v of this.gameManager.views) v.add(this);
+        this.updateAABB = (active) => {
+            if (!active || (!this.collidingBond && this.bond != null)) {
+                this.isInGrid = false;
+            } else {
+                this.isInGrid = true;
+                this.minX = this.x - this.size;
+                this.minY = this.y - this.size;
+                this.maxX = this.x + this.size;
+                this.maxY = this.y + this.size;
+            }
+        };
+        entities.set(this.id, this);
+        for (let v of global.gameManager.views) v.add(this);
     }
 
     life() { bringToLife(this) };
@@ -147,7 +111,7 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
         // Define all primary stats
         let set = ensureIsClass(defs[0]);
         this.store = {};
-        for (let gun of this.guns) gun.store = {};
+        for (let gun of this.guns.values()) gun.store = {};
         if (set.PARENT != null) {
             if (Array.isArray(set.PARENT)) {
                 for (let i = 0; i < set.PARENT.length; i++) {
@@ -188,7 +152,7 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
                 for (let i = 0; i < set.CONTROLLERS.length; i++) {
                     let io = set.CONTROLLERS[i];
                     if ("string" == typeof io) io = [io];
-                    toAdd.push(new ioTypes[io[0]](this, io[1], this.gameManager));
+                    toAdd.push(new ioTypes[io[0]](this, io[1], global.gameManager));
                     addedSuccess = true;
                 }
                 this.addController(toAdd);
@@ -198,7 +162,15 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
             }
         }
         if (set.IGNORED_BY_AI != null) this.ignoredByAi = set.IGNORED_BY_AI;
-        if (set.MOTION_TYPE != null) this.motionType = set.MOTION_TYPE;
+        if (set.MOTION_TYPE != null) {
+            this.motionType = set.MOTION_TYPE;
+            if (Array.isArray(this.motionType)) {
+                this.motionTypeArgs = this.motionType[1];
+                this.motionType = this.motionType[0];
+            } else {
+                this.motionTypeArgs = {};
+            }
+        }
         if (set.FACING_TYPE != null) {
             this.facingType = set.FACING_TYPE;
             if (Array.isArray(this.facingType)) {
@@ -208,6 +180,7 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
                 this.facingTypeArgs = {};
             }
         };
+        if (set.NO_COLLISIONS) this.settings.no_collisions = set.NO_COLLISIONS;
         if (set.MIRROR_MASTER_ANGLE != null) this.settings.mirrorMasterAngle = set.MIRROR_MASTER_ANGLE
         if (set.DRAW_HEALTH != null) this.settings.drawHealth = set.DRAW_HEALTH;
         if (set.DRAW_SELF != null) this.settings.drawShape = set.DRAW_SELF;
@@ -274,11 +247,14 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
         if (set.VALUE != null) this.skill.score = Math.max(this.skill.score, set.VALUE * this.squiggle);
         if (set.ALT_ABILITIES != null) this.abilities = set.ALT_ABILITIES;
         if (set.GUNS != null) {
+            this.guns.clear();
             let newGuns = [];
             for (let i = 0; i < set.GUNS.length; i++) {
-                newGuns.push(new Gun(this, set.GUNS[i], this.gameManager));
+                newGuns.push(new Gun(this, set.GUNS[i]));
             }
-            this.guns = newGuns;
+            for (let guns of newGuns) {
+                this.guns.set(guns.id, guns);
+            }
         }
         if (set.EXTRA_SKILL != null) this.skill.points += set.EXTRA_SKILL;
         if (set.BODY != null) {
@@ -297,14 +273,16 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
             if (set.BODY.DENSITY != null) this.DENSITY = set.BODY.DENSITY;
             if (set.BODY.STEALTH != null) this.STEALTH = set.BODY.STEALTH;
             if (set.BODY.PUSHABILITY != null) this.PUSHABILITY = set.BODY.PUSHABILITY;
+            if (set.BODY.KNOCKBACK != null) this.KNOCKBACK = set.BODY.KNOCKBACK;
             if (set.BODY.HETERO != null) this.heteroMultiplier = set.BODY.HETERO;
             this.refreshBodyAttributes();
         }
         if (set.SPAWN_ON_DEATH) this.spawnOnDeath = set.SPAWN_ON_DEATH;
+        if (set.TICK_HANDLER) this.tickHandler = set.TICK_HANDLER;
     }
 
     get level() {
-        return Math.min(this.levelCap ?? c.LEVEL_CAP, this.skill.level);
+        return Math.min(this.levelCap ?? Config.LEVEL_CAP, this.skill.level);
     }
     get size() {
         return this.bond == null ? (this.coreSize || this.SIZE) * this.sizeMultiplier * (1 + this.level / 45) : this.bond.size * this.bound.size;
@@ -316,17 +294,17 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
         return this.size * lazyRealSizes[Math.floor(Math.abs(this.shape))];
     }
     get xMotion() {
-        return (this.velocity.x + this.accel.x) / this.gameManager.roomSpeed;
+        return (this.velocity.x + this.accel.x) / global.gameManager.roomSpeed;
     }
     get yMotion() {
-        return (this.velocity.y + this.accel.y) / this.gameManager.roomSpeed;
+        return (this.velocity.y + this.accel.y) / global.gameManager.roomSpeed;
     }
 
     refreshBodyAttributes() {
         let speedReduce = Math.pow(this.size / (this.coreSize || this.SIZE), 1);
-        this.acceleration = (1 * this.gameManager.runSpeed * this.ACCELERATION) / speedReduce;
+        this.acceleration = (1 * global.gameManager.runSpeed * this.ACCELERATION) / speedReduce;
         if (this.settings.reloadToAcceleration) this.acceleration *= this.skill.acl;
-        this.topSpeed = (1 * this.gameManager.runSpeed * this.SPEED * this.skill.mob) / speedReduce;
+        this.topSpeed = (1 * global.gameManager.runSpeed * this.SPEED * this.skill.mob) / speedReduce;
         if (this.settings.reloadToAcceleration) this.topSpeed /= Math.sqrt(this.skill.acl);
         this.health.set(((this.settings.healthWithLevel ? 2 * this.level : 0) + this.HEALTH) * this.skill.hlt * 1);
         this.health.resist = 1 - 1 / Math.max(1, this.RESIST + this.skill.brst);
@@ -337,6 +315,7 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
         this.density = 1 * (1 + 0.08 * this.level) * this.DENSITY;
         this.stealth = 1 * this.STEALTH;
         this.pushability = 1 * this.PUSHABILITY;
+        this.knockback = this.KNOCKBACK ?? false;
         this.sizeMultiplier = 1;
         this.recoilMultiplier = this.RECOIL_MULTIPLIER * 1;
     };
@@ -347,7 +326,7 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
         let g = { x: this.control.goal.x - this.x, y: this.control.goal.y - this.y },
         gactive = (g.x !== 0 || g.y !== 0),
         engine = { x: 0, y: 0, },
-        a = this.acceleration / this.gameManager.roomSpeed;
+        a = this.acceleration / global.gameManager.roomSpeed;
         switch (this.motionType) {
             case 'glide':
                 this.maxSpeed = this.topSpeed;
@@ -369,7 +348,7 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
                 if (gactive && l > this.size) {
                     let desiredxspeed = this.topSpeed * g.x / l,
                         desiredyspeed = this.topSpeed * g.y / l,
-                        turning = Math.sqrt((this.topSpeed * Math.max(1, this.range) + 1) / a);
+                        turning = Math.sqrt((this.topSpeed * Math.max(1, this.motionTypeArgs.turnVelocity ?? this.range) + 1) / a);
                     engine = {
                         x: (desiredxspeed - this.velocity.x) / Math.max(5, turning),
                         y: (desiredyspeed - this.velocity.y) / Math.max(5, turning),
@@ -394,7 +373,21 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
                             x: (desiredxspeed - this.velocity.x) * a,
                             y: (desiredyspeed - this.velocity.y) * a,
                         };
+                    } else if (this.motionTypeArgs.keepSpeed) {
+                        if (this.velocity.length < this.topSpeed) {
+                            engine = {
+                                x: this.velocity.x * a / 20,
+                                y: this.velocity.y * a / 20,
+                            };
+                        }
                     } else this.maxSpeed = 0;
+                } else if (this.motionTypeArgs.keepSpeed) {
+                    if (this.velocity.length < this.topSpeed) {
+                        engine = {
+                            x: this.velocity.x * a / 20,
+                            y: this.velocity.y * a / 20,
+                        };
+                    }
                 } else this.maxSpeed = 0;
                 break;
             case 'drift':
@@ -416,20 +409,20 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
         let t = this.control.target;
         switch (this.facingType) {
             case "spin":
-                this.facing += (this.facingTypeArgs.speed ?? 0.05) / this.gameManager.runSpeed;
+                this.facing += (this.facingTypeArgs.speed ?? 0.05) / global.gameManager.runSpeed;
                 break;
             case "spinWhenIdle":
-                if (t && this.control.fire) this.facing = Math.atan2(t.y, t.x); else this.facing += (this.facingTypeArgs.speed ?? 0.05) / this.gameManager.runSpeed;
+                if (t && this.control.fire) this.facing = Math.atan2(t.y, t.x); else this.facing += (this.facingTypeArgs.speed ?? 0.05) / global.gameManager.runSpeed;
                 break;
             case 'turnWithSpeed':
-                this.facing += this.velocity.length / 90 * Math.PI / this.gameManager.roomSpeed;
+                this.facing += this.velocity.length / 90 * Math.PI / global.gameManager.roomSpeed;
                 break;
             case 'withMotion':
                 this.facing = this.velocity.direction;
                 break;
             case 'smoothWithMotion':
             case 'looseWithMotion':
-                this.facing += util.loopSmooth(this.facing, this.velocity.direction, 4 / this.gameManager.roomSpeed);
+                this.facing += util.loopSmooth(this.facing, this.velocity.direction, 4 / global.gameManager.roomSpeed);
                 break;
             case 'withTarget':
             case 'toTarget':
@@ -441,7 +434,7 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
             case 'looseWithTarget':
             case 'looseToTarget':
             case 'smoothToTarget':
-                this.facing += util.loopSmooth(this.facing, Math.atan2(t.y, t.x), 4 / this.gameManager.roomSpeed);
+                this.facing += util.loopSmooth(this.facing, Math.atan2(t.y, t.x), 4 / global.gameManager.roomSpeed);
                 break;
             case "noFacing":
                 if (this.lastSavedFacing !== this.facing) this.facing = this.facingTypeArgs.angle ?? 0;
@@ -474,7 +467,7 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
             vfacing: this.vfacing,
             layer: this.layerID ? this.layerID : this.bond != null ? this.bound.layer : this.type === "wall" ? 11 : this.type === "food" ? 10 : this.type === "tank" ? 5 : this.type === "crasher" ? 1 : 0,
             color: this.color.compiled,
-            guns: this.guns.length ? this.guns.map((gun) => gun.getPhotoInfo()) : [],
+            guns: Array.from(this.guns).map(gun => gun[1].getPhotoInfo()),
             turrets: [],
         };
     };
@@ -499,15 +492,15 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
         nullVector(this.accel);
         // Apply motion
         this.stepRemaining = 1;
-        this.x += this.stepRemaining * this.velocity.x / this.gameManager.roomSpeed;
-        this.y += this.stepRemaining * this.velocity.y / this.gameManager.roomSpeed;
+        this.x += this.stepRemaining * this.velocity.x / global.gameManager.roomSpeed;
+        this.y += this.stepRemaining * this.velocity.y / global.gameManager.roomSpeed;
     };
 
     friction() {
         var motion = this.velocity.length,
             excess = motion - this.maxSpeed;
         if (excess > 0 && this.damp) {
-            var k = this.damp / this.gameManager.roomSpeed,
+            var k = this.damp / global.gameManager.roomSpeed,
                 drag = excess / (k + 1),
                 finalvelocity = this.maxSpeed + drag;
             this.velocity.x = finalvelocity * this.velocity.x / motion;
@@ -525,10 +518,22 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
             return 0;
         }
         if (!this.settings.canGoOutsideRoom) {
-            this.accel.x -= Math.min(this.x - this.realSize + this.gameManager.room.width / 2 + 50, 0) * c.ROOM_BOUND_FORCE / this.gameManager.roomSpeed;
-            this.accel.x -= Math.max(this.x + this.realSize - this.gameManager.room.width / 2 - 50, 0) * c.ROOM_BOUND_FORCE / this.gameManager.roomSpeed;
-            this.accel.y -= Math.min(this.y - this.realSize + this.gameManager.room.height / 2 + 50, 0) * c.ROOM_BOUND_FORCE / this.gameManager.roomSpeed;
-            this.accel.y -= Math.max(this.y + this.realSize - this.gameManager.room.height / 2 - 50, 0) * c.ROOM_BOUND_FORCE / this.gameManager.roomSpeed;
+            if (Config.ARENA_TYPE === "circle") {
+                let centerPoint = {
+                    x: global.gameManager.room.width - global.gameManager.room.width,
+                    y: global.gameManager.room.height - global.gameManager.room.height,
+                }, dist = util.getDistance(this, centerPoint);
+                if (dist > global.gameManager.room.width - global.gameManager.room.width / 2) {
+                    let strength = (dist - global.gameManager.room.width / 2) * Config.ROOM_BOUND_FORCE / (Config.runSpeed * 350);
+                    this.x = util.lerp(this.x, centerPoint.x, strength);
+                    this.y = util.lerp(this.y, centerPoint.y, strength);
+                }
+            } else {
+                this.accel.x -= Math.min(this.x - this.realSize + global.gameManager.room.width / 2 + 50, 0) * Config.ROOM_BOUND_FORCE / global.gameManager.roomSpeed;
+                this.accel.x -= Math.max(this.x + this.realSize - global.gameManager.room.width / 2 - 50, 0) * Config.ROOM_BOUND_FORCE / global.gameManager.roomSpeed;
+                this.accel.y -= Math.min(this.y - this.realSize + global.gameManager.room.height / 2 + 50, 0) * Config.ROOM_BOUND_FORCE / global.gameManager.roomSpeed;
+                this.accel.y -= Math.max(this.y + this.realSize - global.gameManager.room.height / 2 - 50, 0) * Config.ROOM_BOUND_FORCE / global.gameManager.roomSpeed;
+            }
         }
     };
 
@@ -539,10 +544,10 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
         }
         // Life-limiting effects
         if (this.settings.diesAtRange) {
-            this.range -= 1 / this.gameManager.roomSpeed;
+            this.range -= 1 / global.gameManager.roomSpeed;
             if (this.range < 0) this.kill();
         }
-        if (this.settings.diesAtLowSpeed && !this.collisionArray.length && this.velocity.length < this.topSpeed / 2) this.health.amount -= this.health.getDamage(1 / this.gameManager.roomSpeed);
+        if (this.settings.diesAtLowSpeed && !this.collisionArray.length && this.velocity.length < this.topSpeed / 2) this.health.amount -= this.health.getDamage(1 / global.gameManager.roomSpeed);
         // Shield regen and damage
         if (this.shield.max) {
             if (this.damageReceived) {
@@ -559,8 +564,7 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
         this.damageReceived = 0;
         // Check for death
         if (this.isDead()) {
-            for (let i = 0; i < this.guns.length; i++) {
-                let gun = this.guns[i];
+            for (let gun of this.guns.values()) {
                 if (gun.shootOnDeath && gun.body != null) gun.spawnBullets();
             }
             return 1;
@@ -569,7 +573,7 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
     };
 
     isBeingViewed(addToNearby = true) {
-        let boolean = checkIfInView(false, addToNearby, this.gameManager.clients, this);
+        let boolean = checkIfInView(false, addToNearby, global.gameManager.clients, this);
         return boolean;
     };
 
@@ -582,13 +586,13 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
 
     destroy() {
         // Remove this from views
-        this.gameManager.views.forEach(v => v.remove(this));
-        // Remove bullet from bullet list if needed and the only reason it exists is for bacteria.
+        global.gameManager.views.forEach(v => v.remove(this));
+        // Remove bullet from bullet list if needed, and the only reason it exists is for bacteria.
         if (this.bulletparent != null) util.remove(this.bulletparent.bulletchildren, this.bulletparent.bulletchildren.indexOf(this))
         // Remove from parent lists if needed
         if (this.parent != null) util.remove(this.parent.children, this.parent.children.indexOf(this));
         // Kill all of its children
-        entities.forEach(instance => {
+        for (const instance of entities.values()) {
             if (instance.source.id === this.id) {
                 if (instance.settings.persistsAfterDeath) {
                     instance.source = instance;
@@ -605,13 +609,15 @@ class bulletEntity extends EventEmitter { // Basically an (Entity) but with heav
                     instance.master = instance;
                 }
             }
-        });
-        // Remove from the collision grid
+        }
         this.removeFromGrid();
         this.isGhost = true;
+        entities.delete(this.id);
+        targetableEntities.delete(this.id);
     }
 
     isDead() { return this.health.amount <= 0; };
+    emit() {} // Placeholder
 }
 
 module.exports = { bulletEntity };

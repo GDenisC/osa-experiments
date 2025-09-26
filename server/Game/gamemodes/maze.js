@@ -1,6 +1,5 @@
 class Maze {
     constructor(gameManager, type) {
-        this.gameManager = gameManager;
         this.type = type;
     }
     generate() {
@@ -12,16 +11,21 @@ class Maze {
         }
         squares.forEach(element => {
             let wall = new Entity({
-                x: this.gameManager.room.width / width * element.x - this.gameManager.room.width / 2 + this.gameManager.room.width / width / 2 * element.size, 
-                y: this.gameManager.room.height / height * element.y - this.gameManager.room.height / 2 + this.gameManager.room.height / height / 2 * element.size
-            }, false, this.gameManager)
+                x: global.gameManager.room.width / width * element.x - global.gameManager.room.width / 2 + global.gameManager.room.width / width / 2 * element.size, 
+                y: global.gameManager.room.height / height * element.y - global.gameManager.room.height / 2 + global.gameManager.room.height / height / 2 * element.size
+            })
             wall.define("wall");
-            wall.SIZE = this.gameManager.room.width / width / 2 * element.size / lazyRealSizes[4] * Math.SQRT2 - 2;
+            wall.SIZE = global.gameManager.room.width / width / 2 * element.size / lazyRealSizes[4] * Math.SQRT2 - 2;
             wall.protect();
+            wall.life();
+            makeHitbox(wall);
+            walls.push(wall);
+            wall.on("dead", () => {
+                util.remove(walls, walls.indexOf(wall));
+            })
         });
     }
-    redefine(theshit, type) {
-        this.gameManager = theshit;
+    redefine(type) {
         this.type = type;
     }
 }

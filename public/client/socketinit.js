@@ -10,6 +10,7 @@ var startedSync = false;
 let levelscore = 0;
 let deduction = 0;
 let level = 1;
+let kills = [0, 0, 0];
 let sscore = util.AdvancedSmoothBar(0, 2);
 let getNow = () => {
     return Date.now() - clockDiff - serverStart;
@@ -50,20 +51,26 @@ gui = {
     playerid: -1,
     __s: {
         setScore: d => {
-            d ? (sscore.set(d), deduction > sscore.get() && (deduction = level = 0)) : (levelscore = 3, deduction = level = 0, sscore = util.AdvancedSmoothBar(0, 2))
+            sscore.set(d);
+        },
+        setKills: (solo, assists, bosses) => {
+            kills = [solo, assists, bosses];
         },
         update: () => {
-            levelscore = Math.floor(1.74 * Math.pow(level + 1, 1.79503264) - 0.53 * level)
+            levelscore = Math.ceil(Math.pow(level, 3) * 0.3083);
+            levelscore = levelscore - deduction;
             if (sscore.get() >= deduction + levelscore) deduction += levelscore, level++;
             else if (sscore.get() < deduction) {
                 var d = level - 1;
-                deduction -= Math.floor(1.74 * Math.pow(d + 1, 1.79503264) - 0.53 * d);
+                deduction = Math.ceil(Math.pow(level, 3) * 0.3083);
+                deduction -= levelscore - deduction * d;
                 level--
             }
         },  
         getProgress: () => levelscore ? Math.min(1, Math.max(0, (sscore.get() - deduction) / levelscore)) : 0,
         getScore: () => sscore.get(),
-        getLevel: () => level
+        getLevel: () => level,
+        getKills: () => kills
     },
     type: 0,
     root: "",
@@ -208,6 +215,7 @@ const Minimap = class {
 const Entry = class {
     constructor(to) {
         this.score = util.Smoothbar(0, 10, 3, .03);
+        this.isNew = true;
         this.update(to);
     }
     update(to) {
@@ -216,24 +224,30 @@ const Entry = class {
         if (typeof to.bar === "string" && to.bar.includes(", ")) this.bar = +to.bar.split(", ")[0];
         this.color = to.color;
         this.index = to.index;
-        this.score.set(to.score);
+        if (this.isNew) {
+            this.isNew = false;
+            this.score.force(to.score);
+        } else this.score.set(to.score);
         this.old = false;
         this.nameColor = to.nameColor;
         this.id = to.id;
         this.label = to.label;
+        this.renderEntity = to.renderEntity;
     }
     publish() {
         let indexes = this.index.split("-"),
             ref = global.mockups[parseInt(indexes[0])];
             if (!ref) ref = global.missingMockup[0];
+
         return {
             id: this.id,
-            image: util.getEntityImageFromMockup(this.index, this.color),
+            image: util.requestEntityImage(this.index, this.color),
             position: ref.position,
             barColor: this.bar,
             label: this.name ? this.name + " - " + this.label : this.label,
             score: this.score.get(),
             nameColor: this.nameColor,
+            renderEntity: this.renderEntity,
         };
     }
 };
@@ -269,7 +283,7 @@ const Leaderboard = class {
 };
 let minimapAllInt = new Integrate(5),
     minimapTeamInt = new Integrate(3),
-    leaderboardInt = new Integrate(7),
+    leaderboardInt = new Integrate(8),
     leaderboard = new Leaderboard(),
     minimap = new Minimap(200);
 let lags = [];
@@ -357,6 +371,7 @@ const GunContainer = n => {
                 color: g.color,
                 borderless: g.borderless,
                 alpha: g.alpha,
+                strokeWidth: g.strokeWidth,
                 drawFill: g.drawFill,
                 drawAbove: g.drawAbove,
                 length: g.length,
@@ -374,6 +389,7 @@ const GunContainer = n => {
                 g.color = c.color;
                 g.borderless = c.borderless; 
                 g.alpha = c.alpha;
+                g.strokeWidth = c.strokeWidth;
                 g.drawFill = c.drawFill;
                 g.drawAbove = c.drawAbove;
                 g.length = c.length;
@@ -414,9 +430,7 @@ function Status() {
             return '#FFFFFF';
         },
         getBlend: () => {
-            let o = (statState === 'normal' || statState === 'dying') ? 0 :
-                statState === 'invuln' ? 0.125 + Math.sin((getNow() - statTime) / 33) / 8 :
-                    1 - Math.min(1, (getNow() - statTime) / 80);
+            let o = (statState === 'normal' || statState === 'dying') ? 0 : 1 - Math.min(1, (getNow() - statTime) / 80);
             if (getNow() - statTime > 500 && statState === 'injured') {
                 statState = 'normal';
             }
@@ -427,7 +441,7 @@ function Status() {
 // Make a converter
 const process = (z = {}) => {
     global.loggers.processEntities.set();
-    let isNew = z.facing == null; // For whatever reason arguments.length is uglified poorly...
+    let isNew = z.facing == null; // For whatever reason, arguments.length is uglified poorly...
     // Figure out what kind of data we're looking at
     let type = get.next();
     // Handle it appropiately
@@ -446,7 +460,7 @@ const process = (z = {}) => {
     } else { // issa something real
         z.interval = global.metrics.rendergap;
         z.id = get.next();
-        // Determine if this is an new entity or if we already know about it
+        // Determine if this is a new entity or if we already know about it
         let i = global.entities.findIndex(x => x.id === z.id);
         if (i !== -1) {
             // remove it if needed (this way we'll only be left with the dead/unused entities)
@@ -496,6 +510,7 @@ const process = (z = {}) => {
             z.drawFill = get.next();
         }
         let invuln = type & 0x10 ? 0 : get.next();
+        z.invuln = invuln ? z.invuln || Date.now() : 0;
         // Update health, flagging as injured if needed
         if (isNew) {
             z.health = get.next() / 65535;
@@ -529,8 +544,8 @@ const process = (z = {}) => {
                 lastRender: global.player.time,
                 x: z.x,
                 y: z.y,
-                lastx: z.x - global.metrics.rendergap * config.roomSpeed * (1000 / 30) * z.vx,
-                lasty: z.y - global.metrics.rendergap * config.roomSpeed * (1000 / 30) * z.vy,
+                lastx: z.x - global.metrics.rendergap * config.roomSpeed * (1000 / 40) * z.vx,
+                lasty: z.y - global.metrics.rendergap * config.roomSpeed * (1000 / 40) * z.vy,
                 lastvx: z.vx,
                 lastvy: z.vy,
                 lastf: z.facing,
@@ -577,6 +592,7 @@ const process = (z = {}) => {
             power = get.next(),
             color = get.next(),
             alpha = get.next(),
+            strokeWidth = get.next(),
             borderless = get.next(),
             drawFill = get.next(),
             drawAbove = get.next(),
@@ -586,7 +602,7 @@ const process = (z = {}) => {
             angle = get.next(),
             direction = get.next(),
             offset = get.next();
-        z.guns.setConfig(i, {color, alpha, borderless, drawFill, drawAbove, length, width, aspect, angle, direction, offset}); // Load gun config into container
+        z.guns.setConfig(i, {color, alpha, strokeWidth, borderless, drawFill, drawAbove, length, width, aspect, angle, direction, offset}); // Load gun config into container
         if (time > global.player.lastUpdate - global.metrics.rendergap) z.guns.fire(i, power); // Shoot it
     }
     // Update turrets
@@ -670,7 +686,9 @@ const convert = {
             gui.playerid = get.next();
         }
         if (indices.score) {
-            gui.__s.setScore(get.next());
+            let score = JSON.parse(get.next());
+            gui.__s.setScore(score[0]);
+            gui.__s.setKills(score[1], score[2], score[3]);
         }
         if (indices.points) {
             gui.points = get.next();
@@ -679,7 +697,7 @@ const convert = {
             gui.upgrades = [];
             for (let i = 0, len = get.next(); i < len; i++) {
                 gui.upgrades.push(get.next().split("_"));
-                gui.upgrades[i][2] = util.getEntityImageFromMockup(gui.upgrades[i][2], gui.color);
+                gui.upgrades[i][2] = util.requestEntityImage(gui.upgrades[i][2], gui.color);
             }
         }
         if (indices.statsdata) {
@@ -763,6 +781,7 @@ const convert = {
                 bar: data[4],
                 nameColor: data[5],
                 label: data[6],
+                renderEntity: data[7],
             })
         }
         leaderboard.update(entries);
@@ -801,7 +820,8 @@ let incoming = async function(message, socket) {
 
             case 'w': { // welcome to the game
                 if (m[0]) { // Ask to spawn
-                    socket.talk('s', global.playerName, 1, 1 * config.game.autoLevelUp);
+                    socket.talk('s', global.playerName, 1, 1 * config.game.autoLevelUp, global.bodyID ? global.bodyID : false);
+                    global.bodyID = undefined;
                 }
             }; break;
             case 'R': { // room setup
@@ -813,13 +833,11 @@ let incoming = async function(message, socket) {
                 serverStart = JSON.parse(m[3]);
                 global.serverStart = serverStart;
                 config.roomSpeed = m[4];
-                if (global.mobile) {
-                    var e = 60,
-                    k = setInterval(() => {
-                      socket.talk("L");
-                      0 >= --e && clearInterval(k);
-                    }, 100);
-                  }
+                let blackoutData = JSON.parse(m[5]);
+                global.advanced.blackout.active = blackoutData.active;
+                global.advanced.blackout.color = blackoutData.color;
+                global.advanced.radial = m[6];
+                global.advanced.roundMap = m[7] == "circle" ? true : false;
             } break;
             case "r": {
                 global.gameWidth = m[0];
@@ -860,7 +878,7 @@ let incoming = async function(message, socket) {
                     delta: delta,
                     latency: laten,
                 });
-                // Do it again a couple times
+                // Do it again a couple of times
                 if (sync.length < 10) {
                     // Erase entities if resync is needed.
                     if (startSettings.neededtoresync) global.entities = [];
@@ -879,7 +897,7 @@ let incoming = async function(message, socket) {
                         startSettings.allowtostartgame = true;
                         global.pullSkillBar = false;
                         global.pullUpgradeMenu = false;
-                        socket.talk("NWB"); // Ask for new broadcast.
+                        socket.talk("NWB"); // Ask for a new broadcast.
                     }
                     global.gameUpdate = true;
                     global.metrics.rendertimes = 1;
@@ -895,8 +913,12 @@ let incoming = async function(message, socket) {
         case 'RE': {
             global.mockups = [];
             global.entities = [];
-        }
+        } break;
+        case 'CC': {
+            global.cached = {};
+        } break;
         case 'M': {
+            if (!m[1]) return;
             global.mockups[m[0]] = JSON.parse(m[1]);
         } break;
         case 'u': { // uplink
@@ -955,6 +977,7 @@ let incoming = async function(message, socket) {
                 global.player.animY.add(m[2]);
                 // Fov stuff
                 global.player.view = camfov;
+                global.player.animv.add(global.player.view);
                 if (isNaN(global.player.renderv) || global.player.renderv === 0) {
                     global.player.renderv = defaultFov;
                 }
@@ -1075,7 +1098,33 @@ let incoming = async function(message, socket) {
                 // Now trigger it!
                 set.shakeStartTime = Date.now();
             }
-        }
+        } break;
+        case "t": {
+            // Close the socket
+            socket.onclose = () => { };
+            socket.close();
+            socket.open = false;
+            clearInterval(socket.commandCycle);
+            global.gameStart = false;
+    
+            // Reset the player
+            global.player = global.initPlayer();
+    
+            // Setup
+            global.gameLoading = true;
+            global.serverAdd = m[0];
+            global.bodyID = m[1];
+            if (global.serverMap[global.serverAdd]) global.serverMap[global.serverAdd].onclick();
+
+            // Update the location hash
+            let server = global.servers.find(s => s.ip === m[0]);
+            if (server) location.hash = "#" + server.id;
+            global.locationHash = location.hash;
+
+            // Reconnect server
+            global.reconnect();
+        } break;
+
         case 'K': { // kicked
             // Put your code while being kicked from the server. 
         } break;

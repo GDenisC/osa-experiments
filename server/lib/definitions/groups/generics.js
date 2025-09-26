@@ -102,6 +102,7 @@ Class.genericTank = {
     IGNORED_BY_AI: false,
     SYNC_WITH_TANK: false,
     IS_IMMUNE_TO_TILES: false,
+    RENDER_ON_LEADERBOARD: true,
     REROOT_UPGRADE_TREE: "basic",
     BODY: {
         ACCELERATION: base.ACCEL,
@@ -154,7 +155,7 @@ Class.genericBoss = {
         mob: 0,
     }),
     LEVEL: 45,
-    CONTROLLERS: ["nearestDifferentMaster", "canRepel"],
+    CONTROLLERS: [["nearestDifferentMaster", { lockThroughWalls: true }], "canRepel"],
     FACING_TYPE: ['spin', {speed: 0.02}],
     HITS_OWN_TYPE: "hardOnlyBosses",
     BROADCAST_MESSAGE: "A visitor has left!",
@@ -260,7 +261,23 @@ Class.swarm = {
     DIE_AT_RANGE: true,
     BUFF_VS_FOOD: true,
 };
-
+Class.baseSwarmTurret_swarm = {
+    PARENT: "swarm",
+    MOTION_TYPE: ["swarm", { turnVelocity: 10 }],
+    BODY: {
+        ACCELERATION: Class.swarm.BODY.ACCELERATION,
+        PENETRATION: Class.swarm.BODY.PENETRATION,
+        HEALTH: Class.swarm.BODY.HEALTH,
+        DAMAGE: Class.swarm.BODY.DAMAGE,
+        SPEED: Class.swarm.BODY.SPEED,
+        RESIST: Class.swarm.BODY.RESIST,
+        RANGE: 345,
+        DENSITY: Class.swarm.BODY.DENSITY,
+        PUSHABILITY: Class.swarm.BODY.PUSHABILITY,
+        FOV: 1.7,
+        KNOCKBACK: 15,
+    },
+}
 Class.trap = {
     LABEL: "Thrown Trap",
     TYPE: "trap",

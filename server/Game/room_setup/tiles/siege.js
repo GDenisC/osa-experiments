@@ -1,6 +1,6 @@
 tileClass.outBorder = new Tile({
-     COLOR: "white",
-     TICK: tile => {
+    COLOR: "white",
+    TICK: tile => {
         for (let i = 0; i < tile.entities.length; i++) {
             let entity = tile.entities[i];
             if (!entity.isBoss && 
@@ -8,17 +8,17 @@ tileClass.outBorder = new Tile({
                 !entity.isArenaCloser && 
                 !entity.master.master.isArenaCloser &&
                 !entity.godmode &&
-                 entity.type !== "wall"
+                entity.type !== "wall"
             ) entity.kill();
         }
-     }
+    }
 });
 
 let addTileToBossSpawnTile = (tile, room) => {
     if (!room.spawnable["bossSpawnTile"]) room.spawnable["bossSpawnTile"] = [];
     room.spawnable["bossSpawnTile"].push(tile);
 }
-let bossTick = (tile, pushTo, allow, gameManager) => {
+let bossTick = (tile, pushTo, allow) => {
     for (let i = 0; i < tile.entities.length; i++) {
         let entity = tile.entities[i];
         if (!entity.isBoss && 
@@ -26,14 +26,14 @@ let bossTick = (tile, pushTo, allow, gameManager) => {
             !entity.isArenaCloser && 
             !entity.master.master.isArenaCloser &&
             !entity.godmode &&
-             entity.type !== "wall"
+            entity.type !== "wall"
         ) entity.kill();
         if (pushTo == "right" && 
             allow == "blitz" && 
-            gameManager.gameSettings.BLITZ &&
+            Config.BLITZ &&
             entity.isBoss && 
             !entity.control.fire
-            ) {
+        ) {
             entity.x += 2 / 0.9;
         }
     }
@@ -42,18 +42,18 @@ let bossTick = (tile, pushTo, allow, gameManager) => {
 tileClass.bossSpawn = new Tile({
     COLOR: "red",
     NAME: "Boss Spawn",
-    INIT: (tile, room, gameManager) => {
-        if (!gameManager.gameSettings.BLITZ && !gameManager.gameSettings.FORTRESS && !gameManager.gameSettings.CITADEL) addTileToBossSpawnTile(tile, room);
+    INIT: (tile, room) => {
+        if (!Config.BLITZ && !Config.FORTRESS && !Config.CITADEL) addTileToBossSpawnTile(tile, room);
     },
-    TICK: (tile, room, gameManager) => bossTick(tile, "right", "blitz", gameManager)
+    TICK: (tile, room) => bossTick(tile, "right", "blitz")
 });
 tileClass.bossSpawnVoid = new Tile({
     COLOR: "white",
     NAME: "Boss Spawn",
-    INIT: (tile, room, gameManager) => {
-        if (gameManager.gameSettings.BLITZ || gameManager.gameSettings.FORTRESS || gameManager.gameSettings.CITADEL) addTileToBossSpawnTile(tile, room);
+    INIT: (tile, room) => {
+        if (Config.BLITZ || Config.FORTRESS || Config.CITADEL) addTileToBossSpawnTile(tile, room);
     },
-    TICK: (tile, room, gameManager) => bossTick(tile, "right", "blitz", gameManager)
+    TICK: (tile, room) => bossTick(tile, "right", "blitz")
 })
 
 tileClass.sbase1 = new Tile({

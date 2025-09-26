@@ -4075,7 +4075,7 @@ Class.undertowBullet = {
         {
         event: "tick",
         handler: ({ body }) => {
-            for (let instance of entities) {
+            for (let instance of entities.values()) {
                 let diffX = instance.x - body.x,
                     diffY = instance.y - body.y,
                     dist2 = diffX ** 2 + diffY ** 2;
@@ -4093,7 +4093,7 @@ Class.undertowBullet = {
                     instance.velocity.x += util.clamp(body.x - instance.x, -90, 90) * instance.damp * forceMulti;//0.05
                     instance.velocity.y += util.clamp(body.y - instance.y, -90, 90) * instance.damp * forceMulti;//0.05
                         if (instance.type != "undertowEffect" && instance.type != "bullet" && instance.type != "swarm" && instance.type != "drone" && instance.type != "trap" && instance.type != "dominator") {
-                                let o = new Entity({x: instance.x, y: instance.y}, false, body.gameManager)
+                                let o = new Entity({x: instance.x, y: instance.y})
                                 o.define('undertowEffect')
                                 o.team = body.team;
                                 o.color = instance.color;

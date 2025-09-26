@@ -2,11 +2,11 @@ class Activation {
     constructor(body) {
         this.body = body;
         this.active = true;
-        this.gameManager = body.gameManager;
         this.timer = ran.irandomRange(15);
     }
     update() {
         if (this.body.skipLife) { return this.active = false; }
+        if (this.body.alwaysActive) { return this.active = true; }
         if (this.body.isDead()) { return 0; }
         switch (this.active) {
             case false:
@@ -17,7 +17,7 @@ class Activation {
             case true:
                 this.body.addToGrid();
                 this.timer = 15;
-                this.active = this.body.isPlayer || this.body.isBot || this.gameManager.views.some(v => v.check(this.body, 0.6));
+                this.active = this.body.isPlayer || this.body.isBot || global.gameManager.views.some(v => v.check(this.body, 0.6));
                 break;
         }
     }
@@ -31,10 +31,6 @@ const dirtyCheck = function (p, r) {
     }
     return false
 };
-
-const purgeEntities = () => {
-   entities = entities.filter(e => !e.isGhost);
-}
 
 let remapTarget = (i, ref, self) => {
     if (i.target == null || !(i.main || i.alt)) return undefined;
@@ -61,4 +57,4 @@ lazyRealSizes = new Proxy(lazyRealSizes, {
     }
 });
 
-module.exports = { dirtyCheck, purgeEntities, remapTarget, lazyRealSizes, Activation }
+module.exports = { dirtyCheck, remapTarget, lazyRealSizes, Activation }

@@ -33,7 +33,8 @@ const missingMockup = {
     className: "missingMockup",
     upgrades: [],
     guns: [],
-    turrets: []
+    turrets: [],
+    props: []
 };
 function Clickable() {
     let region = {
@@ -170,6 +171,7 @@ const global = {
     died: false,
     kicked: false,
     continuity: false,
+    glCanvas: null,
     showChat: 0,
     generateTankTree: false,
     needsFovAnimReset: true,
@@ -186,6 +188,7 @@ const global = {
     missingMockup: [missingMockup],
     roomSetup: [],
     entities: [],
+    cached: {},
     updateTimes: 0,
     pullUpgradeMenu: false,
     pullSkillBar: false,
@@ -199,6 +202,7 @@ const global = {
         exitGame: Region(1),
         deathRespawn: Region(1),
         reconnect: Region(1),
+        graphicsMode: Region(20),
     },
     statHover: false,
     upgradeHover: false,
@@ -215,6 +219,14 @@ const global = {
         rendergap: 0,
         lastuplink: 0,
         mspt: 0,
+    },
+    advanced: {
+        radial: false,
+        roundMap: false,
+        blackout: {
+            active: false,
+            color: "#000000"
+        },
     },
     bandwidth: {
         currentHa: 0,
@@ -234,6 +246,7 @@ const global = {
         renderhealth: false,
         renderPlayerNames: false,
         renderPlayerScores: false,
+        renderPlayerKillbar: false,
         minimapReducedInfo: false,
         fullHDMode: false,
     },
@@ -243,6 +256,11 @@ const global = {
         mspt_color: "not found",
         lag_color: "not found",
         serverGamemodeName: "Unknown",
+    },
+    renderingInfo: {
+        entities: 0,
+        turretEntities: 0,
+        entitiesWithName: 0,
     },
     lerp: (v, z, x) => {
         v = (x - v) / (z - v);
@@ -292,6 +310,7 @@ const global = {
             screenx: 0,
             screeny: 0,
             renderv: 2000,
+            animv: new util.animBar(),
             slip: 0,
             view: 1,
             target: global.canvas.target,

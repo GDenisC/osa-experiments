@@ -1,7 +1,7 @@
 function init() {
     let useOldMenu = false;
     function selectedEntities(player, run) {
-        entities.forEach((o) => {
+        for (const o of entities.values()) {
           if (
             (o !== player.body) != null &&
             util.getDistance(o, {
@@ -12,11 +12,11 @@ function init() {
             ) {
                 run(o);
             }
-        });
+        }
     }
     function targetEntities(player, test = () => true) {
         let array = [];
-        entities.forEach((o) => {
+        for (const o of entities.values()) {
           if (
             (o !== player.body) != null &&
             test(o) &&
@@ -28,7 +28,7 @@ function init() {
             ) {
                 array.push(o);
             }
-        });
+        };
         return array;
     }
     function target(player) {
@@ -36,6 +36,17 @@ function init() {
             x: player.body.x + player.target.x,
             y: player.body.y + player.target.y,
         };
+    }
+    function nearest(array, location, test = () => true) {
+        let lowest = Infinity, closest;
+        for (const instance of array.values()) {
+            let distance = (instance.x - location.x) ** 2 + (instance.y - location.y) ** 2;
+            if (distance < lowest && test(instance, distance)) {
+                lowest = distance;
+                closest = instance;
+            }
+        }
+        return closest;
     }
     function makeHelpList(command) {
         let name = command.name;
@@ -95,7 +106,7 @@ function init() {
             run: ({ socket, player }) => {
                 if (socket.permissions?.class) {
                     player.body.define({ RESET_UPGRADES: true, BATCH_UPGRADES: false });
-                    player.body.define(socket.permissions?.class || c.SPAWN_CLASS);
+                    player.body.define(socket.permissions?.class || Config.SPAWN_CLASS);
                 } else {
                     player.body.define({ RESET_UPGRADES: true, BATCH_UPGRADES: false });
                     player.body.define("healer");
@@ -130,6 +141,7 @@ function init() {
             name: "Teleport",
             keys: [[[69, "E"]]],
             level: 1,
+            operatorAccess: true,
             run: ({ player }) => {
                 player.body.x += player.target.x;
                 player.body.y += player.target.y;
@@ -188,16 +200,16 @@ function init() {
                 let dragged = [];
                 let tx = player.body.x + player.target.x;
                 let ty = player.body.y + player.target.y;
-                entities.forEach((e) => {
-                    if (e.bond) return;
-                  if (
-                    !(e.type === "mazeWall" && e.shape === 4) &&
-                    (e.x - tx) * (e.x - tx) + (e.y - ty) * (e.y - ty) <
-                      e.size * e.size * 1
-                  ) {
-                    dragged.push({ e, dx: e.x - tx, dy: e.y - ty });
-                  }
-                });
+                for (const e of entities.values()) {
+                    if (e.bond) continue;
+                    if (
+                        !(e.type === "mazeWall" && e.shape === 4) &&
+                        (e.x - tx) * (e.x - tx) + (e.y - ty) * (e.y - ty) <
+                        e.size * e.size * 1
+                    ) {
+                        dragged.push({ e, dx: e.x - tx, dy: e.y - ty });
+                    }
+                };
                 if (dragged.length === 0) {
                   socket.talk("m", 4_000, "No entity picked up!");
                   return;
@@ -267,7 +279,7 @@ function init() {
                     pos = { x: gridCell.x, y: gridCell.y };
                     let checkWall = targetEntities(player, o => o.type === "wall");
                     if (!checkWall.length) {
-                        let o = new Entity(pos, false, gameManager);
+                        let o = new Entity(pos);
                         o.define("wall");
                         o.SIZE = gameManager.room.wallGrid.width / gameManager.room.wallGrid.xgrid / 2 / lazyRealSizes[4] * Math.SQRT2 - 2;
                         o.team = -101;
@@ -404,7 +416,8 @@ function init() {
                     if (o.bond) return;
                     let color = getTeamColor(o.team);
                     player.body.team = o.team;
-                    player.body.color.base = color;
+                    
+                    if (color < 0) player.body.color.base = color;
                     changedTeamToEntity = {
                         team: o.team
                     };
@@ -528,10 +541,10 @@ function init() {
             operatorAccess: true,
             run: ({ player }) => {
                 const range = 255; // 10 ** 2 was 100, but should be radius, not squared
-                const force = 35;
+                const force = 45;
                 let t = target(player);
-                for (let entity of entities) {
-                    if (entity === player.body) continue; // Don't blast yourself
+                for (let entity of entities.values()) {
+                    if (entity.type == "wall") continue;
                     let dx = entity.x - t.x;
                     let dy = entity.y - t.y;
                     let dist = Math.sqrt(dx * dx + dy * dy);
@@ -660,14 +673,13 @@ function init() {
         {
             name: "Ban",
             keys: [[[79, "O"]]],
-            level: 3,
-            operatorAccess: true,
+            level: 2,
             run: ({ socket, player }) => {
                 const types = 2,
-                    typeNames = [["temporary", "temporarily"], ["permanent", "permanently"]];
+                    typeNames = [["permanent", "permanently"], ["temporary", "temporarily"]];
                 function selectPlayer(player) {
                     let found = null;
-                    entities.forEach((o) => {
+                    for (const o of entities.values()) {
                         if (
                             o !== player.body &&
                             o.isPlayer &&
@@ -678,19 +690,19 @@ function init() {
                         ) {
                             found = o;
                         }
-                    });
+                    };
                     return found;
                 }
                 let selected = selectPlayer(player);
                 if (selected && selected.socket) {
                     const perms = selected.socket.permissions || {};
-                    if (perms.shiny || perms.yt || perms.dev) {
-                        socket.talk("m", 5_000, "You can't ban a shiny, YouTuber, or developer!");
+                    if (perms && perms.FullOPperms) {
+                        socket.talk("m", 5_000, "You cannot ban this player!");
                         return;
                     }
                     let type = player.body.store.banCommandType ?? 0;
                     let name = (selected.body && selected.body.name ? selected.body.name.trim() : "unnamed");
-                    if (type === 0) {
+                    if (type === 1) {
                         selected.socket.ban("Banned by operator.");
                     } else {
                         selected.socket.permaban("Permanently banned by operator.");
@@ -758,6 +770,36 @@ function init() {
             }
         },
         {
+            name: "Operator access",
+            description: "Gives player operator access.",
+            keys: [[[186]], [[59]]],
+            displayKey: ";",
+            level: 1,
+            operatorAccess: true,
+            run: ({ player }) => {
+                selectedEntities(player, (o) => {
+                    if (o.isPlayer && o.socket) {
+                        if (o.hasOperator) {
+                            if (o.socket.permissions && o.socket.permissions.level > 1) {
+                                player.body.sendMessage("This player is already an operator!");
+                            } else {
+                                o.hasOperator = false;
+                                o.socket.talk("m", 8_000, "You are no longer an operator.");
+                                player.body.sendMessage(
+                                    "Operator access removed to " + `${o.name === "" ? "A unnamed Player" : o.name}` + "."
+                                );
+                            }
+                            return 1;
+                        }
+                        o.hasOperator = true;
+                        o.socket.status.hasOperator = true;
+                        o.socket.talk("m", 8_000, "You are now an operator.");
+                        player.body.sendMessage("Operator access given to " + `${o.name === "" ? "A unnamed Player" : o.name}` + ".");
+                    }
+                });
+            },
+        },
+        {
             name: "Unknown",
             keys: [[["default", "Unknown"]]],
             level: 1,
@@ -789,7 +831,7 @@ function init() {
               player: socket.player,
               level: permsLevel,
               operator: socket.player.body.hasOperator,
-              gameManager: socket.player.body.gameManager,
+              gameManager: global.gameManager,
             });
             socket.player.body.refreshBodyAttributes();
           } catch (e) {
@@ -800,6 +842,6 @@ function init() {
 }
 
 
-// If you dont want to add the key commands, just uncomment the return line.
+// If you don't want to add the key commands, just uncomment the return line.
 // return;
 init();

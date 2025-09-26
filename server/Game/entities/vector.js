@@ -38,7 +38,7 @@ class Vector {
 // Gets the nearest
 function nearest(array, location, test = () => true) {
     let lowest = Infinity, closest;
-    for (let instance of array) {
+    for (const instance of array) {
         let distance = (instance.x - location.x) ** 2 + (instance.y - location.y) ** 2;
         if (distance < lowest && test(instance, distance)) {
             lowest = distance;
@@ -49,13 +49,39 @@ function nearest(array, location, test = () => true) {
 }
 
 function timeOfImpact(p, v, s) {
-    // Requires relative position and velocity to aiming point
-    let a = s ** 2 - (v.x ** 2 + v.y ** 2),
-        b = p.x * v.x + p.y * v.y,
-        c = p.x ** 2 + p.y ** 2,
-        d = b ** 2 + a * c
-    if (d < 0) return 0;
-    return Math.max(0, (b + Math.sqrt(d)) / a) * 0.2;
+    // p = relative position vector to target
+    // v = relative velocity vector (target velocity - projectile velocity)
+    // s = projectile speed
+    
+    // Quadratic equation: |p + v*t| = s*t
+    // Expanding: (p.x + v.x*t)² + (p.y + v.y*t)² = (s*t)²
+    // Results in: (v.x² + v.y² - s²)t² + 2(p.x*v.x + p.y*v.y)t + (p.x² + p.y²) = 0
+    
+    let a = v.x * v.x + v.y * v.y - s * s;
+    let b = 2 * (p.x * v.x + p.y * v.y);
+    let c = p.x * p.x + p.y * p.y;
+    
+    let discriminant = b * b - 4 * a * c;
+    
+    // No real solution means interception is impossible
+    if (discriminant < 0) return 0;
+    
+    let sqrtDiscriminant = Math.sqrt(discriminant);
+    
+    // Handle the case where projectile speed equals target speed
+    if (Math.abs(a) < 1e-10) {
+        // Linear equation: bt + c = 0
+        return b !== 0 ? Math.max(0, -c / b) : 0;
+    }
+    
+    // Two potential solutions
+    let t1 = (-b + sqrtDiscriminant) / (2 * a);
+    let t2 = (-b - sqrtDiscriminant) / (2 * a);
+    
+    // We want the smallest positive time
+    let validTimes = [t1, t2].filter(t => t > 1e-10); // Small epsilon to avoid numerical issues
+    
+    return validTimes.length > 0 ? Math.min(...validTimes) : 0;
 }
 
 // Null vector that will turn a vector into null.

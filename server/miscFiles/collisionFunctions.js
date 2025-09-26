@@ -2,7 +2,7 @@ function simplecollide(my, n) {
     // Cache values to avoid redundant calculations
     const dx = my.x - n.x, dy = my.y - n.y;
     const dist = Math.hypot(dx, dy);
-    const difference = (1 + dist / 2) * my.gameManager.runSpeed;
+    const difference = (1 + dist / 2) * global.gameManager.runSpeed;
     const pushability1 = my.intangibility ? 1 : my.pushability;
     const pushability2 = n.intangibility ? 1 : n.pushability;
     const factor = pushability1 / (pushability2 + 0.3) * 0.05 / difference;
@@ -26,7 +26,7 @@ function firmcollide(my, n, buffer = 0) {
     if (buffer > 0 && distSq <= bufferLimit * bufferLimit) {
         const dist = Math.sqrt(distSq);
         const factor = ((my.acceleration + n.acceleration) * (bufferLimit - dist)) /
-            (buffer * my.gameManager.runSpeed * dist);
+            (buffer * global.gameManager.runSpeed * dist);
         const accelX = dx * factor, accelY = dy * factor;
         my.accel.x -= accelX;
         my.accel.y -= accelY;
@@ -37,8 +37,8 @@ function firmcollide(my, n, buffer = 0) {
 
     const dist = Math.sqrt(distSq);
     const overlap = totalSize - dist;
-    const iterations = Math.min(150, (overlap * 20) | 0);
-    const factor = 0.05 * iterations / (dist * my.gameManager.runSpeed);
+    const iterations = Math.min(20, (overlap * 20) | 0);
+    const factor = 0.01 * iterations / (dist * global.gameManager.runSpeed);
     const adjustX = dx * factor, adjustY = dy * factor;
 
     const mySpeed = Math.hypot(my.velocity.x, my.velocity.y);
@@ -213,14 +213,22 @@ function advancedcollide(my, n, doDamage, doInelastic, nIsFirmCollide = false) {
         } else {
             elasticity *= 2;
         }
-        let spring = 2 * Math.sqrt(savedHealthRatio_me * savedHealthRatio_n) / my.gameManager.runSpeed,
+        let knockback;
+        if (my.knockback && n.knockback) {
+            knockback = my.knockback * n.knockback;
+        } else if (my.knockback) {
+            knockback = my.knockback;
+        } else if (n.knockback) {
+            knockback = n.knockback;
+        } else knockback = Config.KNOCKBACK_CONSTANT;
+        let spring = 2 * Math.sqrt(savedHealthRatio_me * savedHealthRatio_n) / global.gameManager.runSpeed,
             elasticImpulse = Math.pow(combinedDepth_down, 2) * elasticity * component * my.mass * n.mass / (my.mass + n.mass),
-            springImpulse = c.KNOCKBACK_CONSTANT * spring * combinedDepth_up,
+            springImpulse = knockback * spring * combinedDepth_up,
             impulse = -(elasticImpulse + springImpulse) * (1 - my.intangibility) * (1 - n.intangibility),
             force_x = impulse * direction_x,
             force_y = impulse * direction_y,
-            modifier_me = c.KNOCKBACK_CONSTANT * my.pushability / my.mass * deathFactor_n,
-            modifier_n = c.KNOCKBACK_CONSTANT * n.pushability / n.mass * deathFactor_me;
+            modifier_me = knockback * my.pushability / my.mass * deathFactor_n,
+            modifier_n = knockback * n.pushability / n.mass * deathFactor_me;
         my.accel.x += modifier_me * force_x;
         my.accel.y += modifier_me * force_y;
         n.accel.x -= modifier_n * force_x;
@@ -254,7 +262,7 @@ function mooncollide(moon, bounce) {
 
 function mazewallcollidekill(bounce, wall) {
     if (bounce.type !== 'tank' && bounce.type !== 'miniboss' && bounce.type !== 'food' && bounce.type !== 'crasher') {
-        bounce.kill();
+        bounce.destroy();
     } else {
         bounce.collisionArray.push(wall);
     }

@@ -14,9 +14,9 @@ const skcnv = {
 let curvePoints = [];
 
 let curve = (x) => {
-    let index = x * c.MAX_SKILL;
+    let index = x * Config.MAX_SKILL;
     if (!curvePoints[index])
-        curvePoints[index] = Math.log(4 * (index / c.MAX_SKILL) + 1) / 1.6;
+        curvePoints[index] = Math.log(4 * (index / Config.MAX_SKILL) + 1) / 1.6;
     return curvePoints[index];
 };
 function apply(f, x) {
@@ -28,7 +28,7 @@ class Skill {
         // Just skill stuff.
         this.raw = inital;
         this.caps = [];
-        this.setCaps([ c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL, c.MAX_SKILL ]);
+        this.setCaps([ Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL, Config.MAX_SKILL ]);
         this.name = [
             "Reload",
             "Bullet Penetration",
@@ -57,13 +57,13 @@ class Skill {
         this.acl = 0;
         this.reset();
     }
-    reset() {
+    reset(resetLSPF = true) {
         this.points = 0;
         this.score = 0;
         this.deduction = 0;
         this.level = 0;
-        this.canUpgrade = false;
-        this.LSPF = null;
+        this.levelUpScore = 1;
+        if (resetLSPF) this.LSPF = null;
         this.set([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
         this.maintain();
     }
@@ -76,7 +76,7 @@ class Skill {
         }
         let attrib = [];
         for (let i = 0; i < 10; i++) {
-            attrib[i] = curve(this.raw[i] / c.MAX_SKILL);
+            attrib[i] = curve(this.raw[i] / Config.MAX_SKILL);
         }
         this.rld = Math.pow(0.5, attrib[skcnv.rld]);
         this.pen = apply(2.5, attrib[skcnv.pen]);
@@ -86,9 +86,9 @@ class Skill {
         this.acl = apply(0.5, attrib[skcnv.rld]);
         this.rst = 0.5 * attrib[skcnv.str] + 2.5 * attrib[skcnv.pen];
         this.ghost = attrib[skcnv.pen];
-        this.shi = c.GLASS_HEALTH_FACTOR * apply(3 / c.GLASS_HEALTH_FACTOR - 1, attrib[skcnv.shi]);
+        this.shi = Config.GLASS_HEALTH_FACTOR * apply(3 / Config.GLASS_HEALTH_FACTOR - 1, attrib[skcnv.shi]);
         this.atk = apply(0.021, attrib[skcnv.atk]);
-        this.hlt = c.GLASS_HEALTH_FACTOR * apply(2 / c.GLASS_HEALTH_FACTOR - 1, attrib[skcnv.hlt]);
+        this.hlt = Config.GLASS_HEALTH_FACTOR * apply(2 / Config.GLASS_HEALTH_FACTOR - 1, attrib[skcnv.hlt]);
         this.mob = apply(0.8, attrib[skcnv.mob]);
         this.rgn = apply(25, attrib[skcnv.rgn]);
         this.brst = 0.3 * (0.5 * attrib[skcnv.atk] + 0.5 * attrib[skcnv.hlt] + attrib[skcnv.rgn]);
@@ -120,34 +120,28 @@ class Skill {
         this.update();
     }
     maintain() {
-        if (this.score - this.deduction >= this.levelScore) {
-            this.deduction += this.levelScore;
-            this.level += 1;
-            this.points += this.levelPoints;
-            if (this.level < c.LEVEL_CAP) {
-                if (this.level % c.TIER_MULTIPLIER && this.level <= c.MAX_UPGRADE_TIER * c.TIER_MULTIPLIER) {
-                    this.canUpgrade = true;
-                }
-                this.update();
-                return true;
-            }
-        }
-        return false;
+        if (this.score - this.deduction < this.levelScore) return false;
+
+        this.deduction = this.levelUpScore;
+        this.level += 1;
+        this.levelUpScore = this.scoreForLevel;
+        this.points += this.levelPoints;
+        this.update();
+        return true;
+    }
+    get scoreForLevel() {
+        return Math.ceil(Math.pow(this.level, 3) * 0.3083);
     }
     get levelScore() {
-        let sscore = 1.74 * Math.pow(this.level + 1, 1.79503264) - 0.53 * this.level
-        return Math.floor(sscore);
+        return this.levelUpScore - this.deduction;
     }
     get progress() {
         return this.levelScore ? (this.score - this.deduction) / this.levelScore : 0;
     }
     get levelPoints() {
-        return this.LSPF ? this.LSPF(this.level) : c.LEVEL_SKILL_POINT_FUNCTION(this.level);
+        return this.LSPF ? this.LSPF(this.level) : Config.LEVEL_SKILL_POINT_FUNCTION(this.level);
     }
     cap(skill, real = false) {
-        if (!real && this.level < c.LEVEL_SOFT_CAP) {
-            return Math.round(this.caps[skcnv[skill]] * c.SOFT_MAX_SKILL);
-        }
         return this.caps[skcnv[skill]];
     }
     upgrade(stat) {

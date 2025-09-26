@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <script src="https://pixijs.download/release/pixi.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <meta name="description" content="Survive and shoot at others while keeping your own tank alive!">
     <meta name="robots" content="index, follow">
@@ -34,17 +35,17 @@
             <div class="startMenuHolder mainHolder">
             <div class="sliderHolder">
                 <div class="slider startMenuSlidingContent">
-                <div class="header">
-                    <a class="icon" tabindex="-1"><img src="/imgs/round.png" alt="arras.io icon"></a>
-                    <h1>arras.io</h1>
-                </div>
-                <div>
-                    <div class="horizontalSelector" id="serverFilterRegion" style="display: none;"></div>
-                    <div class="horizontalSelector" id="serverFilterMode" style="display: none;"></div>
-                </div>
-                <div class="serverSelector shadowScroll"><table><tbody id="serverSelector"></tbody></table></div>
-                <input type="text" autofocus tabindex="1" spellcheck="false" placeholder="This is the tale of" id="playerNameInput" maxlength="24">
-                <input type="text" class="conceal" tabindex="3" placeholder="Insert token here" id="playerKeyInput" maxlength="64" />
+                    <div class="header">
+                        <a class="icon" tabindex="-1"><img src="/imgs/round.png" alt="arras.io icon"></a>
+                        <h1>arras.io</h1>
+                    </div>
+                    <div>
+                        <div class="horizontalSelector" id="serverFilterRegion" style="display: none;"></div>
+                        <div class="horizontalSelector" id="serverFilterMode" style="display: none;"></div>
+                    </div>
+                    <div class="serverSelector shadowScroll"><table><tbody id="serverSelector"></tbody></table></div>
+                    <input type="text" autofocus tabindex="1" spellcheck="false" placeholder="This is the tale of" id="playerNameInput" maxlength="24">
+                    <input type="text" class="conceal" tabindex="3" placeholder="Insert token here" id="playerKeyInput" maxlength="64" />
                 </div>
                 <div class="slider" id="startMenuSlidingTrigger">
                 <h3>
@@ -122,12 +123,15 @@
                             </tr>
                             <tr>
                                 <td><div><label class="container"><input id="optRenderScores" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark" checked></span>Player Scores</label></div></td>
+                                <td><div><label class="container"><input id="optRenderKillbar" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark" checked></span>Kill bar</label></div></td>
+                            </tr>
+                            <tr>
                                 <td><div><label class="container"><input id="optReducedInfo" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark"></span>Reduced Info Bar</label></div></td>
                             </tr>
                         </table>
                     </div>
                     <div id="tabOptions">
-                        <div class="optionsHeader">Performance</div>
+                        <div class="optionsHeader">Performance & Graphics</div>
                         <table>
                             <tr>
                                 <td><div><label class="container"><input id="optFancy" tabindex="-1" class="checkbox" type="checkbox"><span class="checkmark" checked></span>Fancy Animations</label></div></td>

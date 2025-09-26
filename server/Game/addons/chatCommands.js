@@ -4,6 +4,7 @@ const prefix = "$";
 let commands = [
   {
         command: ["help"],
+        description: "Show this help menu.",
         level: 0,
         run: ({ socket, level }) => {
             let useOldMenu = false;
@@ -33,31 +34,30 @@ let commands = [
             let sendAvailableLeaderboardMessage = () => {
                 let lines = [
                     "Available leaderboards:",
-                    "- default",
-                    "- players",
-                    "- bosses",
-                    "- global",
+                    ...leaderboards.map(lb => `- ${lb}`)
                 ];
                 socket.talk("Em", 10_000, JSON.stringify(lines));
+            };
+
+            const leaderboards = [
+                "default",
+                "players",
+                "bosses",
+                "global",
+            ];
+            const choice = args[0];
+
+            if (!choice) {
+                sendAvailableLeaderboardMessage(socket);
+                return;
             }
-            if (!args[0]) sendAvailableLeaderboardMessage(); else {
-                let sendMessage = () => {
-                    socket.status.forceNewBroadcast = true;
-                    socket.talk("m", 4_000, "Leaderboard changed.");
-                }
-                if (args[0] == "default") {
-                    socket.status.selectedLeaderboard = "default";
-                    sendMessage();
-                } else if (args[0] == "players") {
-                    socket.status.selectedLeaderboard = "players";
-                    sendMessage();
-                } else if (args[0] == "bosses") {
-                    socket.status.selectedLeaderboard = "bosses";
-                    sendMessage();
-                } else if (args[0] == "global") {
-                    socket.status.selectedLeaderboard = "global";
-                    sendMessage();
-                } else sendAvailableLeaderboardMessage();
+
+            if (leaderboards.includes(choice)) {
+                socket.status.selectedLeaderboard = choice;
+                socket.status.forceNewBroadcast = true;
+                socket.talk("m", 4_000, "Leaderboard changed.");
+            } else {
+                socket.talk("m", 4_000, "Unknown leaderboard.");
             }
         }
     },
@@ -66,69 +66,85 @@ let commands = [
         description: "Enable or disable chat",
         level: 0,
         run: ({ socket }) => {
-            if (!socket.status.disablechat) {
-                socket.status.disablechat = true;
-                socket.talk("m", 3_000, "In-game chat disabled.");
-            } else {
-                socket.status.disablechat = false;
-                socket.talk("m", 3_000, "In-game chat enabled.");
-            }
+            socket.status.disablechat = socket.status.disablechat ?? false;
+            socket.talk("m", 3_000, `In-game chat ${socket.status.disablechat ? "enabled" : "disabled"}`);
         }
     },
     {
         command: ["arena"],
-        description: "Enable or disable chat",
+        description: "Manage the arena",
         level: 1,
         hidden: true,
         run: ({ socket, args, gameManager }) => {
             let sendAvailableArenaMessage = () => {
                 let lines = [
                     "Help menu:",
-                    "- $ arena size dynamic - Make the size of the arena dynamic, depending on the number of players",
-                    "- $ arena size <width> <height> - Set the size of the arena",
-                    "- $ arena team <team> - Set the number of teams, from 0 (FFA) to 4 (4TDM)",
-                    "- $ arena spawnpoint [x] [y] - Set a location where all players spawn on default",
-                    "- $ arena close - Close the arena",
+                    `- ${prefix} arena size dynamic - Make the size of the arena dynamic, depending on the number of players`,
+                    `- ${prefix} arena size <width> <height> - Set the size of the arena`,
+                    `- ${prefix} arena team <team> - Set the number of teams, from 0 (FFA) to 4 (4TDM)`,
+                    `- ${prefix} arena spawnpoint [x] [y] - Set a location where all players spawn on default`,
+                    `- ${prefix} arena close - Close the arena`,
                 ];
-                if (!gameManager.gameSettings.SANDBOX) lines.splice(1, 1)
+                if (!Config.SANDBOX) lines.splice(1, 1)
                 socket.talk("Em", 10_000, JSON.stringify(lines));
             }
             if (!args[0]) sendAvailableArenaMessage(); else {
-                if (args[0] == "size") {
-                    if (args[1] == "dynamic") {
-                        if (!gameManager.gameSettings.SANDBOX) return socket.talk("m", 3_000, "This command is only available on sandbox.");
-                        gameManager.room.settings.sandbox.do_not_change_arena_size = false;
-                    } else {
-                        if (!args[1]) return socket.talk("m", 3_000, "Invalid arguments.");
-                        if (!args[2]) return socket.talk("m", 3_000, "Invalid arguments.");
-                        if (args[1] % 2 === 0 && args[2] % 2 === 0) {
-                            if (gameManager.gameSettings.SANDBOX) gameManager.room.settings.sandbox.do_not_change_arena_size = true;
-                            gameManager.updateBounds(args[1] * 30, args[2] * 30);
-                        } else socket.talk("m", 3_000, "Arena size must be even.");
-                    }
-                } else if (args[0] == "team") {
-                    if (!args[1]) return socket.talk("m", 3_000, "Invalid argument.");
-                    if (args[1] == "0") {
-                        gameManager.gameSettings.MODE = "ffa";
-                        gameManager.gameSettings.TEAMS = null;
-                        socket.rememberedTeam = undefined;
-                    } else {
-                        gameManager.gameSettings.MODE = "tdm";
-                        gameManager.gameSettings.TEAMS = args[1];
-                        socket.rememberedTeam = undefined;
-                    }
-                } else if (args[0] == "spawnpoint") {
-                    if (!args[1]) return socket.talk("m", 3_000, "Invalid arguments.");
-                    if (!args[2]) return socket.talk("m", 3_000, "Invalid arguments.");
-                    socket.talk("m", 4_000, "Spawnpoint set.");
-                    global.spawnPoint = {
-                        x: parseInt(args[1] * 30),
-                        y: parseInt(args[2] * 30),
-                    }
-                } else if (args[0] == "close") {
-                    util.warn(`${socket.player.body.name == "" ? `A unnamed player (ip: ${socket.ip})` : socket.player.body.name} has closed the arena.`);
-                    gameManager.closeArena();
-                } else socket.talk("m", 4_000, "Unknown subcommand.");
+                switch (args[0]) {
+                    case "size":
+                        if (args[1] === "dynamic") {
+                            if (!Config.SANDBOX) return socket.talk("m", 3_000, "This command is only available on sandbox.");
+                            gameManager.room.settings.sandbox.do_not_change_arena_size = false;
+                        } else {
+                            if (!args[1] || !args[2]) return socket.talk("m", 3_000, "Invalid arguments.");
+                            if (args[1] % 2 === 0 && args[2] % 2 === 0) {
+                                if (Config.SANDBOX) gameManager.room.settings.sandbox.do_not_change_arena_size = true;
+                                gameManager.updateBounds(args[1] * 30, args[2] * 30);
+                            } else {
+                                socket.talk("m", 3000, "Arena size must be even.");
+                            }
+                        }
+                        break;
+                    case "team":
+                        if (!args[1]) return socket.talk("m", 3_000, "Invalid argument.");
+                        if (args[1] === "0") {
+                            Config.MODE = "ffa";
+                            Config.TEAMS = null;
+                            socket.rememberedTeam = undefined;
+                        } else {
+                            Config.MODE = "tdm";
+                            Config.TEAMS = args[1];
+                            socket.rememberedTeam = undefined;
+                        }
+                        break;
+                    case "spawnpoint":
+                        if (!args[1] || !args[2]) return socket.talk("m", 3_000, "Invalid arguments.");
+                        socket.talk("m", 4_000, "Spawnpoint set.");
+                        global.spawnPoint = {
+                            x: parseInt(args[1] * 30),
+                            y: parseInt(args[2] * 30),
+                        };
+                        break;
+                    case "close":
+                        util.warn(`${socket.player.body.name === "" ? `An unnamed player (ip: ${socket.ip})` : socket.player.body.name} has closed the arena.`);
+                        gameManager.closeArena();
+                        break;
+                    default:
+                        socket.talk("m", 4_000, "Unknown subcommand.");
+                }
+            }
+        }
+    },
+    {
+        command: ["broadcast"],
+        description: "Broadcast a message to all players.",
+        level: 2,
+        hidden: true,
+        run: ({ args, socket }) => {
+            if (!args[0]) {
+                socket.talk("m", 5_000, "No message specified.");
+            }
+            else {
+                gameManager.socketManager.broadcast(args.join(" "));
             }
         }
     },
@@ -145,7 +161,7 @@ let commands = [
                 socket.talk("Em", 10_000, JSON.stringify(lines));
             }
             let command = args[0];
-            if (command == "reloaddefs" || command == "redefs") {
+            if (command === "reloaddefs" || command === "redefs") {
                 /* IMPORT FROM (defsReloadCommand.js) */
                 if (!global.reloadDefinitionsInfo) {
                     global.reloadDefinitionsInfo = {
@@ -158,7 +174,7 @@ let commands = [
                 if (sinceLastReload < 5000) {
                     socket.talk('m', Config.MESSAGE_DISPLAY_TIME, `Wait ${Math.floor((5000 - sinceLastReload) / 100) / 10} seconds and try again.`);
                     return;
-                };
+                }
                 // Set the timeout timer ---
                 lastReloadTime = time;
 
@@ -172,7 +188,7 @@ let commands = [
                 Class = {};
 
                 // Log it.
-                util.warn(`[IMPORTANT] Definitions are going to be reloaded on server ${gameManager.gamemode} (${gameManager.serverProperties.id})!`);
+                util.warn(`[IMPORTANT] Definitions are going to be reloaded on server ${gameManager.gamemode} (${gameManager.webProperties.id})!`);
 
                 // Purge all cache entries of every file in definitions
                 for (let file in require.cache) {
@@ -192,8 +208,8 @@ let commands = [
                 };
 
                 // Redefine all tanks and bosses
-                for (let entity of entities) {
-                    // If it's a valid type and it's not a turret
+                for (let entity of entities.values()) {
+                    // If it's a valid type, and it's not a turret
                     if (!['tank', 'miniboss', 'food'].includes(entity.type)) continue;
                     if (entity.bond) continue;
 
@@ -204,7 +220,7 @@ let commands = [
                     // Redefine all properties and update values to match
                     entity.upgrades = [];
                     entity.define(entityDefs);
-                    for (let instance of entities) {
+                    for (let instance of entities.values()) {
                         if (
                             instance.settings.clearOnMasterUpgrade &&
                             instance.master.id === entity.id
@@ -231,16 +247,21 @@ let commands = [
                     // Erase cached mockups for each connected clients.
                     gameManager.clients.forEach(socket => {
                         socket.status.mockupData = socket.initMockupList();
-                        socket.talk("RE"); // Also reset the global.entities in client so it can refresh.
+                        socket.status.selectedLeaderboard2 = socket.status.selectedLeaderboard;
+                        socket.status.selectedLeaderboard = "stop";
+                        socket.talk("RE"); // Also reset the global.entities in the client so it can refresh.
                         if (Config.LOAD_ALL_MOCKUPS) for (let i = 0; i < mockupData.length; i++) {
                             socket.talk("M", mockupData[i].index, JSON.stringify(mockupData[i]));
                         }
+                        socket.status.selectedLeaderboard = socket.status.selectedLeaderboard2;
+                        delete socket.status.selectedLeaderboard2;
+                        socket.talk("CC"); // Clear cache
                     });
                     // Log it again.
-                    util.warn(`[IMPORTANT] Definitions are successfully reloaded on server ${gameManager.gamemode} (${gameManager.serverProperties.id})!`);
+                    util.warn(`[IMPORTANT] Definitions are successfully reloaded on server ${gameManager.gamemode} (${gameManager.webProperties.id})!`);
                     gameManager.gameHandler.run();
                 }, 1000)
-            } else socket.talk("m", 4_000, "Unknown subcommand, here's a help list."), sendAvailableDevCommandsMessage();
+            } else sendAvailableDevCommandsMessage();
         },
     },
 ]
@@ -262,12 +283,26 @@ function runCommand(socket, message, gameManager) {
             } catch (e) {
                 console.error("Error while running ", commandName);
                 console.error(e);
+                socket.talk("m", 5_000, "An error occurred while running this command.");
             }
         } else socket.talk("m", 5_000, "You do not have access to this command.");
     } else socket.talk("m", 5_000, "Unknown command.");
 
     return true;
 }
+global.addChatCommand = function (command) {
+    if (!command.command || !command.run) {
+        throw new Error("Invalid command format. A command must have at least a 'command' and a 'run' property.");
+    }
+    if (!Array.isArray(command.command)) {
+        throw new Error("Invalid command format. The 'command' property must be an array of strings.");
+    }
+    if (commands.find(c => c.command.some(cmd => command.command.includes(cmd)))) {
+        throw new Error("A command with this name already exists.");
+    }
+    commands.push(command);
+}
+
 
 /** CHAT MESSAGE EVENT **/
 module.exports = ({ Events }) => {

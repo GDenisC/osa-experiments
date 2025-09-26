@@ -15,6 +15,9 @@ class Canvas {
             this[id].blur();
             this.cv.focus();
             global.showChat = false;
+            setTimeout(() => {
+                if (!this.chatBox.loadedProperly) this.chatBox.remove(), this.chatInput.remove(), this.chatBox = false;
+            }, 50)
             if (!this[id].value) return;
             if (event.keyCode === global.KEY_ENTER) this.socket.talk('M', this[id].value);
             this[id].value = "";
@@ -393,39 +396,123 @@ class Canvas {
             global.socket.cmd.reactNow();
         }
     }
-    record() {
-        let captureCanvas = () => {
-            const canvas = this.cvb.cloneNode();
-            const ctx = canvas.getContext("2d");
-            ctx.fillStyle = "#000000";
-            const toMerge = [this.cvb, this.cvg, this.cvu];
-            const anim = () => {
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                toMerge.forEach(layer => ctx.drawImage(layer, 0, 0));
-                requestAnimationFrame(anim);
-            };
-            anim();
-            return canvas;
+  record() {
+        let AdvancedCanvasCapturer = () => {
+            let canvas = this.cvb.cloneNode();
+            let ctx = canvas.getContext("2d");
+            let toMerge = [];
+            let stop = false;
+            return {
+                init: () => {
+                    let glCanvas = global.glCanvas || null;
+                    // Merge all layers, including WebGL2 if present
+                    toMerge = glCanvas
+                    ? [this.cvb, glCanvas, this.cvg, this.cvu]
+                    : [this.cvb, this.cvg, this.cvu];
+                    ctx.canvas.width = this.cv.width;
+                    ctx.canvas.height = this.cv.height;
+                },
+                start: () => {
+                    stop = false; // Reset flag
+                    ctx.canvas.width = this.cv.width; // Set Width
+                    ctx.canvas.height = this.cv.height; // Set Height
+                    const anim = () => {
+                        if (stop) return;
+                        if (ctx.canvas.width !== this.cv.width || ctx.canvas.height !== this.cv.height) {
+                            global.createMessage("Recorder stopped due to resize change. Saving file...", 5_000);
+                            this.videoRecorder.stop();
+                            this.videoRecorderCanvas.stop();
+                            setTimeout(() => this.videoRecorder.download(), 200);
+                        }
+                        ctx.fillRect(0, 0, this.cv.width, this.cv.height);
+                        toMerge.forEach(layer => {
+                            if (layer) ctx.drawImage(layer, 0, 0);
+                        });
+                        requestAnimationFrame(anim);
+                    };
+                    anim();
+                },
+                stop: () => { stop = true; },
+                getCanvas: () => canvas
+            }
         }
         if (this.cv.captureStream && window.MediaRecorder) {
             if (this.videoRecorder) {
                 switch (this.videoRecorder.state) {
                     case "inactive":
-                      global.createMessage("Recorder Started!", 2_000);
-                      this.videoRecorder.start();
-                      break;
+                        global.createMessage("Recorder Started!", 2_000);
+                        this.videoRecorderCanvas.start();
+                        this.videoRecorder.start();
+                        break;
                     case "recording":
-                      global.createMessage("Recorder Stopped! Saving file...", 5_000);
-                      this.videoRecorder.stop();
-                      setTimeout(() => this.videoRecorder.download(), 200);
+                        global.createMessage("Recorder Stopped! Saving file...", 5_000);
+                        this.videoRecorder.stop();
+                        this.videoRecorderCanvas.stop();
+                        setTimeout(() => this.videoRecorder.download(), 200);
                 }
             } else {
-                let canvas = captureCanvas();
-                this.videoRecorder = new AdvancedRecorder(canvas, 60);
+                this.videoRecorderCanvas = AdvancedCanvasCapturer();
+                this.videoRecorderCanvas.init();
+                this.videoRecorderCanvas.start();
+                this.videoRecorder = new AdvancedRecorder(this.videoRecorderCanvas.getCanvas(), 60);
                 global.createMessage("Recorder Started!", 2_000);
                 this.videoRecorder.start();
             }
         }
+    }
+    screenshot() {
+        let AdvancedCanvasCapturer = () => {
+            let canvas = this.cvb.cloneNode();
+            let ctx = canvas.getContext("2d");
+            let toMerge = [];
+            return {
+                init: () => {
+                    let glCanvas = global.glCanvas || null;
+                    // Merge all layers, including WebGL2 if present
+                    toMerge = glCanvas
+                    ? [this.cvb, glCanvas, this.cvg, this.cvu]
+                    : [this.cvb, this.cvg, this.cvu];
+                    ctx.canvas.width = this.cv.width;
+                    ctx.canvas.height = this.cv.height;
+                },
+                capture: () => {
+                    ctx.canvas.width = this.cv.width; // Set Width
+                    ctx.canvas.height = this.cv.height; // Set Height
+                    ctx.fillStyle = "#ffffff"
+                    ctx.fillRect(0, 0, this.cv.width, this.cv.height);
+                    toMerge.forEach(layer => {
+                        if (layer) ctx.drawImage(layer, 0, 0);
+                    });
+                    
+                },
+                getCanvas: () => canvas
+            }
+        }
+        if (this.screenshotCanvas) {
+            this.screenshotCanvas.capture();
+        } else {
+            this.screenshotCanvas = AdvancedCanvasCapturer();
+            this.screenshotCanvas.init();
+            this.screenshotCanvas.capture();
+        }
+        let cv = this.screenshotCanvas.getCanvas();
+        var x = cv.toDataURL(),
+            k = atob(x.split(",")[1]);
+        x = x.split(",")[0].split(":")[1].split(";")[0];
+        let p = new Uint8Array(k.length);
+        for (let a = 0; a < k.length; a++) p[a] = k.charCodeAt(a);
+        let q = URL.createObjectURL(new Blob([p], {type: x})),
+        w = document.createElement("a");
+        w.style.display = "none";
+        w.setAttribute("download", "osa-screenshot.png");
+        w.setAttribute("href", q);
+        document.body.appendChild(w);
+        setTimeout(() => {
+            URL.revokeObjectURL(q);
+            document.body.removeChild(w);
+        }, 100);
+        w.click();
+        global.createMessage("Saving screenshot...", 3_000);
     }
     // MOBILE SUPPORT
     touchStart(e) {
@@ -605,7 +692,6 @@ class Canvas {
     touchEnd(e) {
         e.preventDefault();
         for (let touch of e.changedTouches) {
-            let mpos = { x: touch.clientX, y: touch.clientY };
             let id = touch.identifier;
       
             if (this.movementTouch === id) {

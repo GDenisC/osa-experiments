@@ -56,7 +56,8 @@ import * as socketStuff from "./socketinit.js";
 
     var upgradeSpin = 0,
         lastPing = 0,
-        lasttick = 0;
+        lasttick = 0,
+        fovlasttick = 0;
 
     // Tips setup :D
     let tips = global.tips[Math.floor(Math.random() * global.tips.length)];
@@ -138,7 +139,6 @@ import * as socketStuff from "./socketinit.js";
             }
         }
     }
-
     window.onload = async () => {
         // Prepare the server selector
         global.serverMap = {};
@@ -170,6 +170,7 @@ import * as socketStuff from "./socketinit.js";
         util.retrieveFromLocalStorage("optLerpAnim");
         util.retrieveFromLocalStorage("optBorders");
         util.retrieveFromLocalStorage("optNoGrid");
+        util.retrieveFromLocalStorage("optRenderKillbar");
         util.retrieveFromLocalStorage("seperatedHealthbars");
         util.retrieveFromLocalStorage("autoLevelUp");
         util.retrieveFromLocalStorage("optMobile");
@@ -285,8 +286,6 @@ import * as socketStuff from "./socketinit.js";
         window.addEventListener("resize", resizeEvent);
         // Resizing stuff
         resizeEvent();
-        // Start client
-        startClient();
     };
 
     // Sliding between options menu.
@@ -331,7 +330,7 @@ import * as socketStuff from "./socketinit.js";
                 e !== g &&
                     (buttonTabs.children[e].classList.remove("active"), // Remove the active class
                         buttonTabs.children[g].classList.add("active"), // Add the clicked active class
-                        (tabOptions[e].style.display = "none"), // Dont display the old menu.
+                        (tabOptions[e].style.display = "none"), // don't display the old menu.
                         (tabOptions[g].style.display = "block"), // Display the menu.
                         (e = g))
             });
@@ -342,7 +341,7 @@ import * as socketStuff from "./socketinit.js";
     tabOptionsMenuSwitcher();
 
     // Prepare canvas
-    function resizeEvent() {
+   function resizeEvent() {
         let scale = window.devicePixelRatio;
         if (config.graphical.lowResolution) {
             scale *= 0.5;
@@ -362,9 +361,12 @@ import * as socketStuff from "./socketinit.js";
         document.getElementById("gameCanvas-gameplay").getContext("2d"),
         document.getElementById("gameCanvas-gui").getContext("2d"),
     ];
+    var c2 = document.createElement("canvas");
+    var ctx2 = c2.getContext("2d");
+    ctx2.imageSmoothingEnabled = false;
 
     // Animation things
-    function Smoothbar(value, speed, sharpness = 3, lerpValue = 0.025) {
+    function Smoothbar(value, speed, sharpness = 3, lerpValue = 0.025, syncWithfps = false) {
         let time = Date.now();
         let display = value;
         let oldvalue = value;
@@ -377,7 +379,7 @@ import * as socketStuff from "./socketinit.js";
                 }
             },
             get: (round = false) => {
-                display = util.lerp(display, value, lerpValue);
+                display = util.lerp(display, value, lerpValue, syncWithfps);
                 if (Math.abs(value - display) < 0.1 && round) display = value;
                 return display;
             },
@@ -582,9 +584,6 @@ import * as socketStuff from "./socketinit.js";
             var h = c[1] ? {
                     Update: "update",
                     Feature: "update",
-                    Poll: "poll",
-                    "Event Poll": "event-poll",
-                    "Gamemode Poll": "event-poll",
                     Event: "event",
                     Gamemode: "event",
                     "Balance Update": "balance-update",
@@ -609,139 +608,23 @@ import * as socketStuff from "./socketinit.js";
             c[3] && f.push(c[3]);
             y.innerHTML = f.join(" - ");
             d.appendChild(y);
-            if ("poll" ===
-                h || "event-poll" === h) {
-                let [a, u, k] = b.shift().split(",").map(b => b.trim());
-                var n = "table" === k;
-                let x = "radio" === k,
-                    ha = Math.ceil((new Date(u.trim()) - Date.now()) / 36E5);
-                y.appendChild(document.createElement("br"));
-                c = document.createElement("small");
-                c.appendChild(document.createTextNode(0 < ha ? "closing in " + ha + " hour" + (1 === ha ? "" : "s") : "closed"));
-                let L = document.createElement("a");
-                L.href = "javascript:;";
-                L.innerText = "view all results";
-                n && c.appendChild(L);
-                let O = document.createElement("a");
-                O.href = "javascript:;";
-                O.innerText =
-                    "reset";
-                O.style.display = "none";
-                x && c.appendChild(O);
-                y.appendChild(c);
-                d.appendChild(document.createElement("br"));
-                y = document.createElement("table");
-                y.className = n ? "poll-table" : "poll-list";
-                c = document.createElement("tbody");
-                h = (() => {
-                    let b = [],
-                        c = [],
-                        f = (new Promise(b => {
-                            let a = !1;
-                            sa.addEventListener("scroll", () => {
-                                if (!a) {
-                                    var c = sa.getBoundingClientRect(),
-                                        f = d.getBoundingClientRect();
-                                    0 >= f.height || f.top > c.bottom + c.height || f.bottom < c.top - c.height || (a = !0, b())
-                                }
-                            })
-                        })).then(() => fetch("http://ip-p.arras.io:2020/poll/" + a +
-                            "/status")).then(b => b.json()).then(b => {
-                            if (!b.ok) throw Error("Poll does not exist!");
-                            c = b.options
-                        });
-                    L.onclick = () => {
-                        L.remove();
-                        let a = b.map(b => parseInt(b.title, 10)).sort((b, a) => b - a),
-                            c = "#2196f3 #00adc3 #009688 #4caf50 #e8ae00 #ff8200 #ff0000".split(" ");
-                        for (let h of b) {
-                            var f = parseInt(h.title, 10);
-                            h.className = "count";
-                            h.innerHTML = 1E3 <= f ? (f / 1E3).toFixed(1) + "<span>k</span>" : 0 <= f ? f : "?";
-                            f = Math.floor((a.indexOf(f) + .5) / a.length * c.length);
-                            h.style.color = c[f]
-                        }
-                    };
-                    O.onclick = () => {
-                        h.checked = !1;
-                        h.onchange();
-                        h = null;
-                        O.style.display =
-                            "none"
-                    };
-                    let h = null,
-                        y = 0;
-                    return d => {
-                        let e = b => (d ? d + " - " : "") + b + " vote" + (1 === b ? "" : "s"),
-                            u = y++,
-                            n = document.createElement("label");
-                        n.className = "container";
-                        let g = document.createElement("input");
-                        g.tabIndex = -1;
-                        g.type = x ? "radio" : "checkbox";
-                        g.disabled = !0;
-                        x && (g.name = "radio-" + a);
-                        f.then(() => {
-                            let {
-                                voted: b,
-                                votes: f
-                            } = c[u] || {
-                                voted: !1,
-                                votes: 0
-                            };
-                            g.checked = b;
-                            x && b && (h = g, O.style.display = "inline");
-                            g.disabled = 0 >= ha;
-                            let y = f - b;
-                            g.onchange = () => {
-                                fetch("http://ip-p.arras.io:2020/poll/" + a + "/set/" + u + "/" + g.checked);
-                                let b = y + (g.checked ?
-                                    1 : 0);
-                                d ? l.nodeValue = e(b) : n.title = e(b);
-                                x && h && h !== g && g.checked && (h.checked = !1, h.onchange());
-                                h = g;
-                                O.style.display = "inline"
-                            };
-                            d ? l.nodeValue = e(f) : n.title = e(f)
-                        });
-                        let l;
-                        d && (l = document.createTextNode(d), n.appendChild(l));
-                        n.appendChild(g);
-                        let k = document.createElement("span");
-                        k.className = x ? "radio" : "checkmark";
-                        n.appendChild(k);
-                        b.push(n);
-                        return n
-                    }
-                })();
-                for (var g of b) {
-                    b = document.createElement("tr");
-                    if (n)
-                        for (var l of g.split("|")) l = l.trim(), f = document.createElement("td"), "X" === l ? f.appendChild(h()) : (e = l.match(/^:*/)[0].length,
-                            f.colSpan = e + 1, f.innerHTML = l.slice(e)), b.appendChild(f);
-                    else f = document.createElement("td"), f.appendChild(h(g)), b.appendChild(f);
-                    c.appendChild(b)
-                }
-                y.appendChild(c);
-                d.appendChild(y)
-            } else {
-                g = document.createElement("ul");
-                for (n of b) l = document.createElement("li"), l.innerHTML = n, g.appendChild(l);
-                l = g.getElementsByTagName("a");
-                for (b = 0; b < l.length; b++) {
-                    n = l[b];
-                    if (!n.href) continue;
-                    let a = n.href.lastIndexOf("#"); - 1 !== a && (a = n.href.slice(a + 1), "options-menu" === a ? l[b].onclick = function(b) {
-                            b.preventDefault();
-                            bb()
-                        } : Ja[a] &&
-                        (l[b].onclick = function(b) {
-                            b.preventDefault();
-                            Ja[a]()
-                        }))
-                }
-                d.appendChild(g)
+            let g = document.createElement("ul");
+            let l;
+            for (let n of b) l = document.createElement("li"), l.innerHTML = n, g.appendChild(l);
+            l = g.getElementsByTagName("a");
+            for (b = 0; b < l.length; b++) {
+                let n = l[b];
+                if (!n.href) continue;
+                let a = n.href.lastIndexOf("#"); - 1 !== a && (a = n.href.slice(a + 1), "options-menu" === a ? l[b].onclick = function(b) {
+                    b.preventDefault();
+                    bb()
+                } : Ja[a] &&
+                (l[b].onclick = function(b) {
+                    b.preventDefault();
+                    Ja[a]()
+                }))
             }
+            d.appendChild(g)
             a && d.appendChild(document.createElement("hr"));
             sa.appendChild(d)
         }
@@ -765,6 +648,7 @@ import * as socketStuff from "./socketinit.js";
         global.GUIStatus.renderLeaderboard = document.getElementById("optRenderLeaderboard").checked;
         global.GUIStatus.renderPlayerNames = document.getElementById("optRenderNames").checked;
         global.GUIStatus.renderPlayerScores = document.getElementById("optRenderScores").checked;
+        global.GUIStatus.renderPlayerKillbar = document.getElementById("optRenderKillbar").checked;
         global.GUIStatus.renderhealth = document.getElementById("optRenderHealth").checked;
         global.GUIStatus.minimapReducedInfo = document.getElementById("optReducedInfo").checked;
         global.GUIStatus.fullHDMode = document.getElementById("optFullHD").checked;
@@ -797,6 +681,7 @@ import * as socketStuff from "./socketinit.js";
         util.submitToLocalStorage("optPredictive");
         util.submitToLocalStorage("optSharpEdges");
         util.submitToLocalStorage("optSlowerFOV");
+        util.submitToLocalStorage("optRenderKillbar");
         util.submitToLocalStorage("coloredHealthbars");
         util.submitToLocalStorage("seperatedHealthbars");
         util.submitToLocalStorage("optNoGrid");
@@ -853,12 +738,16 @@ import * as socketStuff from "./socketinit.js";
         global.socket = socketInit();
         // initialize canvas.
         global.canvas.socket = global.socket;
-        global.socketMotionCycle = setInterval(() => moveCompensation.iterate(global.socket.cmd.getMotion()), 1e3 / 30);
+        global.socketMotionCycle = setInterval(() => moveCompensation.iterate(global.socket.cmd.getMotion()), 1e3 / 40);
         if (!global.playerTotalInterval) global.playerTotalInterval = setInterval(() => util.pullTotalPlayers(), 20000);
         if (!global.canvas.initalized) global.canvas.init();
         document.getElementById("gameAreaWrapper").style.display = "block";
         document.getElementById("gameCanvas").focus();
         window.onbeforeunload = () => (global.gameStart && !global.died && !global.disconnected ? !0 : null);
+        // Start client if it didn't start yet
+        !global.clientStarted && startClient();
+        // Load graphics
+        loadGraphics();
     }
     global.startGame = () => startGame();
     function startClient() {
@@ -871,15 +760,16 @@ import * as socketStuff from "./socketinit.js";
         }
         gameDraw.color = color;
         animloop(); // Start the client
+        global.clientStarted = true; // Set flag
     }
 
     // Start animation
     window.requestAnimFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || (callback => setTimeout(callback, 1000 / 60));
     window.cancelAnimFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
     // Drawing states
-    const statMenu = AdvancedSmoothBar(0, 0.3, 1);
-    const upgradeMenu = Smoothbar(0, 2, 3, 0.1);
-    const mobileUpgradeGlide = Smoothbar(0, 2, 3, 0.1);
+    const statMenu = Smoothbar(0, 2, 0.1, 0.08, 0.025, true);
+    const upgradeMenu = Smoothbar(0, 2, 3, 0.08, 0.025, true);
+    const mobileUpgradeGlide = Smoothbar(0, 2, 3, 0.08, 0.025, true);
     const lbGlide = AdvancedSmoothBar(0, 0.3, 1.5);
     const chatInput = AdvancedSmoothBar(0, 0.3, 1.3);
     util.fovAnimation = util.AdvancedSmoothBar(0, 0.2, 1.5);
@@ -1107,7 +997,7 @@ import * as socketStuff from "./socketinit.js";
         return textArray;
     }
 
-    function drawText(rawText, x, y, size, defaultFillStyle, align = "left", center = false, fade = 1, stroke = true, context = ctx[2]) {
+    function drawText(rawText, x, y, size, defaultFillStyle, align = "left", center = false, fade = 1, stroke = true, context = ctx[2], radial = false) {
         size += config.graphical.fontSizeBoost;
         // Get text dimensions and resize/reset the canvas
         let offset = size / 5,
@@ -1116,7 +1006,7 @@ import * as socketStuff from "./socketinit.js";
             renderedFullText = textArray.reduce((a, b, i) => (i & 1) ? a : a + b, '');
 
         if (context.getTransform) {
-            ratio = ctx[2].getTransform().d;
+            ratio = context.getTransform().d;
             offset *= ratio;
         }
         if (ratio !== 1) {
@@ -1139,7 +1029,7 @@ import * as socketStuff from "./socketinit.js";
                 alignMultiplier = 1;
         }
         if (alignMultiplier) {
-            Xoffset -= ctx[2].measureText(renderedFullText).width * alignMultiplier;
+            Xoffset -= context.measureText(renderedFullText).width * alignMultiplier;
         }
 
         // Draw it
@@ -1149,6 +1039,9 @@ import * as socketStuff from "./socketinit.js";
         context.strokeStyle = color.black;
         context.fillStyle = defaultFillStyle;
         context.save();
+        radial && context.translate(global.screenWidth / 2, global.screenHeight / 2);
+        radial && context.rotate(Math.atan2(-global.player.renderx, -global.player.rendery));
+        radial && context.translate(global.screenWidth / -2, global.screenHeight / -2);
         context.lineCap = config.graphical.miterText ? "miter" : "round";
         context.lineJoin = config.graphical.miterText ? "miter" : "round";
         if (ratio !== 1) {
@@ -1222,33 +1115,33 @@ import * as socketStuff from "./socketinit.js";
         ctx[2].stroke();
     }
 
-    function drawBar(x1, x2, y, width, color) {
-        ctx[2].beginPath();
-        ctx[2].lineTo(x1, y);
-        ctx[2].lineTo(x2, y);
-        ctx[2].lineWidth = width;
-        if (color) ctx[2].strokeStyle = color;
-        if (!config.graphical.sharpEdges) ctx[2].closePath();
-        ctx[2].stroke();
+    function drawBar(x1, x2, y, width, color, context = ctx[2]) {
+        context.beginPath();
+        context.lineTo(x1, y);
+        context.lineTo(x2, y);
+        context.lineWidth = width;
+        if (color) context.strokeStyle = color;
+        if (!config.graphical.sharpEdges) context.closePath();
+        context.stroke();
     }
 
-    function drawBarStroke(x1, y, width, color, h2) {
-        ctx[2].lineWidth = 2.5;
-        ctx[2].strokeStyle = color;
-        ctx[2].beginPath();
-        ctx[2].moveTo(x1, y);
-        ctx[2].lineTo(x1 + width, y);
-        ctx[2].arc(x1 + width, y + h2 / 2, h2 / 2, -Math.PI / 2, Math.PI / 2);
-        ctx[2].lineTo(x1, y + h2);
-        ctx[2].arc(x1, y + h2 / 2, h2 / 2, Math.PI / 2, -Math.PI / 2);
-        ctx[2].stroke();
+    function drawBarStroke(x1, y, width, color, h2, context = ctx[2]) {
+        context.lineWidth = 2.5;
+        context.strokeStyle = color;
+        context.beginPath();
+        context.moveTo(x1, y);
+        context.lineTo(x1 + width, y);
+        context.arc(x1 + width, y + h2 / 2, h2 / 2, -Math.PI / 2, Math.PI / 2);
+        context.lineTo(x1, y + h2);
+        context.arc(x1, y + h2 / 2, h2 / 2, Math.PI / 2, -Math.PI / 2);
+        context.stroke();
     }
 
-    function drawBarAdvanced(x1, x2, y, width, color, h2) {
-        ctx[2].beginPath();
-        ctx[2].roundRect(x1 - width / 2, y - width / 2, x2 - x1 + width, h2 + width, [width / 2]);
-        ctx[2].fillStyle = color;
-        ctx[2].fill();
+    function drawBarAdvanced(x1, x2, y, width, color, h2, context = ctx[2]) {
+        context.beginPath();
+        context.roundRect(x1 - width / 2, y - width / 2, x2 - x1 + width, h2 + width, [width / 2]);
+        context.fillStyle = color;
+        context.fill();
     }
 
     function drawButton(x, y, width, height, alpha, type = "rect", text, textSize, color1, color2, color3, clickable = false, clickType, clickableRatio, index) {
@@ -1293,10 +1186,10 @@ import * as socketStuff from "./socketinit.js";
         if (type == "rect") drawGuiRect(x - width / 2, y, width, height, true);
         else if (type == "bar") drawBarStroke(x - width / 2, y, width, color3 ? color3 : color.black, height);
     }
+    /* NOTE: WebGL will be included in the next beta release of osa */
     // Entity drawing (this is a function that makes a function)
-    const drawEntity = (() => {
-        const ctx2 = document.createElement("canvas").getContext("2d"),
-        drawPolyImgs = [],
+    const drawEntityCanvas2D = (() => {
+        let drawPolyImgs = [],
         // Draw body function, (AKA: drawPoly)
         drawBody = (context, centerX, centerY, radius, sides, angle = 0, borderless, fill, imageInterpolation) => {
             try {
@@ -1331,8 +1224,8 @@ import * as socketStuff from "./socketinit.js";
                             context.translate(centerX, centerY);
                             context.rotate(angle);
                             context.imageSmoothingEnabled = imageInterpolation;
-                            const imageSize = radius * 0.9;
-                            context.drawImage(img, -radius, -radius, radius * 2, radius * 2);
+                            const imageSize = radius / 1.09;
+                            context.drawImage(img, -imageSize, -imageSize, imageSize * 2, imageSize * 2);
                             context.imageSmoothingEnabled = true;
                             context.rotate(-angle);
                             context.translate(-centerX, -centerY);
@@ -1483,24 +1376,9 @@ import * as socketStuff from "./socketinit.js";
         
             if (useFancyCanvas) {
                 context = ctx2;
-                const axis = m.position.axis;
-                const canvasSize = drawSize * axis + ratio * 20 * axis;
-                
-                // Only resize canvas when necessary
-                if (context.canvas.width !== canvasSize) {
-                    context.canvas.width = context.canvas.height = canvasSize;
-                }
-                
-                const middleX = m.position.middle.x;
-                const cosRot = Math.cos(rot);
-                const sinRot = Math.sin(rot);
-                const offsetX = (drawSize * axis * middleX * cosRot) / 4;
-                const offsetY = (drawSize * axis * middleX * sinRot) / 4;
-                xx = canvasSize / 2 - offsetX;
-                yy = canvasSize / 2 - offsetY;
-                
-                // Minimize transforms
-                context.setTransform(1, 0, 0, 1, 0, 0);
+                context.canvas.width = context.canvas.height = drawSize * m.position.axis + ratio * 20 * m.position.axis;
+                xx = context.canvas.width / 2 - (drawSize * m.position.axis * m.position.middle.x * Math.cos(rot)) / 4;
+                yy = context.canvas.height / 2 - (drawSize * m.position.axis * m.position.middle.x * Math.sin(rot)) / 4;
                 context.translate(0.5, 0.5);
             } else if (alphaFade < 0.5) {
                 return;
@@ -1519,52 +1397,46 @@ import * as socketStuff from "./socketinit.js";
             // --- Size ratio cached for body drawing ---
             const sizeRatio = (drawSize / m.size) * m.realSize;
         
-            // --- Find upper turrets with optimized loop ---
-            const turrets = source.turrets;
-            const turretCount = turrets.length;
-            let upperTurretsIndex = turretCount;
-            
-            for (let i = 0; i < turretCount; ++i) {
-                if (turrets[i].layer > 0) {
-                    upperTurretsIndex = i;
-                    break;
-                }
-            }
+            // --- Find upper turrets and props with optimized loop ---
+            const turrets = instance.isImage ? source.turrets : [...source.turrets, ...m.props];
+            if (m.props) turrets.sort((a, b) => a.layer - b.layer);
         
             // --- Draw turrets beneath with cached values ---
-            for (let i = 0; i < upperTurretsIndex; ++i) {
-                const t = turrets[i];
-                
+            for (let i = 0; i < turrets.length; i++) {
+                let t = turrets[i];
+                if (t.isProp) t = util.requestEntityImage(t);
                 // Cache facing calculation
                 if (t.lerpedFacing === undefined) {
                     t.lerpedFacing = t.facing;
                 } else {
                     t.lerpedFacing = util.lerpAngle(t.lerpedFacing, t.facing, 0.1, true);
                 }
-                
-                const ang = t.direction + t.angle + rot;
-                const len = t.offset * drawSize;
-                const facing = (t.mirrorMasterAngle || turretsObeyRot) ? rot + t.angle : t.lerpedFacing;
-                const cosAng = Math.cos(ang);
-                const sinAng = Math.sin(ang);
-                
-                context.lineWidth = initStrokeWidth * t.strokeWidth;
-                
-                drawEntity(
-                    baseColor,
-                    xx + len * cosAng,
-                    yy + len * sinAng,
-                    t,
-                    ratio,
-                    1,
-                    (drawSize / ratio / t.size) * t.sizeFactor,
-                    lineWidthMult,
-                    facing,
-                    turretsObeyRot,
-                    context,
-                    t,
-                    render
-                );
+                t.invuln = instance.invuln;
+                if (!t.layer) {
+                    const ang = t.direction + t.angle + rot;
+                    const len = t.offset * drawSize;
+                    const facing = (t.mirrorMasterAngle || turretsObeyRot) ? rot + t.angle : t.lerpedFacing;
+                    const cosAng = Math.cos(ang);
+                    const sinAng = Math.sin(ang);
+                    
+                    context.lineWidth = initStrokeWidth * t.strokeWidth;
+                    
+                    drawEntityCanvas2D(
+                        baseColor,
+                        xx + len * cosAng,
+                        yy + len * sinAng,
+                        t,
+                        ratio,
+                        1,
+                        (drawSize / ratio / t.size) * t.sizeFactor,
+                        lineWidthMult,
+                        facing,
+                        turretsObeyRot,
+                        context,
+                        t,
+                        render
+                    );
+                }
             }
         
             // --- Gun positions/config with minimal property access ---
@@ -1575,10 +1447,6 @@ import * as socketStuff from "./socketinit.js";
             
             const sourceGuns = source.guns;
             const gunLength = sourceGuns.length;
-        
-            // --- Draw guns and body with optimized loops ---
-            const cosRot = Math.cos(rot);
-            const sinRot = Math.sin(rot);
             
             for (let drawAbove = 0; drawAbove < 2; ++drawAbove) {
                 // Draw guns for current layer
@@ -1602,10 +1470,10 @@ import * as socketStuff from "./socketinit.js";
                     const gy = g.offset * sinGunAngle;
                     
                     // Minimize color calculations
-                    const gunColor = g.color == null ? color.grey : gameDraw.modifyColor(g.color, baseColor);
+                    let gunColor = g.color == null ? color.grey : gameDraw.modifyColor(g.color, baseColor);
                     const gunAlpha = g.alpha === undefined ? 1 : g.alpha;
-                    const mixedColor = gameDraw.mixColors(gunColor, statusColor, blend);
-                    
+                    let mixedColor = gameDraw.mixColors(gunColor, statusColor, blend);
+                    instance.invuln !== 0 && 100 > (Date.now() - instance.invuln) % 200 && ((mixedColor = gameDraw.mixColors(gunColor, gameDraw.getColor(6), 0.3)));
                     gameDraw.setColor(context, mixedColor);
                     
                     // Draw gun with precalculated values
@@ -1631,12 +1499,12 @@ import * as socketStuff from "./socketinit.js";
                     context.lineWidth = initStrokeWidth * m.strokeWidth;
                     
                     // Precalculate body color
-                    const bodyColor = gameDraw.mixColors(
+                    let bodyColor = gameDraw.mixColors(
                         gameDraw.modifyColor(instance.color, baseColor),
                         statusColor,
                         blend
                     );
-                    
+                    instance.invuln !== 0 && 100 > (Date.now() - instance.invuln) % 200 && ((bodyColor = gameDraw.mixColors(gameDraw.modifyColor(instance.color, baseColor), gameDraw.getColor(6), 0.3)));
                     gameDraw.setColor(context, bodyColor);
         
                     // Optimized glow effect
@@ -1650,7 +1518,7 @@ import * as socketStuff from "./socketinit.js";
                             : gameDraw.mixColors(
                                 gameDraw.modifyColor(instance.color),
                                 statusColor,
-                                blend
+                                0
                             );
                             
                         const glowSize = glowRadius * sizeRatio;
@@ -1683,53 +1551,54 @@ import * as socketStuff from "./socketinit.js";
             }
         
             // --- Draw turrets above with cached trig values ---
-            for (let i = upperTurretsIndex; i < turretCount; ++i) {
-                const t = turrets[i];
-                
+            for (let i = 0; i < turrets.length; i++) {
+                let t = turrets[i];
+                if (t.isProp) t = util.requestEntityImage(t);
                 // Cache facing calculation
                 if (t.lerpedFacing === undefined) {
                     t.lerpedFacing = t.facing;
                 } else {
                     t.lerpedFacing = util.lerpAngle(t.lerpedFacing, t.facing, 0.1, true);
                 }
-                
-                const ang = t.direction + t.angle + rot;
-                const len = t.offset * drawSize;
-                const facing = (t.mirrorMasterAngle || turretsObeyRot) ? rot + t.angle : t.lerpedFacing;
-                const cosAng = Math.cos(ang);
-                const sinAng = Math.sin(ang);
-                
-                context.lineWidth = initStrokeWidth * t.strokeWidth;
-                
-                drawEntity(
-                    baseColor,
-                    xx + len * cosAng,
-                    yy + len * sinAng,
-                    t,
-                    ratio,
-                    1,
-                    (drawSize / ratio / t.size) * t.sizeFactor,
-                    lineWidthMult,
-                    facing,
-                    turretsObeyRot,
-                    context,
-                    t,
-                    render
-                );
+                t.invuln = instance.invuln;
+                if (t.layer) {
+                    const ang = t.direction + t.angle + rot;
+                    const len = t.offset * drawSize;
+                    const facing = (t.mirrorMasterAngle || turretsObeyRot) ? rot + t.angle : t.lerpedFacing;
+                    const cosAng = Math.cos(ang);
+                    const sinAng = Math.sin(ang);
+                    
+                    context.lineWidth = initStrokeWidth * t.strokeWidth;
+                    
+                    drawEntityCanvas2D(
+                        baseColor,
+                        xx + len * cosAng,
+                        yy + len * sinAng,
+                        t,
+                        ratio,
+                        1,
+                        (drawSize / ratio / t.size) * t.sizeFactor,
+                        lineWidthMult,
+                        facing,
+                        turretsObeyRot,
+                        context,
+                        t,
+                        render
+                    );
+                }
             }
         
             // --- Optimized fancy canvas drawing ---
             if (!assignedContext && context !== ctx[1] && context.canvas.width > 0 && context.canvas.height > 0) {
-                const mainCtx = ctx[1];
-                mainCtx.save();
+                ctx[1].save();
                 
                 // Apply alpha in one operation
-                mainCtx.globalAlpha = alphaFade;
-                mainCtx.imageSmoothingEnabled = true;
+                ctx[1].globalAlpha = alphaFade;
+                ctx[1].imageSmoothingEnabled = false;
                 
                 // Draw in one operation
-                mainCtx.drawImage(context.canvas, x - xx, y - yy);
-                mainCtx.restore();
+                ctx[1].drawImage(context.canvas, x - xx, y - yy);
+                ctx[1].restore();
             }
         
             // --- Minimal context reset ---
@@ -1740,13 +1609,17 @@ import * as socketStuff from "./socketinit.js";
         }
     })();
 
+
+    const drawEntity = (baseColor, x, y, instance, ratio, alpha = 1, scale = 1, lineWidthMult = 1, rot = 0, turretsObeyRot = false, assignedContext = false, turretInfo = false, render = instance.render, smoothsize = false, forceRenderOnCanvas2D = false) => {
+        return drawEntityCanvas2D(baseColor, x, y, instance, ratio, alpha, scale, lineWidthMult, rot, turretsObeyRot, assignedContext, turretInfo, render, smoothsize);
+    };
     const iconColorOrder = [10, 11, 12, 15, 13, 2, 14, 4, 5, 1, 0, 3];
     function getIconColor(colorIndex) {
         return iconColorOrder[colorIndex % 12].toString();
     }
 
     function drawEntityIcon(model, x, y, len, height, lineWidthMult, angle, alpha, colorIndex, upgradeKey, hover = false) {
-        let picture = (typeof model == "object") ? model : util.getEntityImageFromMockup(model, gui.color),
+        let picture = (typeof model == "object") ? model : util.requestEntityImage(model, gui.color),
             position = picture.position,
             scale = (0.6 * len) / position.axis,
             entityX = x + 0.5 * len,
@@ -1781,8 +1654,9 @@ import * as socketStuff from "./socketinit.js";
         drawGuiRect(x, y + height * 0.6, len, height * 0.4);
         ctx[2].globalAlpha = 1;
 
-        // Draw Tank
-        drawEntity(baseColor, entityX, entityY, picture, 1, 1, scale / picture.size, lineWidthMult, angle, true, ctx[2]);
+        // FIX: Force Canvas2D rendering for tank icons to ensure proper layering
+        // Draw Tank - always use Canvas2D for icons to avoid layering issues with WebGL2
+        drawEntity(baseColor, entityX, entityY, picture, 1, 1, scale / picture.size, lineWidthMult, angle, true, ctx[2], false, picture.render, false, true);
 
         // Tank name
         drawText(picture.upgradeName ?? picture.name, x + (upgradeKey ? 0.9 * len : len) / 2, y + height * 0.94, height / 10, color.guiwhite, "center");
@@ -1813,6 +1687,24 @@ import * as socketStuff from "./socketinit.js";
             roomY = -py + global.screenHeight / 2 - ratio * gameHeight / 2,
             roomWidth = ratio * gameWidth,
             roomHeight = ratio * gameHeight;
+            if (global.advanced.radial) {
+                ctx[0].save();
+                ctx[0].translate(global.screenWidth / 2, global.screenHeight / 2);
+                ctx[0].rotate(Math.atan2(-global.player.renderx, -global.player.rendery));
+                ctx[0].translate(global.screenWidth / -2, global.screenHeight / -2);
+            }
+            if (global.advanced.roundMap) {
+                ctx[0].save();
+                ctx[0].beginPath();
+                ctx[0].arc(
+                    -px + global.screenWidth / 2 - (ratio * gameWidth) * 0,
+                    -py + global.screenHeight / 2 - (ratio * gameHeight) * 0,
+                    (ratio * global.gameWidth) / 2,
+                    0,
+                    Math.PI * 2
+                );
+                ctx[0].clip();
+            }
         ctx[0].fillRect(roomX, roomY, roomWidth, roomHeight);
         if (global.roomSetup.length) {
             let W = global.roomSetup[0].length,
@@ -1826,7 +1718,12 @@ import * as socketStuff from "./socketinit.js";
                         bottom = ratio * f * gameHeight / H - py + global.screenHeight / 2 - ratio * gameHeight / 2,
                         left = ratio * (h + 1) * gameWidth / W - px + global.screenWidth / 2 - ratio * gameWidth / 2,
                         right = ratio * (f + 1) * gameHeight / H - py + global.screenHeight / 2 - ratio * gameHeight / 2;
-                    if (tile.image) { // if a tile is a image, then get the image and render it.
+                    if (!tile) {
+                        ctx[0].fillStyle = gameDraw.getColor("border", true);
+                        ctx[0].fillRect(top, bottom, left - top, right - bottom);
+                        continue;
+                    };
+                    if (tile.image) { // if a tile is an image, then get the image and render it.
                         ctx[0].globalAlpha = 1;
                         if (!tile.renderImage) {
                             tile.renderImage = new Image();
@@ -1850,6 +1747,7 @@ import * as socketStuff from "./socketinit.js";
                 }
             }
         }
+        global.advanced.roundMap && ctx[0].restore();
         let gridsize = 30 * ratio;
         if (config.graphical.showGrid && 2.5 < gridsize) { // Draw grid if the user wants to.
             ctx[0].save();
@@ -1857,22 +1755,43 @@ import * as socketStuff from "./socketinit.js";
             ctx[0].strokeStyle = color.guiblack;
             ctx[0].globalAlpha = 0.04;
             ctx[0].beginPath();
-            for (let x = (global.screenWidth / 2 - px) % gridsize; x < global.screenWidth; x += gridsize) {
-                ctx[0].moveTo(x, 0);
-                ctx[0].lineTo(x, global.screenHeight);
+            if (global.advanced.radial) {
+                let n =
+                Math.ceil(Math.sqrt(global.screenWidth * global.screenWidth + global.screenHeight * global.screenHeight) / ratio / ratio / 12) * gridsize;
+                for (let u = ((global.screenWidth / 2 - px) % gridsize) - n; u < global.screenWidth + n; u += gridsize)
+                ctx[0].moveTo(u, -n), ctx[0].lineTo(u, n + global.screenHeight);
+                for (let u = ((global.screenHeight / 2 - py) % gridsize) - n; u < global.screenHeight + n; u += gridsize)
+                ctx[0].moveTo(-n, u), ctx[0].lineTo(n + global.screenWidth, u);
+            } else {
+                for (let x = (global.screenWidth / 2 - px) % gridsize; x < global.screenWidth; x += gridsize) {
+                    ctx[0].moveTo(x, 0);
+                    ctx[0].lineTo(x, global.screenHeight);
+                }
+                for (let y = (global.screenHeight / 2 - py) % gridsize; y < global.screenHeight; y += gridsize) {
+                    ctx[0].moveTo(0, y);
+                    ctx[0].lineTo(global.screenWidth, y);
+                }
             }
-            for (let y = (global.screenHeight / 2 - py) % gridsize; y < global.screenHeight; y += gridsize) {
-                ctx[0].moveTo(0, y);
-                ctx[0].lineTo(global.screenWidth, y);
-            }
+
             ctx[0].stroke();
             ctx[0].globalAlpha = 1;
-            ctx[0].restore();
+            global.advanced.radial && ctx[0].restore();
         }
+        global.advanced.radial && ctx[0].restore();
     }
-
     function drawEntities(px, py, ratio, tick) {
         global.loggers.renderedEntities.set();
+        if (global.advanced.blackout.active) {
+            document.getElementById("gameCanvas-background").style.display = "none";
+            ctx[1].drawImage(ctx[0].canvas, 0, 0, global.screenWidth, global.screenHeight);
+            if (global.glCanvas) ctx[1].drawImage(global.glCanvas, 0, 0, global.screenWidth, global.screenHeight);
+        } else if (document.getElementById("gameCanvas-background").style.display === "none") document.getElementById("gameCanvas-background").style.display = "block";
+        if (global.advanced.radial) {
+            ctx[1].save();
+            ctx[1].translate(global.screenWidth / 2, global.screenHeight / 2);
+            ctx[1].rotate(Math.atan2(-global.player.renderx, -global.player.rendery));
+            ctx[1].translate(global.screenWidth / -2, global.screenHeight / -2);
+        }
         // Draw things
         for (let instance of global.entities) {
             if (!instance.render.draws) {
@@ -1927,9 +1846,10 @@ import * as socketStuff from "./socketinit.js";
             x += global.screenWidth / 2;
             y += global.screenHeight / 2;
             let alpha = instance.id === gui.playerid ? 1 : instance.alpha;
-            alpha = handleScreenDistance(alpha, instance, false);
+            if (!global.advanced.radial) alpha = handleScreenDistance(global.advanced.blackout.active && global.died ? 0 : alpha, instance, false);
             drawEntity(baseColor, x, y, instance, ratio, instance.id === gui.playerid || global.showInvisible ? instance.alpha ? instance.alpha * 0.75 + 0.25 : 0.25 : instance.alpha * alpha, 1, 1, instance.render.f, false, false, false, instance.render, isize);
         }
+        global.advanced.radial && ctx[1].restore();
         for (let instance of global.entities) {
             let alpha = instance.id === gui.playerid ? 1 : instance.alpha;
             alpha = handleScreenDistance(alpha, instance);
@@ -1945,6 +1865,68 @@ import * as socketStuff from "./socketinit.js";
                 y = instance.id === gui.playerid ? global.player.screeny : ratio * instance.render.y - py;
             drawChatMessages(x, false, py, instance, ratio, alpha, instance.size, px, py);
             drawChatInput(x, y, instance, ratio, instance.size);
+        }
+        if (global.advanced.blackout.active) {
+            let entity = global.entities.find((u) => u.id === gui.playerid);
+            if (entity) {
+                ctx[1].beginPath();
+                let x = global.screenWidth / 2 - px + ratio * 0,
+                    y = global.screenHeight / 2 - py + ratio * 0,
+                    kt = ratio * global.gameWidth,
+                    ky = ratio * global.gameHeight,
+                    G = global.roomSetup[0].length,
+                    L = global.roomSetup.length
+
+                for (let S = 0; S < L; S++) for (let ea = 0; ea < G; ea++) {
+                    let Pc = x + ((ea + 0.5) / G) * kt - kt / 2,
+                        Qc = y + ((S + 0.5) / L) * ky - ky / 2,
+                        tile = global.roomSetup[S][ea];
+
+                    if (tile.visibleOnBlackout) {
+                        ctx[1].moveTo(Pc + ((0.5) / G) * kt, Qc);
+                        ctx[1].arc(Pc, Qc, ((0.5) / G) * kt, 0, 2 * Math.PI);
+                    }
+                }
+                for (let entity of global.entities) {
+                    let x = ratio * entity.render.x - px,
+                        y = ratio * entity.render.y - py,
+                        indexes = entity.index.split("-"),
+                        m = global.mockups[parseInt(indexes[0])] ?? global.missingMockup[0];
+
+                    x += global.screenWidth / 2;
+                    y += global.screenHeight / 2;
+                    if (entity.id === gui.playerid || (m.visibleOnBlackout && entity.alpha < 0.1)) {
+                        ctx[1].moveTo(x, y);
+                        ctx[1].arc(x, y, entity.size * ratio * 4, 0, 2 * Math.PI);
+                    }
+                    if (entity.id === gui.playerid) {
+                        if (!global.died) {
+                            ctx[1].moveTo(x, y);
+                            let na = Math.atan2(global.target.y * global.reverseTank, global.target.x * global.reverseTank);
+                            ctx[1].arc(x, y, entity.size * ratio * 24, na - 0.3, na + 0.3);
+                        }
+                        for (let gun of m.guns) {
+                            let facing = entity.render.f,
+                                tx = x + gun.offset * Math.cos(gun.direction + gun.angle + facing) + (gun.length / 2) * Math.cos(gun.angle + facing),
+                                ty = y + gun.offset * Math.sin(gun.direction + gun.angle + facing) + (gun.length / 2) * Math.sin(gun.angle + facing);
+                            ctx[1].moveTo(tx, ty);
+                            let Ia = facing + gun.angle;
+                            ctx[1].arc(tx, ty, entity.size * ratio * gun.length * 6, Ia - 0.3, Ia + 0.3);
+                        }
+                    }
+                }
+                ctx[1].globalAlpha = 1;
+                ctx[1].fillStyle = global.advanced.blackout.color;
+                ctx[1].globalCompositeOperation = "destination-in";
+                ctx[1].fill();
+                ctx[1].globalCompositeOperation = "destination-over";
+                ctx[1].fillRect(0, 0, global.screenWidth, global.screenHeight);
+                ctx[1].globalCompositeOperation = "source-over";
+            } else {
+                ctx[1].globalAlpha = 1;
+                ctx[1].fillStyle = global.advanced.blackout.color;
+                ctx[1].fillRect(0, 0, global.screenWidth, global.screenHeight);
+            }
         }
         global.loggers.renderedEntities.mark();
     }
@@ -1965,7 +1947,7 @@ import * as socketStuff from "./socketinit.js";
 
         if (lastGuiType != gui.type || global.generateTankTree) {
             try {
-                let m = util.getEntityImageFromMockup(gui.type), // The mockup that corresponds to the player's tank
+                let m = util.requestEntityImage(gui.type), // The mockup that corresponds to the player's tank
                     rootName = m.rerootUpgradeTree, // The upgrade tree root of the player's tank
                     rootIndex = [];
                 for (let name of rootName) {
@@ -2070,18 +2052,16 @@ import * as socketStuff from "./socketinit.js";
                 text = txt;
 
             if (0 >= duration) {
-                if (!msg.faded) {
-                    msg.faded++;
-                    global.messagesFaded.push(msg);
-                }
+                 global.messages.splice(i, 1);
+                 continue;
             }
 
             let K = Math.max(0, Math.min(1, time / 300, duration / 300));
-            if (msg.textJSON) { // If a message is like a big ass box then draw this instead.
+            if (msg.textJSON) { // If a message is like a big ass box, then draw this instead.
                 let len = 0;
                 // Give it a textobj if it doesn't have one
                 msg.textJSON.forEach((txt) => {
-                    if (len < util.canvasMeasureText(txt, height - 4, false, ctx[2])) len = util.canvasMeasureText(txt, height - 4, false, ctx[2])
+                    if (len < measureText(txt, height - 4, false)) len = measureText(txt, height - 4, false)
                 })
                 ctx[2].globalAlpha = 0.5 * K;
                 // Draw the background
@@ -2090,7 +2070,7 @@ import * as socketStuff from "./socketinit.js";
                 // Draw the text
                 msg.textobjs = [];
                 msg.textJSON.forEach((txt) => {
-                    msg.textobjs[msg.textobjs.length] = function () { }; // For some reason this fixes the text's location i guess.
+                    msg.textobjs[msg.textobjs.length] = function () { }; // For some reason, this fixes the text's location, I guess.
                     drawText(txt, x - len / 2, y + 15 + 18 * (msg.textobjs.length - 1), height - 4, color.guiwhite, "left");
                 })
                 y += 23 * K + 18 * (3 - 2 * K) * (msg.textJSON.length - 1) * K * K;
@@ -2130,7 +2110,13 @@ import * as socketStuff from "./socketinit.js";
         let messages = global.chats[instance.id];
         if (!messages) return;
         const messageSpacing = 25 * 0.04 * g;
-        
+
+        if (global.advanced.radial) {
+            ctx[1].save();
+            ctx[1].translate(global.screenWidth / 2, global.screenHeight / 2);
+            ctx[1].rotate(Math.atan2(-global.player.renderx, -global.player.rendery));
+            ctx[1].translate(global.screenWidth / -2, global.screenHeight / -2);
+        }
         // Draw all the messages
         for (let i = 0; i < messages.length; i++) {
             let chatIndex = messages.length - 1 - i;
@@ -2156,12 +2142,13 @@ import * as socketStuff from "./socketinit.js";
             if (fadeInAlpha >= 1 && !chat.fadedIn) {
                 chat.fadedIn = true;
             }
-            
-            ctx[2].globalAlpha = 0.5 * valpha * alpha * alpha * fade;
-            drawBar(x - msgLengthHalf, x + msgLengthHalf, y - g * (instance.id === gui.playerid ? 2.26 : barScale) - slideOffset, 0.75 * g, gameDraw.modifyColor(instance.color));
-            ctx[2].globalAlpha = valpha * alpha * fade;
+            if (valpha == 0 && expiryAlpha == 0) util.remove(messages, messages.indexOf(chat));
+            ctx[1].globalAlpha = 0.5 * valpha * alpha * alpha * fade;
+            drawBar(x - msgLengthHalf, x + msgLengthHalf, y - g * (instance.id === gui.playerid ? 2.26 : barScale) - slideOffset, 0.75 * g, gameDraw.modifyColor(instance.color), ctx[1]);
+            global.advanced.radial && ctx[1].restore();
+            ctx[1].globalAlpha = valpha * alpha * fade;
             config.graphical.fontStrokeRatio *= 1.2;
-            drawText(text, x, y - g * (instance.id === gui.playerid ? 2.05 : textScale) - slideOffset, 0.50 * g, color.guiwhite, "center");
+            drawText(text, x, y - g * (instance.id === gui.playerid ? 2.05 : textScale) - slideOffset, 0.50 * g, color.guiwhite, "center", false, 1, true, ctx[1], global.advanced.radial ? true : false);
             config.graphical.fontStrokeRatio /= 1.2;
         }
     }
@@ -2179,6 +2166,13 @@ import * as socketStuff from "./socketinit.js";
             if (!m) m = global.missingMockup[0];
             let realSize = (size / m.size) * m.realSize;
 
+            if (global.advanced.radial) {
+                ctx[1].save();
+                ctx[1].translate(global.screenWidth / 2, global.screenHeight / 2);
+                ctx[1].rotate(Math.atan2(-global.player.renderx, -global.player.rendery));
+                ctx[1].translate(global.screenWidth / -2, global.screenHeight / -2);
+            }
+
             if (instance.drawsHealth) {
                 let health = instance.render.health.get(),
                     shield = instance.render.shield.get();
@@ -2190,24 +2184,25 @@ import * as socketStuff from "./socketinit.js";
                     let col = config.graphical.coloredHealthbars ? gameDraw.mixColors(gameDraw.modifyColor(instance.color), color.guiwhite, 0.5) : color.lgreen;
                     let yy = y + 1 + realSize + 15 * ratio;
                     let barWidth = 3 * ratio;
-                    ctx[2].globalAlpha = alpha * alpha * fade;
+                    ctx[1].globalAlpha = alpha * alpha * fade;
 
                     //background bar
-                    drawBar(x - size, x + size, yy + barWidth * config.graphical.seperatedHealthbars / 2, barWidth * (1 + config.graphical.seperatedHealthbars) + config.graphical.barChunk, color.black);
+                    drawBar(x - size, x + size, yy + barWidth * config.graphical.seperatedHealthbars / 2, barWidth * (1 + config.graphical.seperatedHealthbars) + config.graphical.barChunk, color.black, ctx[1]);
 
                     //hp bar
-                    drawBar(x - size, x - size + 2 * size * health, yy + barWidth * config.graphical.seperatedHealthbars, barWidth, col);
+                    drawBar(x - size, x - size + 2 * size * health, yy + barWidth * config.graphical.seperatedHealthbars, barWidth, col, ctx[1]);
 
                     //shield bar
                     if (shield || config.graphical.seperatedHealthbars) {
                         if (!config.graphical.seperatedHealthbars) ctx[2].globalAlpha *= 0.7;
-                        ctx[2].globalAlpha *= 0.3 + 0.3 * shield,
-                            drawBar(x - size, x - size + 2 * size * shield, yy, barWidth, config.graphical.coloredHealthbars ? gameDraw.mixColors(col, color.guiblack, 0.25) : color.teal);
+                        ctx[1].globalAlpha *= 0.3 + 0.3 * shield,
+                            drawBar(x - size, x - size + 2 * size * shield, yy, barWidth, config.graphical.coloredHealthbars ? gameDraw.mixColors(col, color.guiblack, 0.25) : color.teal, ctx[1]);
                     }
-                    if (gui.showhealthtext) drawText(Math.round(instance.healthN) + "/" + Math.round(instance.maxHealthN), x, yy + barWidth * 2 + barWidth * config.graphical.seperatedHealthbars * 2 + 10, 12 * ratio, color.guiwhite, "center");
+                    if (gui.showhealthtext) drawText(Math.round(instance.healthN) + "/" + Math.round(instance.maxHealthN), x, yy + barWidth * 2 + barWidth * config.graphical.seperatedHealthbars * 2 + 10, 12 * ratio, color.guiwhite, "center", false, 1, true, ctx[1]);
                     ctx[2].globalAlpha = alpha;
                 }
             }
+            global.advanced.radial && ctx[1].restore();
         }
     }
 
@@ -2215,7 +2210,7 @@ import * as socketStuff from "./socketinit.js";
         if (!(0.02 > alpha)) {
             let fade = instance.render.status.getFade();
             fade *= fade;
-            ctx[2].globalAlpha = fade;
+            ctx[1].globalAlpha = fade;
 
             let size = isize * ratio;
             x += global.screenWidth / 2;
@@ -2224,11 +2219,11 @@ import * as socketStuff from "./socketinit.js";
             if (instance.id !== gui.playerid && instance.nameplate) {
                 var name = instance.name.substring(7, instance.name.length + 1);
                 var namecolor = instance.name.substring(0, 7);
-                ctx[2].globalAlpha = alpha * alpha * fade;
+                ctx[1].globalAlpha = alpha * alpha * fade;
                 let g = Math.max(20, size);
-                if (global.GUIStatus.renderPlayerNames) drawText(name, x, y - g * (global.GUIStatus.renderPlayerScores ? 1.9 : 1.45), 0.55 * g, namecolor == "#ffffff" ? color.guiwhite : namecolor, "center");
-                if (global.GUIStatus.renderPlayerScores) drawText(util.handleLargeNumber(instance.score, 1), x, y - 1.45 * g, 0.3 * g, namecolor == "#ffffff" ? color.guiwhite : namecolor, "center");
-                ctx[2].globalAlpha = 1;
+                if (global.GUIStatus.renderPlayerNames) drawText(name, x, y - g * (global.GUIStatus.renderPlayerScores || typeof instance.score === "string" ? 1.9 : 1.45), 0.55 * g, namecolor == "#ffffff" ? color.guiwhite : namecolor, "center", false, 1, true, ctx[1], global.advanced.radial ? true : false);
+                if (global.GUIStatus.renderPlayerScores || typeof instance.score === "string") drawText(typeof instance.score === "string" ? instance.score : util.handleLargeNumber(instance.score, 1), x, y - 1.45 * g, 0.3 * g, namecolor == "#ffffff" ? color.guiwhite : namecolor, "center", false, 1, true, ctx[1], global.advanced.radial ? true : false);
+                ctx[1].globalAlpha = 1;
             }
         }
     }
@@ -2276,7 +2271,7 @@ import * as socketStuff from "./socketinit.js";
             }
 
             //bar fills
-            drawBar(x + height / 2, x - height / 2 + len * ska(cap), y + height / 2, height - 3 + config.graphical.barChunk, color.black);
+            drawBar(x + height / 2, x - height / 2 + len * ska(cap), y + height / 2, height - 4 + config.graphical.barChunk, color.black);
             drawBar(x + height / 2, x + height / 2 + len * ska(cap) - gap, y + height / 2, height - 3, color.grey);
             drawBar(x + height / 2, x + height / 2 + len * ska(level) - gap, y + height / 2, height - 3.5, col);
 
@@ -2328,6 +2323,7 @@ import * as socketStuff from "./socketinit.js";
         //rendering information
         let width = 440,
             scorewidth = 70,
+            scorelength = 0,
             height = 25.5,
             x = (global.screenWidth - width) / 2,
             y = global.screenHeight - 22 - height;
@@ -2338,10 +2334,20 @@ import * as socketStuff from "./socketinit.js";
         drawText("Level " + gui.__s.getLevel() + " " + gui.class, x + width / 2 + 1, y + height / 2 + 9, 21, color.guiwhite, "center", false, 6);
         height = 17;
         y -= height + 5;
-        drawBar(x + scorewidth, x + width - scorewidth, y + height / 2, height - 3 + config.graphical.barChunk, color.black);
-        drawBar(x + scorewidth, x + width - scorewidth, y + height / 2, height - 3, color.grey);
-        drawBar(x + scorewidth, x + width * ((scorewidth / width) + ((width - scorewidth * 2) / width) * (max ? Math.min(1, gui.__s.getScore() / max) : 1)), y + height / 2, height - 3.5, color.green);
-        drawText("Score: " + util.formatLargeNumber(Math.round(gui.__s.getScore())), x + width / 2 + 0.5, y + height / 2 + 6, 13, color.guiwhite, "center");
+        if (global.GUIStatus.renderPlayerKillbar) {
+            scorelength = -112.2;
+            scorewidth = 160;
+            drawBar(x + scorewidth - scorelength, x + width - scorewidth - scorelength, y + height / 2, height - 3 + config.graphical.barChunk, color.black);
+            drawBar(x + scorewidth - scorelength, x + width - scorewidth - scorelength, y + height / 2, height - 3, color.grey);
+            drawBar(x + scorewidth - scorelength, x - scorelength + width * ((scorewidth / width) + ((width - scorewidth * 2) / width) * (1 ? Math.min(1, gui.__s.getKills()[0] / 1) : 1)), y + height / 2, height - 3.5, color.teal);
+            drawText("Kills: " + util.formatKills(...gui.__s.getKills()), x + width / 2 + 0.5 - scorelength, y + height / 2 + 6, 13, color.guiwhite, "center");
+            scorelength = 72.5;
+            scorewidth = 120;
+        }
+        drawBar(x + scorewidth - scorelength, x + width - scorewidth - scorelength, y + height / 2, height - 3 + config.graphical.barChunk, color.black);
+        drawBar(x + scorewidth - scorelength, x + width - scorewidth - scorelength, y + height / 2, height - 3, color.grey);
+        drawBar(x + scorewidth - scorelength, x - scorelength + width * ((scorewidth / width) + ((width - scorewidth * 2) / width) * (max ? Math.min(1, gui.__s.getScore() / max) : 1)), y + height / 2, height - 3.5, color.green);
+        drawText("Score: " + util.formatLargeNumber(Math.round(gui.__s.getScore())), x + width / 2 + 0.5 - scorelength, y + height / 2 + 6, 13, color.guiwhite, "center");
         ctx[2].lineWidth = 4;
         var name = global.player.name.substring(7, global.player.name.length + 1);
         drawText(name, Math.round(x + width / 2) + 1.5, Math.round(y - 10 - 4) - 1, 31, global.nameColor = "#ffffff" ? color.guiwhite : global.nameColor, "center");
@@ -2357,7 +2363,7 @@ import * as socketStuff from "./socketinit.js";
         } else global.serverStats.mspt_color = color.guiwhite;
     }
 
-    function drawMinimapAndDebug(spacing, alcoveSize, GRAPHDATA, tick) {
+    function drawMinimapAndDebug(spacing, alcoveSize, GRAPHDATA) {
         // Draw minimap and FPS monitors
         // Minimap stuff starts here
         let len = alcoveSize; // * global.screenWidth;
@@ -2370,6 +2376,14 @@ import * as socketStuff from "./socketinit.js";
             y += global.canUpgrade ? (alcoveSize / 1.5) * mobileUpgradeGlide.get() * upgradeColumns / 1.5 + spacing * (upgradeColumns + 1.55) + 9 : 0;
             y += global.canSkill || global.showSkill ? statMenu.get() * alcoveSize / 2.6 + spacing / 0.75 : 0;
         }
+        ctx[2].globalAlpha = 0.4;
+        ctx[2].save();
+        ctx[2].fillStyle = color.white;
+        global.advanced.roundMap ? drawGuiCircle(x + len / 2, y + height / 2, len / 2) : drawGuiRect(x, y, len, height);
+        ctx[2].beginPath(); // We will not allow to draw outside the minimap, so we are only allowing minimap entities to draw INSIDE the minimap only
+        global.advanced.roundMap ? ctx[2].arc(x + len / 2, y + height / 2, len / 2, 0, 2 * Math.PI) : ctx[2].rect(x, y, len, height); // Draw everything inside the minimap
+        ctx[2].clip();
+
         if (global.roomSetup.length) {
             let W = global.roomSetup[0].length,
                 H = global.roomSetup.length,
@@ -2379,41 +2393,43 @@ import * as socketStuff from "./socketinit.js";
                 let j = 0;
                 for (let xcell = 0; xcell < W; xcell++) {
                     let cell = global.roomSetup[ycell][xcell];
-                    let color = cell.color;
-                    if (color == 'none') cell.color = 'pureBlack';
-                    if (cell.renderImage) {
-                        ctx[2].globalAlpha = 1;
-                        ctx[2].drawImage(cell.renderImage, x + (j * len) / W, y + (i * height) / H, len / W, height / H);
-                    }
-                    ctx[2].globalAlpha = 0.4;
-                    ctx[2].fillStyle = gameDraw.getColor(color);
-                    if (gameDraw.getColor(color) !== color.white) {
+                    if (!cell) {
+                        ctx[2].fillStyle = gameDraw.getColor("border", true);
                         drawGuiRect(x + (j * len) / W, y + (i * height) / H, len / W, height / H);
-                    }
+                    } else {
+                        let color = cell.color;
+                        if (color == 'none') cell.color = 'pureBlack';
+                        if (cell.renderImage) {
+                            ctx[2].globalAlpha = 1;
+                            ctx[2].drawImage(cell.renderImage, x + (j * len) / W, y + (i * height) / H, len / W, height / H);
+                        }
+                        ctx[2].globalAlpha = 0.4;
+                        ctx[2].fillStyle = gameDraw.getColor(color);
+                        if (gameDraw.getColor(color) !== color.white) {
+                            drawGuiRect(x + (j * len) / W, y + (i * height) / H, len / W, height / H);
+                        }
+                    };
                     j++;
                 }
                 i++;
             }
         }
-
-        ctx[2].fillStyle = color.white;
-        drawGuiRect(x, y, len, height);
         ctx[2].globalAlpha = 1;
-        ctx[2].lineWidth = 3;
-        ctx[2].fillStyle = color.black;
-        drawGuiRect(x, y, len, height, true); // Border
         for (let entity of minimap.get()) {
             ctx[2].fillStyle = gameDraw.mixColors(gameDraw.modifyColor(entity.color), color.black, 0.3);
             ctx[2].globalAlpha = entity.alpha;
             switch (entity.type) {
                 case 2:
+                    // Draw wall entieies
                     let trueSize = (entity.size + 2) / 1.1283791671; // lazyRealSizes[4] / sqrt(2)
                     drawGuiRect(x + ((entity.x - trueSize) / global.gameWidth + 0.5) * len, y + ((entity.y - trueSize) / global.gameHeight + 0.5) * height, ((2 * trueSize) / global.gameWidth) * len, ((2 * trueSize) / global.gameWidth) * len + 0.2);
                     break;
                 case 1:
+                    // Draw rock/other entities
                     drawGuiCircle(x + (entity.x / global.gameWidth + 0.5) * len, y + (entity.y / global.gameHeight + 0.5) * height, (entity.size / global.gameWidth) * len);
                     break;
                 case 0:
+                    // Draw players
                     if (entity.id !== gui.playerid) drawGuiCircle(x + (entity.x / global.gameWidth + 0.5) * len, y + (entity.y / global.gameHeight + 0.5) * height, !global.mobile ? 2 : 3.5);
                     break;
             }
@@ -2423,7 +2439,14 @@ import * as socketStuff from "./socketinit.js";
         ctx[2].lineWidth = 1;
         ctx[2].strokeStyle = color.guiblack;
         ctx[2].fillStyle = color.guiblack;
+        // Draw yourself in the minimap
         drawGuiCircle(x + (global.player.cx.animX / global.gameWidth + 0.5) * len, y + (global.player.cy.animY / global.gameHeight + 0.5) * height, !global.mobile ? 2 : 3.5, false);
+        ctx[2].restore();
+        ctx[2].globalAlpha = 1;
+        ctx[2].fillStyle = color.black;
+        // Draw border of the minimap
+        ctx[2].lineWidth = 3;
+        global.advanced.roundMap ? drawGuiCircle(x + len / 2, y + height / 2, len / 2, true) : drawGuiRect(x, y, len, height, true); // Border
         if (global.mobile) {
             x = global.screenWidth - spacing - len;
             y = global.screenHeight - spacing;
@@ -2446,9 +2469,15 @@ import * as socketStuff from "./socketinit.js";
         let tankSpeed = Math.sqrt(global.player.vx * global.player.vx + global.player.vy * global.player.vy);
         let xloc = global.player.renderx / 30;
         let yloc = global.player.rendery / 30;
-
         if (global.showDebug) {
-            drawText("Open Source Arras", x + len, y - 50 - 9 * 14 - 2, 15, "#1081E5", "right");
+            let getRenderingInfo = (data, isTurret) => {
+                isTurret ? global.renderingInfo.turretEntities += data.length : global.renderingInfo.entities += data.length;
+                for (let instance of data) { 
+                    if (instance.name && instance.id !== gui.playerid) global.renderingInfo.entitiesWithName++;
+                    if (instance.turrets.length) getRenderingInfo(instance.turrets, true);
+                };
+            };
+            getRenderingInfo(global.entities, false);
             if (!global.tankSpeedHistory) global.tankSpeedHistory = [];
             const HISTORY_LENGTH = 5;
             let rawSpeed = Math.sqrt(global.player.vx * global.player.vx + global.player.vy * global.player.vy) * config.roomSpeed;
@@ -2456,14 +2485,16 @@ import * as socketStuff from "./socketinit.js";
             global.tankSpeedHistory.push(rawSpeed);
             if (global.tankSpeedHistory.length > HISTORY_LENGTH) global.tankSpeedHistory.shift();
             let tankSpeed = global.tankSpeedHistory.reduce((sum, val) => sum + val, 0) / global.tankSpeedHistory.length;
-            drawText("Tank Speed: " + tankSpeed.toFixed(2) + " gu/s", x + len, y - 50 - 8 * 14, 10, color.guiwhite, "right");
-            drawText(`Coordinates: (${xloc.toFixed(2)}, ${yloc.toFixed(2)})`, x + len, y - 50 - 7 * 14, 10, color.guiwhite, "right");
+            drawText("Open Source Arras", x + len, y - 50 - 10 * 14 - 2, 15, "#1081E5", "right");
+            drawText("Tank Speed: " + tankSpeed.toFixed(2) + " gu/s", x + len, y - 50 - 9 * 14, 10, color.guiwhite, "right");
+            drawText(`Coordinates: (${xloc.toFixed(2)}, ${yloc.toFixed(2)})`, x + len, y - 50 - 8 * 14, 10, color.guiwhite, "right");
+            drawText(`Rendering: e ${global.renderingInfo.entities} t: ${global.renderingInfo.turretEntities} n: ${global.renderingInfo.entitiesWithName}`, x + len, y - 50 - 7 * 14, 10, color.guiwhite, "right");
             drawText(`Bandwidth: tx ${global.bandwidth.finalHa} rx ${global.bandwidth.finalFa}`, x + len, y - 50 - 6 * 14, 10, color.guiwhite, "right");
             drawText("Memory: " + global.metrics.rendergap.toFixed(1) + " Mib / " + "Class: " + global.mockups[parseInt(gui.type.split("-"))].name, x + len, y - 50 - 5 * 14, 10, color.guiwhite, "right");
             drawText("Update Rate: " + global.metrics.updatetime + "Hz", x + len, y - 50 - 4 * 14, 10, color.guiwhite, "right");
             drawText(`§${global.serverStats.lag_color}§ ${(100 * gui.fps).toFixed(2)}% §reset§/ ` + global.serverStats.players + ` Player${global.serverStats.players == 1 ? "" : "s"}`, x + len, y - 50 - 3 * 14, 10, color.guiwhite, "right");
             drawText("Prediction: " + Math.round(GRAPHDATA) + "ms", x + len, y - 50 - 2 * 14, 10, color.guiwhite, "right");
-            drawText(`§${global.metrics.rendertime_color}§ ${global.metrics.rendertime} FPS §reset§/` + `§${global.serverStats.mspt_color}§ ${global.serverStats.mspt} mspt§reset§ : ${global.metrics.mspt} gmspt`, x + len, y - 50 - 1 * 14, 10, color.guiwhite, "right");
+            drawText(`§${global.metrics.rendertime_color}§ ${global.metrics.rendertime} FPS §reset§/` + `§${global.serverStats.mspt_color}§ ${global.serverStats.mspt} mspt : ${global.metrics.mspt} gmspt`, x + len, y - 50 - 1 * 14, 10, color.guiwhite, "right");
             drawText(ping.toFixed(1) + " ms / " + global.serverStats.serverGamemodeName + " " + global.locationHash, x + len, y - 50, 10, color.guiwhite, "right");
         } else if (!global.GUIStatus.minimapReducedInfo) {
             drawText("Open Source Arras", x + len, y - 50 - 3 * 14 - 2, 15, "#1081E5", "right");
@@ -2503,8 +2534,8 @@ import * as socketStuff from "./socketinit.js";
                 lbEntry = leaderboardEntries[entry.id] = {
                     ...entry,
                     leaderboardUpdate,
-                    animX: AdvancedSmoothBar(0, 0.30, 1.5),
-                    animY: AdvancedSmoothBar(0, 0.30, 1.5),
+                    animX: Smoothbar(0, 0.30, 1.5, 0.025, true),
+                    animY: Smoothbar(0, 0.30, 1.5, 0.025, true),
                     x: 0,
                     y: i,
                     targetX: 1,
@@ -2529,7 +2560,10 @@ import * as socketStuff from "./socketinit.js";
             if (entry.animX.get() > 0.999) {
                 entry.animX.force(0);
                 entry.x = entry.targetX;
-                if (entry.x === 0) entry.visible = false;
+                if (entry.x === 0) { 
+                    entry.visible = false;
+                    delete leaderboardEntries[id];
+                };
             }
             if (entry.animY.get() > 0.999) {
                 entry.animY.force(0);
@@ -2547,23 +2581,25 @@ import * as socketStuff from "./socketinit.js";
                 if (entry.y !== entry.targetY) entryPos = entry.y + entry.animY.get() * (entry.targetY - entry.y);
                 let entryY = y + (vspacing + height) * entryPos;
 
-                drawBar(entryX, entryX + len, entryY + height / 2, height - 3 + config.graphical.barChunk, color.black);
-                drawBar(entryX, entryX + len, entryY + height / 2, height - 3, color.grey);
+                drawBar(entryX, entryX + len, entryY + height / 2 - .7, height - 3 + config.graphical.barChunk, color.black);
+                drawBar(entryX, entryX + len, entryY + height / 2 - .7, height - 3, color.grey);
                 let shift = Math.min(1, entry.score / max);
-                drawBar(entryX, entryX + len * shift, entryY + height / 2, height - 3.5, gameDraw.modifyColor(entry.barColor));
+                drawBar(entryX, entryX + len * shift, entryY + height / 2 - .7, height - 3.5, gameDraw.modifyColor(entry.barColor));
 
                 // Leadboard name + score
                 let nameColor = entry.nameColor || "#FFFFFF";
                 let overwritelabel = entry.label.includes("#")
                     ? entry.label.replace("##", Math.round(entry.score).toString()).replace("#s", 1 === Math.round(entry.score) ? "" : "s")
                     : false;
-                drawText(overwritelabel ? overwritelabel : entry.label + (": " + util.handleLargeNumber(Math.round(entry.score))), entryX + len / 2, entryY + height / 2, height - 5, nameColor == "#ffffff" ? color.guiwhite : nameColor, "center", true);
+                drawText(overwritelabel ? overwritelabel : entry.label + (": " + util.handleLargeNumber(Math.round(entry.score))), entryX + len / 2, entryY + height / 2, height - 4.5, nameColor == "#ffffff" ? color.guiwhite : nameColor, "center", true);
 
                 // Mini-image
-                let xx = entryX - 1.5 * height - scale * entry.position.middle.x * Math.SQRT1_2,
-                    yy = entryY + 0.5 * height - scale * entry.position.middle.y * Math.SQRT1_2,
-                    baseColor = entry.color;
-                drawEntity(baseColor, xx, yy, entry.image, 1 / scale, 1, (scale * scale) / entry.image.size, 1, -Math.PI / 4, true, ctx[2]);
+                if (entry.renderEntity) {
+                    let xx = entryX - 1.5 * height - scale * entry.position.middle.x * Math.SQRT1_2,
+                        yy = entryY + 0.5 * height - scale * entry.position.middle.y * Math.SQRT1_2,
+                        baseColor = entry.color;
+                    drawEntity(baseColor, xx, yy, entry.image, 1 / scale, 1, (scale * scale) / entry.image.size, 3, -Math.PI / 4, true, ctx[2], false, entry.image.render, false, true);
+                }
             }
         }
         leaderboardUpdate++;
@@ -2638,7 +2674,7 @@ import * as socketStuff from "./socketinit.js";
                 upgradeNum++;
             }
 
-            // Draw dont upgrade button
+            // Draw don't upgrade button
             let h = 19.1,
                 textScale = h - 6,
                 msg = "Don't Upgrade",
@@ -2936,6 +2972,7 @@ import * as socketStuff from "./socketinit.js";
             x += global.screenWidth / 2;
             y += global.screenHeight / 2;
             let boxLengthHalf = (10.49 * g) / 2;
+            global.canvas.chatBox.loadedProperly = true;
             // Box drawing
             global.canvas.chatBox.style.color = color.black;
             global.canvas.chatBox.style.backgroundColor = color.guiwhite;
@@ -2992,7 +3029,7 @@ import * as socketStuff from "./socketinit.js";
         if (global.finalKillers.length) {
             txt = "🔪 Succumbed to";
             for (let e of global.finalKillers) {
-                txt += " " + util.addArticle(util.getEntityImageFromMockup(e).name) + " and";
+                txt += " " + util.addArticle(util.requestEntityImage(e).name) + " and";
             }
             txt = txt.slice(0, -4);
         } else {
@@ -3022,7 +3059,7 @@ import * as socketStuff from "./socketinit.js";
             scale = len / position.axis,
             xx = global.screenWidth / 2 - scale * position.middle.x * 0.707,
             yy = y + scale * position.middle.y * Math.SQRT1_2,
-            picture = util.getEntityImageFromMockup(gui.type, gui.color),
+            picture = util.requestEntityImage(gui.type, gui.color),
             baseColor = picture.color,
             name = global.player.name.substring(7, global.player.name.length + 1),
             timestamp = Math.floor(Date.now() / 1000);
@@ -3030,7 +3067,7 @@ import * as socketStuff from "./socketinit.js";
         clearScreen(color.black, 0.1 + 0.15 * global.lerp(0, 0.5, glide), ctx[2]);
         let ratio = util.getScreenRatio();
         scaleScreenRatio(ratio, true);
-        drawEntity(baseColor, (xx - 190 - len / 2 + 0.5) | 0, (yy - -5 + 0.5) | 0, picture, 1.5, 1, (0.5 * scale) / picture.realSize, 1, -Math.PI / 4, true, ctx[2]);
+        drawEntity(baseColor, (xx - 190 - len / 2 + 0.5) | 0, (yy - -5 + 0.5) | 0, picture, 1.5, 1, (0.5 * scale) / picture.realSize, 1, -Math.PI / 4, true, ctx[2], false, picture.render, false, true);
         drawText("Level " + gui.__s.getLevel(), x - 275, y - -80, 14, color.guiwhite, "center");
         drawText(picture.name, x - 275, y - -110, 24, color.guiwhite, "center");
         drawText(timestamp + '', x, y - 80, 10, color.guiwhite, "center");
@@ -3096,6 +3133,7 @@ import * as socketStuff from "./socketinit.js";
         global.GRAPHDATA = 0;
         let tickMotion = lasttick ? tick - lasttick : null;
         lasttick = tick;
+        global.clientTickMotion = null == tickMotion ? 0 : 0.99 ** tickMotion;
         let motion = compensation();
         motion.set();
         global.GRAPHDATA = motion.getPrediction();
@@ -3107,9 +3145,8 @@ import * as socketStuff from "./socketinit.js";
             global.player.renderx = util.lerp(global.player.renderx, global.player.cx.x, 0.1, true);
             global.player.rendery = util.lerp(global.player.rendery, global.player.cy.y, 0.1, true);
         } else if (config.graphical.smoothcamera) {
-            let n = null == tickMotion ? 0 : 0.99 ** tickMotion;
-            global.player.renderx = global.player.renderx * n + playerx * (1 - n);
-            global.player.rendery = global.player.rendery * n + playery * (1 - n);
+            global.player.renderx = global.player.renderx * global.clientTickMotion + playerx * (1 - global.clientTickMotion);
+            global.player.rendery = global.player.rendery * global.clientTickMotion + playery * (1 - global.clientTickMotion);
         } else if (config.graphical.predictAnimations) {
             global.player.renderx = motion.predict(global.player.lastx, global.player.cx.x, global.player.lastvx, global.player.vx),
             global.player.rendery = motion.predict(global.player.lasty, global.player.cy.y, global.player.lastvy, global.player.vy);
@@ -3154,7 +3191,7 @@ import * as socketStuff from "./socketinit.js";
             drawMessages(spacing, alcoveSize);
             drawSkillBars(spacing, alcoveSize);
             drawSelfInfo(max);
-            drawMinimapAndDebug(spacing, alcoveSize, global.GRAPHDATA, tick);
+            drawMinimapAndDebug(spacing, alcoveSize, global.GRAPHDATA);
             if (global.GUIStatus.renderLeaderboard) drawLeaderboard(spacing, alcoveSize, max);
             drawAvailableUpgrades(spacing, alcoveSize);
         } else drawAvailableUpgrades(spacing, alcoveSize);
@@ -3212,11 +3249,11 @@ import * as socketStuff from "./socketinit.js";
         drawText("Error!", global.screenWidth / 2, global.screenHeight / 2, 30, color.red, "center");
         drawText("The client ran into an error, try to move away from the glitched entity.", global.screenWidth / 2, global.screenHeight / 2 + 30, 15, color.guiwhite, "center");
         drawText("Press F12 if you're on PC, check the console logs, and report it to the developers.", global.screenWidth / 2, global.screenHeight / 2 + 60, 15, color.guiwhite, "center");
-    }
-    let animationFrame =
-    (!/Chrome\/8[4-6]\.0\.41([4-7][0-9]|8[0-3])\./.test(navigator.userAgent) &&
-      window.requestAnimationFrame) ||
-    ((a) => setTimeout(() => a(Date.now()), 1e3 / 60));
+    };
+        let animationFrame =
+        (!/Chrome\/8[4-6]\.0\.41([4-7][0-9]|8[0-3])\./.test(navigator.userAgent) &&
+          window.requestAnimationFrame) ||
+        ((a) => setTimeout(() => a(Date.now()), 1e3 / 60));
     function animloop(tick) {
         if (document.hidden) {
             setTimeout(() => animloop(Date.now()), 200); // Slow down when tab is hidden
@@ -3228,20 +3265,27 @@ import * as socketStuff from "./socketinit.js";
             util.fovAnimation.force(2000);
             global.needsFovAnimReset = false;
         }
-        let animFov = config.graphical.slowerFOV ? 3 : 1.1
         if (global.gameStart) {
-            util.fovAnimation.set(global.player.renderv + (global.player.view - global.player.renderv) / animFov);
-            global.player.renderv = util.fovAnimation.get();
+            // Update fov
+            let fovtickMotion = fovlasttick ? tick - fovlasttick : null;
+            fovlasttick = tick;
+            let renderv = null == fovtickMotion ? 0 : config.graphical.slowerFOV ? 0.98 : 0.99 ** fovtickMotion;
+            let renderfov = global.player.animv.get(tick);
+            global.player.renderv = global.player.renderv * renderv + renderfov * (1 - renderv);
+            // Reset collected rendering info (DEBUG)
+            global.renderingInfo.entities = 0;
+            global.renderingInfo.turretEntities = 0;
+            global.renderingInfo.entitiesWithName = 0;
         }
-
+    
         var ratio = config.graphical.screenshotMode ? 2 : util.getRatio();
         // Set the drawing style
-        ctx[2].lineCap = "round";
-        ctx[2].lineJoin = "round";
         gameDraw.reanimateColors();
-        ctx[0].clearRect(0, 0, window.innerWidth + 1000, window.innerHeight + 1000);
-        ctx[1].clearRect(0, 0, window.innerWidth + 1000, window.innerHeight + 1000);
-        ctx[2].clearRect(0, 0, window.innerWidth + 1000, window.innerHeight + 1000);
+        for (let context of ctx) {
+            context.lineCap = "round";
+            context.lineJoin = "round";
+            context.clearRect(0, 0, window.innerWidth + 1000, window.innerHeight + 1000);
+        }
         // Figure out where we're rendering if we don't yet know
         if (isNaN(global.player.renderx) && isNaN(global.player.rendery)) {
             global.player.renderx = global.player.cx.x;
@@ -3250,7 +3294,7 @@ import * as socketStuff from "./socketinit.js";
         // Draw the game
         if (global.gameUpdate && !global.disconnected) {
             global.time = getNow();
-            if (isNaN(global.time)) { // If something isnt right, do a resync and pause the rendering.
+            if (isNaN(global.time)) { // If something isn't right, do a resync and pause the rendering.
                 global.gameUpdate = false;
                 global.pullUpgradeMenu = true;
                 global.pullSkillBar = true;
@@ -3274,9 +3318,6 @@ import * as socketStuff from "./socketinit.js";
                 global.bandwidth.currentFa = 0;
                 if (!global.secondaryLoop) global.secondaryLoop = true, runSecondary();
                 // Other
-                setTimeout(() => {
-                    if (global.messagesFaded.length == global.messages.length) global.messages = [], global.messagesFaded = []; // Erase messages if everything has faded.
-                }, 100)
                 let sum = global.loggers.master.record();
                 let sum2 = global.loggers.socketMaster.record();
 
@@ -3285,7 +3326,7 @@ import * as socketStuff from "./socketinit.js";
             global.metrics.lag = global.time - global.player.time;
         }
         if (global.GUIStatus.fullHDMode) ctx[2].translate(0.5, 0.5);
-
+    
         try {
             drawGameplay(tick, ratio);
             drawGUI(tick, util.getScreenRatio());
@@ -3300,10 +3341,9 @@ import * as socketStuff from "./socketinit.js";
                 drawDisconnectedScreen();
             }
             if (global.GUIStatus.fullHDMode) ctx[2].translate(-0.5, -0.5);
-
-            //oh no we need to throw an error!
+    
+            //oh no, we need to throw an error!
         } catch (e) {
-
             //hold on....
             drawErrorScreen(); // Draw the error screen.
             if (global.GUIStatus.fullHDMode) ctx[2].translate(-0.5, -0.5);

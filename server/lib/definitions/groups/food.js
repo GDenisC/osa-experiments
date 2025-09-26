@@ -11,6 +11,7 @@ Class.egg = {
     SIZE: 4.5,
     COLOR: "veryLightGrey",
     INTANGIBLE: true,
+    VISIBLE_ON_BLACKOUT: true,
     BODY: {
         DAMAGE: 0,
         DENSITY: 2,
@@ -404,7 +405,6 @@ for (let tier = 0; tier < 6; tier++) {
             let food = shinyName + polyName;
             food = food[0].toLowerCase() + food.slice(1);
 
-            Class[`laby${tier}${food}`] = // backwards compatability, DO NOT ADD A SEMICOLON HERE. javascript is funny about whitespace characters :))))))
             Class[`laby_${poly}_${tier}_${shiny}_0`] = makeLaby(Class[food], tier, (polyName === "Triangle" && tier > 0) ? 2/3 : 1);
 
             Class[`laby_${poly}_${tier}_${shiny}_1`] = makeCrasher(Class[`laby_${poly}_${tier}_${shiny}_0`]);
