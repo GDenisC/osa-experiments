@@ -510,7 +510,7 @@ exports.makeTurret = (type, options = {}) => {
         PARENT: 'genericTank',
         LABEL: options.label ?? "",
         COLOR: options.color ?? "grey",
-        BODY: { FOV: options.fov ?? 2 },
+        BODY: { FOV: (options.fov ?? 2) / 2 },
         INDEPENDENT: options.independent ?? false,
         CONTROLLERS,
         GUNS,

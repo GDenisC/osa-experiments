@@ -45,8 +45,6 @@ Class['smasher'].UPGRADES_TIER_2 = generateProceduralClasses({
 				DAMAGE: 1.1 * (context.mockup.BODY.DAMAGE ?? base.DAMAGE)
 			};
 
-			console.log(context.mockup.BODY.DAMAGE, tier);
-
 			context.mockup.TURRETS = Array.from({ length: 2 + tier }, (_, i) => ({
 				POSITION: [
 					context.mockup.TURRETS[0].POSITION[0] - (tier == 1 ? 3 : 0),
