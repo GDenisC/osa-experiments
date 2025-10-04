@@ -315,6 +315,7 @@ module.exports = {
 	HUNT: false,
 	MODE: 'ffa',
 	TAG: false,
+	GROWTH: false,
 	SPAWN_CONFINEMENT: {},
 
 	// Room setup

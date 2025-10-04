@@ -7,5 +7,6 @@ module.exports = {
 		if (level == 49) return 1;
 		if (level % 10 == 1) return 1;
 		return 0;
-	}
+	},
+	GROWTH: true
 };

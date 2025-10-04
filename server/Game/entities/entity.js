@@ -711,8 +711,11 @@ class Entity extends EventEmitter {
 	}
 
 	refreshBodyAttributes() {
-		const level = Math.min(120, this.level);
-		let speedReduce = Math.min(4, this.size / (this.coreSize || this.SIZE));
+		const level = Math.min(Config.GROWTH ? 120 : 45, this.level);
+		let speedReduce = Math.min(
+			Config.GROWTH ? 4 : 2,
+			this.size / (this.coreSize || this.SIZE)
+		);
 		this.acceleration =
 			(1 * global.gameManager.runSpeed * this.ACCELERATION) / speedReduce;
 		if (this.settings.reloadToAcceleration) this.acceleration *= this.skill.acl;
@@ -811,9 +814,11 @@ class Entity extends EventEmitter {
 		return Math.min(this.levelCap ?? Config.LEVEL_CAP, this.skill.level);
 	}
 	get size() {
+		let level = this.level;
+		if (!Config.GROWTH) level = Math.min(45, level);
 		let levelMultiplier = 1;
-		levelMultiplier += this.level / 45;
-		if (this.level > 45) {
+		levelMultiplier += level / 45;
+		if (level > 45) {
 			levelMultiplier += ((this.skill.score - 26263) / 3_000_000) * 7.5;
 		}
 		return this.bond == null

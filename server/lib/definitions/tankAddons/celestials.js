@@ -20,8 +20,7 @@ Class.proc_celestial = {
 	HITS_OWN_TYPE: 'hardOnlyBosses',
 	BODY: { PUSHABILITY: 0.05 },
 	CONTROLLERS: [['minion', { turnwiserange: 360 }], 'canRepel'],
-	AI: { NO_LEAD: true },
-	REROOT_UPGRADE_TREE: 'proc_celestial'
+	AI: { NO_LEAD: true }
 };
 
 // ETERNAL: CONTROLLERS: [["minion", {orbit: 240}]]
@@ -34,20 +33,48 @@ Class.proc_celestial.UPGRADES_TIER_0 = generateProceduralClasses({
 	},
 	branches: {
 		empty: (context, tier) => {
+			if (
+				tier > 1 &&
+				(context.tiers['empty2'] > tier ||
+					context.tiers['empty3'] > tier ||
+					context.tiers['empty4'] > tier)
+			)
+				return context.cancel();
+
 			if (tier != 0) context.addLabel('A' + tier);
 		},
 		empty2: (context, tier) => {
+			if (
+				tier > 1 &&
+				(context.tiers['empty'] > tier ||
+					context.tiers['empty3'] > tier ||
+					context.tiers['empty4'] > tier)
+			)
+				return context.cancel();
 			if (tier != 0) context.addLabel('B' + tier);
 		},
 		empty3: (context, tier) => {
-			if (context.tiers['empty2'] > 1) return context.cancel();
+			if (
+				tier > 1 &&
+				(context.tiers['empty'] > tier ||
+					context.tiers['empty2'] > tier ||
+					context.tiers['empty4'] > tier)
+			)
+				return context.cancel();
 
 			if (tier != 0) context.addLabel('C' + tier);
 		},
 		empty4: (context, tier) => {
+			if (
+				tier > 1 &&
+				(context.tiers['empty'] > tier ||
+					context.tiers['empty2'] > tier ||
+					context.tiers['empty3'] > tier)
+			)
+				return context.cancel();
+
 			if (tier != 0) context.addLabel('D' + tier);
 		}
 	},
-	maxTiers: 6,
-	rerootUpgradeTree: false
+	maxTiers: 6
 });
