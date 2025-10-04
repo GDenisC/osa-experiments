@@ -1,6 +1,6 @@
-const { base, dfltskl } = require('./constants');
 const { dereference } = require('./facilitators');
 
+/* comment the comment to disable the comment
 /**
 @typedef {Partial<{
 	LABEL: (tier: number) => string,                 // prefix of the tank's label
@@ -164,7 +164,9 @@ const definitionSeparator = '_';
 const defaultOptions = {
 	template: '',
 	mockup: 'genericTank',
-	/** @type {Record<string | symbol, (ctx: ProceduralMockupContext, tier: number)>} */
+	/** @type {((ctx: ProceduralMockupContext, totalTiers: number) => void) | null} */
+	baseBranch: null,
+	/** @type {Record<string | symbol, (ctx: ProceduralMockupContext, tier: number) => void>} */
 	branches: [],
 	startTier: 1,
 	maxTiers: maxTier,
@@ -196,6 +198,7 @@ class ProceduralMockupContext {
 		this.mockup = mockup;
 		this.tiers = tiers;
 		this.label = [];
+		this.cancelled = false;
 	}
 
 	addLabel(label) {
@@ -214,6 +217,10 @@ class ProceduralMockupContext {
 		if (!this.mockup.TURRETS) return;
 
 		return this.mockup.TURRETS.filter(t => t.ID == id);
+	}
+
+	cancel() {
+		this.cancelled = true;
 	}
 }
 
@@ -270,7 +277,7 @@ class ProceduralClassesContext {
 		this.template = this.options.template;
 		this.mockupName = this.options.mockup;
 		this.mockup = cls;
-		/** @type {Record<string | symbol, ProceduralMockup>} */
+		this.baseBranch = this.options.baseBranch;
 		this.branches = this.options.branches;
 		this.startTier = this.options.startTier;
 		this.maxTiers = this.options.maxTiers;
@@ -371,6 +378,17 @@ class ProceduralClassesContext {
 	#generateNextTierOf(mockup) {
 		const generatedTier = [];
 
+		if (this.baseBranch) {
+			this.baseBranch(
+				new ProceduralMockupContext(
+					this,
+					dereference(mockup),
+					mockup[BRANCH_TIERS]
+				),
+				Object.values(mockup[BRANCH_TIERS]).reduce((a, b) => a + b, 0)
+			);
+		}
+
 		for (const branch in this.branches) {
 			const branchTiers = cloneObject(mockup[BRANCH_TIERS]);
 			branchTiers[branch] += 1;
@@ -398,6 +416,8 @@ class ProceduralClassesContext {
 			for (const branch2 in this.branches) {
 				this.branches[branch2](mockupContext, branchTiers[branch2]);
 			}
+
+			if (mockupContext.cancelled) continue;
 
 			mockupContext.mockup.LABEL = mockupContext.getLabel();
 			if (this.rerootUpgradeTree)

@@ -35,7 +35,7 @@ module.exports = {
 			// Keep in mind that if "LOAD_ON_MAINSERVER" is set to true then this code will be replaced with the main server's port instead.
 			PORT: 3001,
 			// Get the gamemode you want to select with.
-			GAMEMODE: ['ffa', 'growth'],
+			GAMEMODE: ['ffa'],
 			// The region, can be anything.
 			REGION: 'local',
 			// How many players can join until it's full.
@@ -46,7 +46,7 @@ module.exports = {
 			// This is where you can override settings in the config.js file, and as long the gamemode's config doesn't override it.
 			PROPERTIES: {
 				// Amount of bots.
-				BOTS: 30
+				BOTS: 10
 			}
 		}
 	],
@@ -120,7 +120,7 @@ module.exports = {
 	},
 
 	// Maximum normally achievable level.
-	LEVEL_CAP: 45,
+	LEVEL_CAP: 900,
 
 	// Maximum level via the level-up key and auto-level-up.
 	LEVEL_CHEAT_CAP: 45,
@@ -156,7 +156,7 @@ module.exports = {
 	BOT_NAME_PREFIX: '',
 
 	// The class that players and player-bots spawn as.
-	SPAWN_CLASS: 'basic',
+	SPAWN_CLASS: 'proc_celestial',
 
 	// How every entity regenerates their health.
 	REGENERATE_TICK: 100,
@@ -178,11 +178,11 @@ module.exports = {
 			[
 				[65, 'egg'],
 				[64, 'triangle'],
-				[45, 'square'],
-				[35, 'pentagon'],
-				[25, 'hexagon']
+				[35, 'square'],
+				[15, 'pentagon'],
+				[5, 'hexagon']
 			]
-		],
+		]/*,
 		[
 			4,
 			[
@@ -202,7 +202,7 @@ module.exports = {
 				[2, 'legendaryPentagon'],
 				[1, 'legendaryHexagon']
 			]
-		]
+		]*/
 	],
 
 	// The possible nest food types that can spawn.
@@ -214,7 +214,7 @@ module.exports = {
 				[4, 'betaPentagon'],
 				[1, 'alphaPentagon']
 			]
-		],
+		],/*
 		[
 			1,
 			[
@@ -224,7 +224,7 @@ module.exports = {
 				[2, 'legendaryPentagon'],
 				[1, 'legendaryHexagon']
 			]
-		]
+		]*/
 	],
 
 	// The possible nest enemy types that can spawn.
