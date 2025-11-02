@@ -6,7 +6,7 @@ const { makeRarities, makePresent } = require('../facilitators');
 Class.egg = {
 	PARENT: 'food',
 	LABEL: 'Egg',
-	VALUE: 10,
+	VALUE: 5,
 	SHAPE: 0,
 	SIZE: 4.5,
 	COLOR: 'veryLightGrey',

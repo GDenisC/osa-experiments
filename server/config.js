@@ -39,14 +39,14 @@ module.exports = {
 			// The region, can be anything.
 			REGION: 'local',
 			// How many players can join until it's full.
-			MAX_PLAYERS: 1,
+			MAX_PLAYERS: 15,
 			// The server ID. Example: (<Yourwebsitename>/#<ServerID>)
 			// Important! You cannot make the same server id with a other one or else the server selector will get confused.
 			SERVER_ID: 'loc',
 			// This is where you can override settings in the config.js file, and as long the gamemode's config doesn't override it.
 			PROPERTIES: {
 				// Amount of bots.
-				BOTS: 50
+				BOTS: 5
 			}
 		}
 	],
@@ -115,7 +115,7 @@ module.exports = {
 	LEVEL_SKILL_POINT_FUNCTION: level => {
 		if (level < 2) return 0;
 		if (level <= 40) return 1;
-		if (level <= 45 && (level & 1) == 1) return 1;
+		if (level <= 45 && level) return 1;
 		return 0;
 	},
 
@@ -315,7 +315,6 @@ module.exports = {
 	HUNT: false,
 	MODE: 'ffa',
 	TAG: false,
-	GROWTH: false,
 	SPAWN_CONFINEMENT: {},
 
 	// Room setup

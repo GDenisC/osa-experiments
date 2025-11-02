@@ -549,7 +549,7 @@ exports.makeTurret = (type, options = {}) => {
     - canRepel: whether or not the auto turret can fire backwards with secondary fire
     - limitFov: whether or not the auto turret should bother to try to limit its FOV arc
     - hasAI: whether or not the auto turret can think and shoot on its own
-    - extraStats: array of stats to append onto the shoot settings of all the turret's guns
+    - extraStats: array of stats to append onto the shoot settings of all of the turret's guns
     - label: turret label
     - color: turret color
     - fov: turret FOV
@@ -991,6 +991,31 @@ const labyRarityToHealth = {
 	5: 10
 };
 
+const labyTierToHealth = {
+	0: 0.25,
+	1: 10,
+	2: 20,
+	3: 150,
+	4: 300
+};
+
+// not accurate values
+const labyRarityToScore = {
+	1: 5,
+	2: 10,
+	3: 40,
+	4: 100,
+	5: 250
+};
+
+const labyRarityToHealth = {
+	1: 2,
+	2: 4,
+	3: 6,
+	4: 8,
+	5: 10
+};
+
 exports.makeLaby = (type, tier, rarity, level, baseScale = 1) => {
 	type = ensureIsClass(type);
 	let usableSHAPE = Math.max(type.SHAPE, 3),
@@ -1055,9 +1080,6 @@ exports.makeRarities = type => {
 		const pn = `${rarities[i]}${ct}`;
 		Class[pn] = exports.makeRare(`${type}`, [i]);
 	}
-};
-exports.calcAspect = (oWidth /*Original*/, eWidth /*expected*/) => {
-	return eWidth / oWidth;
 };
 
 //merry Christmas
