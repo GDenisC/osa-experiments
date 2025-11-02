@@ -355,7 +355,7 @@ class gameHandler {
         for (let i = 0; i < this.bots.length; i++) {
             let o = this.bots[i];
             o.skill.maintain();
-            o.skillUp([ "atk", "hlt", "spd", "str", "pen", "dam", "rld", "mob", "rgn", "shi" ][ran.chooseChance(...Config.BOT_CLASS_UPGRADE_CHANCES)]);
+            o.skillUp([ "atk", "hlt", "spd", "str", "pen", "dam", "rld", "mob", "rgn", "shi" ][ran.chooseChance(...Config.BOT_SKILL_UPGRADE_CHANCES)]);
             o.refreshSkills();
             if (o.leftoverUpgrades && o.upgrade(ran.irandomRange(0, o.upgrades.length))) {
                 o.leftoverUpgrades--;

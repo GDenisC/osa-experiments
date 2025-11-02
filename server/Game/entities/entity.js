@@ -711,7 +711,10 @@ class Entity extends EventEmitter {
 	}
 
 	refreshBodyAttributes() {
-		const level = Math.min(Config.GROWTH ? 120 : 45, this.level);
+		const level = Math.min(45, this.level);
+		const growthLevel = Config.GROWTH
+			? Math.max(0, Math.min(120, this.level) - 45)
+			: 0;
 		let speedReduce = Math.min(
 			Config.GROWTH ? 4 : 2,
 			this.size / (this.coreSize || this.SIZE)
@@ -727,18 +730,19 @@ class Entity extends EventEmitter {
 		this.health.set(
 			((this.settings.healthWithLevel ? 2 * level : 0) + this.HEALTH) *
 				this.skill.hlt *
-				1
+				(1 + growthLevel / 50)
 		);
 		this.health.resist = 1 - 1 / Math.max(1, this.RESIST + this.skill.brst);
 		this.shield.set(
 			((this.settings.healthWithLevel ? 0.6 * level : 0) + this.SHIELD) *
-				this.skill.shi,
+				this.skill.shi *
+				(1 + growthLevel / 180),
 			Math.max(
 				0,
 				((this.settings.healthWithLevel ? 0.006 * level : 0) + 1) *
 					this.REGEN *
 					this.skill.rgn *
-					1
+					(1 + growthLevel / 240)
 			)
 		);
 		this.damage = 1 * this.DAMAGE * this.skill.atk;
@@ -813,13 +817,18 @@ class Entity extends EventEmitter {
 	get level() {
 		return Math.min(this.levelCap ?? Config.LEVEL_CAP, this.skill.level);
 	}
+
+	// How this works: in 2025 growth a 3.00m player has the same size as a wall (tile)
 	get size() {
 		let level = this.level;
 		if (!Config.GROWTH) level = Math.min(45, level);
 		let levelMultiplier = 1;
-		levelMultiplier += level / 45;
-		if (level > 45) {
-			levelMultiplier += ((this.skill.score - 26263) / 3_000_000) * 7.5;
+		if (this.settings.healthWithLevel) {
+			levelMultiplier += Math.min(45, level) / 45;
+		}
+		if (level > 45 && (this.isPlayer || this.isBot)) {
+			const scoreSince45 = this.skill.score - 26263;
+			levelMultiplier += Math.pow(scoreSince45 / 3660, 0.6575) / 8;
 		}
 		return this.bond == null
 			? (this.coreSize || this.SIZE) * this.sizeMultiplier * levelMultiplier

@@ -35,18 +35,18 @@ module.exports = {
 			// Keep in mind that if "LOAD_ON_MAINSERVER" is set to true then this code will be replaced with the main server's port instead.
 			PORT: 3001,
 			// Get the gamemode you want to select with.
-			GAMEMODE: ['ffa'],
+			GAMEMODE: ['teams', 'maze', 'growth'],
 			// The region, can be anything.
 			REGION: 'local',
 			// How many players can join until it's full.
-			MAX_PLAYERS: 15,
+			MAX_PLAYERS: 1,
 			// The server ID. Example: (<Yourwebsitename>/#<ServerID>)
 			// Important! You cannot make the same server id with a other one or else the server selector will get confused.
 			SERVER_ID: 'loc',
 			// This is where you can override settings in the config.js file, and as long the gamemode's config doesn't override it.
 			PROPERTIES: {
 				// Amount of bots.
-				BOTS: 10
+				BOTS: 50
 			}
 		}
 	],
@@ -59,8 +59,8 @@ module.exports = {
 	// Miscellaneous
 
 	// The dimensions of a single tile on the map.
-	TILE_WIDTH: 420,
-	TILE_HEIGHT: 420,
+	TILE_WIDTH: 628,
+	TILE_HEIGHT: 628,
 
 	// How long a chat message lasts in milliseconds.
 	// Includes the fade-out period.
@@ -115,12 +115,12 @@ module.exports = {
 	LEVEL_SKILL_POINT_FUNCTION: level => {
 		if (level < 2) return 0;
 		if (level <= 40) return 1;
-		if (level <= 45 && level) return 1;
+		if (level <= 45 && (level & 1) == 1) return 1;
 		return 0;
 	},
 
 	// Maximum normally achievable level.
-	LEVEL_CAP: 900,
+	LEVEL_CAP: 45,
 
 	// Maximum level via the level-up key and auto-level-up.
 	LEVEL_CHEAT_CAP: 45,
@@ -156,7 +156,7 @@ module.exports = {
 	BOT_NAME_PREFIX: '',
 
 	// The class that players and player-bots spawn as.
-	SPAWN_CLASS: 'proc_celestial',
+	SPAWN_CLASS: 'basic',
 
 	// How every entity regenerates their health.
 	REGENERATE_TICK: 100,
@@ -182,7 +182,7 @@ module.exports = {
 				[15, 'pentagon'],
 				[5, 'hexagon']
 			]
-		]/*,
+		],
 		[
 			4,
 			[
@@ -202,7 +202,7 @@ module.exports = {
 				[2, 'legendaryPentagon'],
 				[1, 'legendaryHexagon']
 			]
-		]*/
+		]
 	],
 
 	// The possible nest food types that can spawn.
@@ -214,7 +214,7 @@ module.exports = {
 				[4, 'betaPentagon'],
 				[1, 'alphaPentagon']
 			]
-		],/*
+		],
 		[
 			1,
 			[
@@ -224,7 +224,7 @@ module.exports = {
 				[2, 'legendaryPentagon'],
 				[1, 'legendaryHexagon']
 			]
-		]*/
+		]
 	],
 
 	// The possible nest enemy types that can spawn.

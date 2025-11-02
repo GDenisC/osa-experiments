@@ -154,6 +154,7 @@ const defaultMockup = {
 
 //const OVERWRITE_LABEL = Symbol('OVERWRITE_LABEL');
 const BRANCH_TIERS = Symbol('BRANCH_TIERS');
+const SEQUENCE = Symbol('SEQUENCE');
 
 const maxTier =
 	Config.MAX_UPGRADE_TIER ||
@@ -171,7 +172,8 @@ const defaultOptions = {
 	startTier: 1,
 	maxTiers: maxTier,
 	maxTiersCap: maxTier,
-	rerootUpgradeTree: true
+	rerootUpgradeTree: true,
+	keepSequence: false
 };
 
 const cloneObject =
@@ -193,11 +195,15 @@ const flatMockup = function (mockup) {
 };
 
 class ProceduralMockupContext {
-	constructor(context, mockup, tiers) {
+	constructor(context, mockup, tiers, sequence) {
+		/** @type {ProceduralClassesContext} */
 		this.context = context;
 		this.mockup = mockup;
-		this.tiers = tiers;
+		this.branchTiers = tiers;
+		this.tiers = sequence.length;
 		this.label = [];
+		/** @type {string[]} */
+		this.sequence = sequence;
 		this.cancelled = false;
 	}
 
@@ -217,6 +223,16 @@ class ProceduralMockupContext {
 		if (!this.mockup.TURRETS) return;
 
 		return this.mockup.TURRETS.filter(t => t.ID == id);
+	}
+
+	getUnique() {
+		if (this.context.keepSequence) {
+			return this.sequence.join(definitionSeparator);
+		} else {
+			return Object.values(this.branchTiers)
+				.map((x, i) => x * Math.pow(2, this.context.maxTiers * i))
+				.reduce((a, b) => a + b, 0);
+		}
 	}
 
 	cancel() {
@@ -273,6 +289,7 @@ class ProceduralClassesContext {
 		cls[BRANCH_TIERS] = Object.fromEntries(
 			Object.keys(this.options.branches).map(x => [x, 0])
 		);
+		cls[SEQUENCE] = [];
 
 		this.template = this.options.template;
 		this.mockupName = this.options.mockup;
@@ -283,6 +300,7 @@ class ProceduralClassesContext {
 		this.maxTiers = this.options.maxTiers;
 		this.rerootUpgradeTree = this.options.rerootUpgradeTree;
 		this.maxTiersCap = this.options.maxTiersCap;
+		this.keepSequence = this.options.keepSequence;
 	}
 
 	/*
@@ -378,25 +396,24 @@ class ProceduralClassesContext {
 	#generateNextTierOf(mockup) {
 		const generatedTier = [];
 
-		if (this.baseBranch) {
-			this.baseBranch(
-				new ProceduralMockupContext(
-					this,
-					dereference(mockup),
-					mockup[BRANCH_TIERS]
-				),
-				Object.values(mockup[BRANCH_TIERS]).reduce((a, b) => a + b, 0)
-			);
-		}
-
 		for (const branch in this.branches) {
 			const branchTiers = cloneObject(mockup[BRANCH_TIERS]);
 			branchTiers[branch] += 1;
 
-			const currentMockupName = [
-				this.template,
-				...Object.values(branchTiers)
-			].join(definitionSeparator);
+			const sequence = cloneObject(mockup[SEQUENCE]);
+			sequence.push(branch);
+
+			let currentMockupName;
+
+			if (this.keepSequence) {
+				currentMockupName = [this.template, ...sequence].join(
+					definitionSeparator
+				);
+			} else {
+				currentMockupName = [this.template, ...Object.values(branchTiers)].join(
+					definitionSeparator
+				);
+			}
 
 			// don't generate already generated mockup
 			if (Class[currentMockupName]) {
@@ -410,11 +427,20 @@ class ProceduralClassesContext {
 			const mockupContext = new ProceduralMockupContext(
 				this,
 				dereference(mockup),
-				branchTiers
+				branchTiers,
+				sequence
 			);
 
-			for (const branch2 in this.branches) {
-				this.branches[branch2](mockupContext, branchTiers[branch2]);
+			this.baseBranch(mockupContext, sequence.length);
+
+			if (this.keepSequence) {
+				for (let tier = 0, l = sequence.length; tier < l; ++tier) {
+					this.branches[sequence[tier]](mockupContext, tier + 1);
+				}
+			} else {
+				for (const branch2 in this.branches) {
+					this.branches[branch2](mockupContext, branchTiers[branch2]);
+				}
 			}
 
 			if (mockupContext.cancelled) continue;
@@ -423,6 +449,7 @@ class ProceduralClassesContext {
 			if (this.rerootUpgradeTree)
 				mockupContext.mockup.REROOT_UPGRADE_TREE = this.mockupName;
 			mockupContext.mockup[BRANCH_TIERS] = branchTiers;
+			mockupContext.mockup[SEQUENCE] = sequence;
 
 			Class[currentMockupName] = mockupContext.mockup;
 			generatedTier.push(currentMockupName);

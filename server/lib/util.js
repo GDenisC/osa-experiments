@@ -49,6 +49,7 @@ exports.sumArray = arr => {
 exports.signedSqrt = x => Math.sign(x) * Math.sqrt(Math.abs(x))
 
 exports.getJackpot = x => x > 39450 ? Math.pow(x - 26300, 0.85) + 26300 : x / 1.5
+exports.getReversedJackpot = x => x > 39450 ? Math.pow(x - 26300, 1.15) + 26300 : x * 1.5
 
 exports.rounder = (val, precision = 6) => {
     if (Math.abs(val) < 0.00001) val = 0;
