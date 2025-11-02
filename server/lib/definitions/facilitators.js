@@ -991,31 +991,6 @@ const labyRarityToHealth = {
 	5: 10
 };
 
-const labyTierToHealth = {
-	0: 0.25,
-	1: 10,
-	2: 20,
-	3: 150,
-	4: 300
-};
-
-// not accurate values
-const labyRarityToScore = {
-	1: 5,
-	2: 10,
-	3: 40,
-	4: 100,
-	5: 250
-};
-
-const labyRarityToHealth = {
-	1: 2,
-	2: 4,
-	3: 6,
-	4: 8,
-	5: 10
-};
-
 exports.makeLaby = (type, tier, rarity, level, baseScale = 1) => {
 	type = ensureIsClass(type);
 	let usableSHAPE = Math.max(type.SHAPE, 3),
@@ -1041,17 +1016,18 @@ exports.makeLaby = (type, tier, rarity, level, baseScale = 1) => {
 		COLOR: type.COLOR,
 		ALPHA: type.ALPHA ?? 1,
 		BODY: {
-			DAMAGE: type.BODY.DAMAGE,
+			DAMAGE: (type.BODY.DAMAGE || 0) * 2,
 			DENSITY: type.BODY.DENSITY,
 			HEALTH:
-				(labyTierToHealth[tier] || 1) *
-				healthMultiplier *
-				(labyRarityToHealth[rarity] || 1),
+				((labyTierToHealth[tier] || 1) *
+					healthMultiplier *
+					(labyRarityToHealth[rarity] || 1)) /
+				(type.BODY.DAMAGE || 1),
 			PENETRATION: type.BODY.PENETRATION,
 			PUSHABILITY: type.BODY.PUSHABILITY / (level + 1) || 0,
 			ACCELERATION: type.BODY.ACCELERATION,
-			SHIELD: 1e-9,
-			REGEN: 1e-18
+			SHIELD: 0,
+			REGEN: 0
 		},
 		INTANGIBLE: type.INTANGIBLE,
 		VARIES_IN_SIZE: false,
@@ -1070,7 +1046,8 @@ exports.makeLaby = (type, tier, rarity, level, baseScale = 1) => {
 					1
 				],
 				TYPE: [type, { COLOR: 'mirror' }]
-			}))
+			})),
+		ACCEPTS_SCORE: false
 	};
 };
 exports.makeRarities = type => {

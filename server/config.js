@@ -39,7 +39,7 @@ module.exports = {
 			// The region, can be anything.
 			REGION: 'local',
 			// How many players can join until it's full.
-			MAX_PLAYERS: 15,
+			MAX_PLAYERS: 1,
 			// The server ID. Example: (<Yourwebsitename>/#<ServerID>)
 			// Important! You cannot make the same server id with a other one or else the server selector will get confused.
 			SERVER_ID: 'loc',
@@ -115,7 +115,7 @@ module.exports = {
 	LEVEL_SKILL_POINT_FUNCTION: level => {
 		if (level < 2) return 0;
 		if (level <= 40) return 1;
-		if (level <= 45 && level) return 1;
+		if (level <= 45 && (level & 1) == 1) return 1;
 		return 0;
 	},
 

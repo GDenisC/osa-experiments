@@ -113,7 +113,7 @@ Class.pentagon = {
 	SIZE: 21,
 	COLOR: 'purple',
 	BODY: {
-		DAMAGE: 1.5 * basePolygonDamage,
+		DAMAGE: 6 * basePolygonDamage,
 		DENSITY: 8,
 		HEALTH: 10 * basePolygonHealth,
 		RESIST: 1.25,
@@ -177,7 +177,7 @@ Class.hexagon = {
 	SIZE: 25,
 	COLOR: 'hexagon',
 	BODY: {
-		DAMAGE: 3 * basePolygonDamage,
+		DAMAGE: 12 * basePolygonDamage,
 		DENSITY: 8,
 		HEALTH: 20 * basePolygonHealth,
 		RESIST: 1.3,
