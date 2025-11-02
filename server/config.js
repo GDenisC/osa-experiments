@@ -46,7 +46,7 @@ module.exports = {
 			// This is where you can override settings in the config.js file, and as long the gamemode's config doesn't override it.
 			PROPERTIES: {
 				// Amount of bots.
-				BOTS: 5
+				BOTS: 50
 			}
 		}
 	],
