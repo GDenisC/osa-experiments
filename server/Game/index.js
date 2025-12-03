@@ -25,9 +25,9 @@ class gameHandler {
         if (instance.tickHandler) instance.tickHandler(instance, instance, other);
         if (other.tickHandler) other.tickHandler(other, other, instance);
 
-        if (instance.settings.no_collisions || 
-            instance.master.master.settings.no_collisions || 
-            other.settings.no_collisions || 
+        if (instance.settings.no_collisions ||
+            instance.master.master.settings.no_collisions ||
+            other.settings.no_collisions ||
             other.master.master.settings.no_collisions
         )  return 0;
 
@@ -184,11 +184,11 @@ class gameHandler {
                                 case true:
                                     firmcollidehard(instance, other, 20);
                                     break;
-                                default: 
+                                default:
                                     firmcollide(instance, other);
                                     break;
                             }
-                            
+
                         };
                         break;
                     case "hardOnlyBosses":
@@ -223,7 +223,7 @@ class gameHandler {
             }
 
             // Reset collision array once at the beginning
-            instance.collisionArray = []; 
+            instance.collisionArray = [];
 
             // Handle physics only if not bonded
             if (instance.bond == null) {
@@ -362,13 +362,13 @@ class gameHandler {
             }
         }
     };
-    
-    maintainloop = () => {   
+
+    maintainloop = () => {
         // Upgrade bots's skill
         for (let i = 0; i < this.bots.length; i++) {
             let o = this.bots[i];
             if (o.skill.level < Config.LEVEL_CAP && o.skill.level >= Config.BOT_START_LEVEL) {
-                o.skill.score += Config.BOT_XP;            
+                o.skill.score += Config.BOT_XP;
             }
         }
         // Spawn bosses
@@ -477,7 +477,7 @@ class gameHandler {
                 let CC = Class[o.defs[0]];
                 if (CC && CC.HEALING_TANK) {
                     o.controllers = [];
-                    o.define({ 
+                    o.define({
                         CONTROLLERS: ["healTeamMasters", "minion", ["wanderAroundMap", { immitatePlayerMovement: true, lookAtGoal: true }]],
                         FACING_TYPE: CC.FACING_TYPE ? CC.FACING_TYPE : Class.bot.FACING_TYPE,
                         AI: Class.bot.AI,

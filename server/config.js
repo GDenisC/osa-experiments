@@ -35,7 +35,7 @@ module.exports = {
 			// Keep in mind that if "LOAD_ON_MAINSERVER" is set to true then this code will be replaced with the main server's port instead.
 			PORT: 3001,
 			// Get the gamemode you want to select with.
-			GAMEMODE: ['teams', 'maze', 'growth'],
+			GAMEMODE: ['teams', 'growth'],
 			// The region, can be anything.
 			REGION: 'local',
 			// How many players can join until it's full.
@@ -305,6 +305,7 @@ module.exports = {
 	DOMINATION: false,
 	RANDOM_COLORS: false,
 	SPACE_PHYSICS: false,
+	LABY_FOOD: false,
 	ARENA_TYPE: 'rect',
 	BLACKOUT: false,
 	RADIAL_MODE: false,

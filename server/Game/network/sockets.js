@@ -31,7 +31,7 @@ class socketManager {
                 'r',
                 global.gameManager.room.width,
                 global.gameManager.room.height,
-                JSON.stringify(global.gameManager.room.setup.map(x => x.map(t => { 
+                JSON.stringify(global.gameManager.room.setup.map(x => x.map(t => {
                     return {
                         color: t.color,
                         image: t.image ?? false,
@@ -265,7 +265,7 @@ class socketManager {
                         'R',
                         global.gameManager.room.width,
                         global.gameManager.room.height,
-                        JSON.stringify(global.gameManager.room.setup.map(x => x.map(t => { 
+                        JSON.stringify(global.gameManager.room.setup.map(x => x.map(t => {
                             return {
                                 color: t.color,
                                 visibleOnBlackout: t.visibleOnBlackout,
@@ -381,7 +381,7 @@ class socketManager {
             case "#": {
                 try {
                     runKeyCommand(socket, m);
-                } catch (e) { 
+                } catch (e) {
                     console.error(e);
                 }
             } break;
@@ -407,7 +407,7 @@ class socketManager {
                     "autoalt",
                     "spinlock" //spinlock does something both in client and server side
                 ][tog];
-    
+
                 // Kick if it sent us shit.
                 if (!given) {
                     socket.kick("Bad toggle.");
@@ -448,7 +448,7 @@ class socketManager {
                 let number = m[0],
                     max = m[1],
                     stat = ["atk", "hlt", "spd", "str", "pen", "dam", "rld", "mob", "rgn", "shi"][number];
-    
+
                 if (typeof number != "number") {
                     socket.kick("Weird stat upgrade request number.");
                     return 1;
@@ -461,19 +461,19 @@ class socketManager {
                     socket.kick("invalid upgrade request max boolean.");
                     return 1;
                 }
-    
+
                 if (!stat) {
                     socket.kick("Unknown stat upgrade request.");
                     return 1;
                 }
-    
+
                 if (player.body != null) {
                     let limit = 256;
                     do {
                         player.body.skillUp(stat);
                     } while (limit-- && max && player.body.skill.points && player.body.skill.amount(stat) < player.body.skill.cap(stat))
                 }
-                
+
             } break;
             case "L": {
                 // level up cheat
@@ -528,8 +528,8 @@ class socketManager {
                 }
                 body.emit("control", { body });
                 if (body.underControl) {
-                    let relinquishedControlMessage = 
-                    Config.DOMINATION ? "dominator" : 
+                    let relinquishedControlMessage =
+                    Config.DOMINATION ? "dominator" :
                     Config.MOTHERSHIP ? "mothership" :
                     "special tank"
                     if (Config.DOMINATION || Config.MOTHERSHIP) {
@@ -595,36 +595,36 @@ class socketManager {
             case "M": {
                 if (player.body == null) return 1;
                 let abort, message = m[0], original = m[0];
-    
+
                 if ("string" !==  typeof message) {
                     socket.kick("Non-string chat message.");
                     return 1;
                 }
-    
+
                 util.log(player.body.name + ': ' + original);
-    
+
                 if (Config.SANITIZE_CHAT_MESSAGE_COLORS) {
                     // I thought it should be "§§" but it only works if you do "§§§§"?
                     message = message.replace(/§/g, "§§§§");
                     original = original.replace(/§/g, "§§§§");
                 }
-    
+
                 Events.emit('chatMessage', { gameManager: global.gameManager, message: original, socket, preventDefault: () => abort = true, setMessage: str => message = str });
-    
+
                 // we are not anti-choice here.
                 if (abort) break;
-    
+
                 if (message !== original) {
                     util.log('changed to: ' + message);
                 }
-    
+
                 let id = player.body.id;
                 if (!chats[id]) {
                     chats[id] = [];
                 }
 
                 chats[id].unshift({ message, expires: Date.now() + Config.CHAT_MESSAGE_DURATION });
-    
+
                 // do one tick of the chat loop so they don't need to wait 100ms to receive it.
                 this.chatLoop();
             } break;
@@ -849,7 +849,7 @@ class socketManager {
         if (!b) return 0;
         gui.bodyid = b.id;
         // Update most things
-        gui.fps.update(Math.min(1, (global.fps / global.gameManager.roomSpeed / 1000) * 30)); 
+        gui.fps.update(Math.min(1, (global.fps / global.gameManager.roomSpeed / 1000) * 30));
         gui.color.update(gui.master.teamColor);
         gui.label.update(b.index);
         gui.score.update(JSON.stringify([b.skill.score, b.killCount.solo, b.killCount.assists, b.killCount.bosses]));
@@ -987,7 +987,7 @@ class socketManager {
         if (this.players.indexOf(socket.player) != -1) { util.remove(this.players, this.players.indexOf(socket.player));  }
         // Free the old view
         if (global.gameManager.views.indexOf(socket.view) != -1) { util.remove(global.gameManager.views, global.gameManager.views.indexOf(socket.view)); socket.makeView(); }
-        
+
         let spawn = true;
 
         if (transferbodyID) {
@@ -1036,7 +1036,7 @@ class socketManager {
                 }
             }
         }
-        // Log it 
+        // Log it
         util.log(`[INFO] [${global.gameManager.name}] ${name == "" ? "An unnamed player" : name} has spawned into the game on team ${socket.player.body.team}! Players: ${this.players.length}`);
         // Stop the timeout
         socket.timeout.stop();
@@ -1052,7 +1052,7 @@ class socketManager {
         socket.view.gazeUpon(true); // Do one tick so the camera can update.
         socket.rememberedTeam = player.team; // Save team
         socket.player.loc = loc;
-    } 
+    }
     getSpawnLocation(rememberedTeam, name) {
         let player = {},
             loc = {};
@@ -1136,7 +1136,7 @@ class socketManager {
             } break;
             default: {
                 body.team = getRandomTeam();
-                body.color.base = Config.RANDOM_COLORS ? 
+                body.color.base = Config.RANDOM_COLORS ?
                     ran.choose([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 ]) : getTeamColor(TEAM_RED);
                 let loop = setInterval(() => {
                     for (let e of entities.values()) {
@@ -1284,7 +1284,7 @@ class socketManager {
         // Return it
         return output;
     }
-    
+
     perspective(e, player, data) {
         if (player.body != null) {
             if (player.body.id === e.master.id) {
@@ -1442,7 +1442,7 @@ class socketManager {
                         // Get our body id
                         player.viewId = player.body.id;
                     }
-                } 
+                }
                 if (player.body == null) { // if we have no body, then u dead bro.
                     fovNow = 2000;
                     camera.scoping = false; // No scoping bugs!
@@ -1460,17 +1460,17 @@ class socketManager {
                 if (camera.lastUpdate - lastVisibleUpdate > Config.visibleListInterval) {
                     // Update our timer
                     lastVisibleUpdate = camera.lastUpdate;
-                    
+
                     // Reuse the nearby array instead of recreating it
                     nearby.clear();
-                    
+
                     // Pre-calculate camera bounds for the broad check
                     const camFovBroad = camera.fov * (global.gameManager.arenaClosed ? 1.6 : 1);
                     const camXBound = camFovBroad + 100;
                     const camYBound = camFovBroad * 0.5625 + 100;
-                    
+
                     // Get nearby entities with single efficient check
-                    for (const entity of entities.values()) { 
+                    for (const entity of entities.values()) {
                         // Simplified check that combines both visibility checks
                         if (Math.abs(entity.x - camera.x) < camXBound + 1.5 * entity.size &&
                             Math.abs(entity.y - camera.y) < camYBound + 1.5 * entity.size) {
@@ -1478,24 +1478,24 @@ class socketManager {
                         }
                     }
                 }
-                
+
                 // Reset the nearby for this frame and prepare for detailed visibility check
                 let visible = [];
-                
+
                 // Pre-calculate constants for the detailed visibility check
                 const camX = camera.x, camY = camera.y, camFov = camera.fov;
                 const limitDistance = 1.5;  // Recommended value is 2
                 const fovDiv = camFov / limitDistance;
                 const fovDivY = fovDiv * (9 / 13);
-                
+
                 // Prepare a batch of mockups to send
                 const mockupsToSend = new Set();
-                
+
                 // Check each nearby entity for detailed visibility
                 for (const entity of nearby.values()) {
-                    
+
                     // Detailed visibility check
-                    if (entity.photo && 
+                    if (entity.photo &&
                         Math.abs(entity.x - camX) < fovDiv + 1.5 * entity.size &&
                         Math.abs(entity.y - camY) < fovDivY + 1.5 * entity.size
                     ) {
@@ -1503,17 +1503,17 @@ class socketManager {
                         if (!Config.LOAD_ALL_MOCKUPS && entity.index) {
                             mockupsToSend.add(entity.index);
                         }
-                
+
                         // Lazily initialize flattened photo
                         if (!entity.flattenedPhoto) {
                             entity.flattenedPhoto = this.flatten(entity.photo);
                         }
-                        
+
                         // Add to visible entities
                         visible.push(this.perspective(entity, player, entity.flattenedPhoto));
                     }
                 }
-                
+
                 // Send mockups as a batch if needed
                 if (!Config.LOAD_ALL_MOCKUPS && mockupsToSend.size > 0) {
                     for (const index of mockupsToSend) {
@@ -1637,7 +1637,7 @@ class socketManager {
                 }
                 if (is === 0) break;
                 let entry = list[top];
-                let color = entry.leaderboardColor ? entry.leaderboardColor + " 0 1 0 false" 
+                let color = entry.leaderboardColor ? entry.leaderboardColor + " 0 1 0 false"
                     : Config.GROUPS || (Config.MODE == 'ffa' && !Config.TAG) ? '11 0 1 0 false'
                     : entry.color.compiled;
                 topTen.push({
@@ -1697,7 +1697,7 @@ class socketManager {
                 if (my.allowedOnMinimap && (
                     my.alwaysShowOnMinimap ||
                     (my.type === "wall" && my.alpha > 0.2) ||
-                    my.type === "miniboss" || my.type == "portal" || 
+                    my.type === "miniboss" || my.type == "portal" ||
                     my.isMothership
                 )) {
                     const x = Config.BLACKOUT ? Math.floor(Math.random() * global.gameManager.room.width - global.gameManager.room.width / 2) : my.x;
@@ -1862,7 +1862,7 @@ class socketManager {
                     (Config.GROUPS || (Config.MODE == 'ffa' && !Config.TAG)) && socket.player.body ? socket.player.body.id : null
                 );
                 let team = socket.status.seesAllTeams ? minimapAllTeamsUpdate : minimapTeamUpdates;
-                
+
                 // Send the leaderboard tanks' mockups
                 if (global.gameManager.gameHandler.active) {
                     for (let e of getLeaderboard.now) {
@@ -1963,10 +1963,10 @@ class socketManager {
         socket.ban = (reason) => this.ban(socket, reason);
         socket.permaban = (reason) => this.permaban(socket, reason);
         socket.lastWords = (...message) => {
-            if (socket.readyState === socket.OPEN) { 
+            if (socket.readyState === socket.OPEN) {
                 socket.send(protocol.encode(message), { binary: true, });
                 socket.terminate();
-            } 
+            }
         };
         socket.on("close", () => {
             socket.loops.terminate();
@@ -2027,7 +2027,7 @@ class socketManager {
             readyToBroadcast: false,
             mockupData: socket.initMockupList(),
             lastHeartbeat: util.time(),
-        };  
+        };
         // Set up loops
         let nextUpdateCall = null; // has to be started manually
         let trafficMonitoring = setInterval(() => this.traffic(socket), 1500);
