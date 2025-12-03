@@ -11,9 +11,7 @@ const { combineStats } = require('./facilitators.js');
  */
 
 class Weapon {
-	/**
-	 * @param {Gun[]} GUNS
-	 */
+	/** @param {Gun[]} GUNS */
 	constructor(GUNS, layer = 0) {
 		/** @type {Gun[]} */
 		this.GUNS = GUNS;
