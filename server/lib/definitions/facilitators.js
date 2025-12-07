@@ -1,6 +1,6 @@
-const { MAX_SKILL } = require('../../config.js');
-const g = require('./gunvals.js');
-const { basePolygonDamage, basePolygonHealth } = require('./constants');
+const { skill_cap } = require("../../config.js")
+const g = require('./gunvals.js')
+const { basePolygonDamage, basePolygonHealth, dfltskl } = require("./constants")
 let skcnv = {
 	atk: 6,
 	spd: 4,
@@ -34,59 +34,51 @@ exports.combineStats = function (stats) {
 			resist: 1
 		};
 
-		for (let object = 0; object < stats.length; object++) {
-			let gStat = stats[object];
-			if (Array.isArray(gStat)) {
-				gStat = {
-					reload: gStat[0],
-					recoil: gStat[1],
-					shudder: gStat[2],
-					size: gStat[3],
-					health: gStat[4],
-					damage: gStat[5],
-					pen: gStat[6],
-					speed: gStat[7],
-					maxSpeed: gStat[8],
-					range: gStat[9],
-					density: gStat[10],
-					spray: gStat[11],
-					resist: gStat[12]
-				};
-			}
-			data.reload *= gStat.reload ?? 1;
-			data.recoil *= gStat.recoil ?? 1;
-			data.shudder *= gStat.shudder ?? 1;
-			data.size *= gStat.size ?? 1;
-			data.health *= gStat.health ?? 1;
-			data.damage *= gStat.damage ?? 1;
-			data.pen *= gStat.pen ?? 1;
-			data.speed *= gStat.speed ?? 1;
-			data.maxSpeed *= gStat.maxSpeed ?? 1;
-			data.range *= gStat.range ?? 1;
-			data.density *= gStat.density ?? 1;
-			data.spray *= gStat.spray ?? 1;
-			data.resist *= gStat.resist ?? 1;
-		}
-		return data;
-	} catch (err) {
-		console.log(err);
-		throw JSON.stringify(stats);
-	}
-};
-exports.setBuild = build => {
-	let skills = build.split(build.includes('/') ? '/' : '').map(r => +r);
-	if (skills.length !== 10)
-		throw new RangeError('Build must be made up of 10 numbers');
-	return [6, 4, 3, 5, 2, 9, 0, 1, 8, 7].map(r => skills[r]);
-};
-exports.skillSet = args => {
-	let skills = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-	for (let s in args) {
-		if (!args.hasOwnProperty(s)) continue;
-		skills[skcnv[s]] = Math.round(MAX_SKILL * args[s]);
-	}
-	return skills;
-};
+        for (let object = 0; object < stats.length; object++) {
+            let gStat = stats[object];
+            if (Array.isArray(gStat)) {
+                gStat = {
+                    reload: gStat[0], recoil: gStat[1], shudder: gStat[2],
+                    size: gStat[3], health: gStat[4], damage: gStat[5],
+                    pen: gStat[6], speed: gStat[7], maxSpeed: gStat[8],
+                    range: gStat[9], density: gStat[10], spray: gStat[11],
+                    resist: gStat[12]
+                };
+            }
+            data.reload *= gStat.reload ?? 1;
+            data.recoil *= gStat.recoil ?? 1;
+            data.shudder *= gStat.shudder ?? 1;
+            data.size *= gStat.size ?? 1;
+            data.health *= gStat.health ?? 1;
+            data.damage *= gStat.damage ?? 1;
+            data.pen *= gStat.pen ?? 1;
+            data.speed *= gStat.speed ?? 1;
+            data.maxSpeed *= gStat.maxSpeed ?? 1;
+            data.range *= gStat.range ?? 1;
+            data.density *= gStat.density ?? 1;
+            data.spray *= gStat.spray ?? 1;
+            data.resist *= gStat.resist ?? 1;
+        }
+        return data;
+    } catch (err) {
+        console.log(err);
+        throw JSON.stringify(stats);
+    }
+}
+exports.setBuild = (build) => {
+    let skills = build.split(build.includes("/") ? "/" : "").map((r) => +r);
+    if (skills.length !== 10)
+        throw new RangeError("Build must be made up of 10 numbers");
+    return [6, 4, 3, 5, 2, 9, 0, 1, 8, 7].map((r) => skills[r]);
+}
+exports.skillSet = (args) => {
+    let skills = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    for (let s in args) {
+        if (!args.hasOwnProperty(s)) continue;
+        skills[skcnv[s]] = Math.round(skill_cap * args[s]);
+    }
+    return skills;
+}
 
 // functions
 exports.dereference = type => {
@@ -115,65 +107,44 @@ exports.dereference = type => {
 
 // gun functions
 exports.makeGuard = (type, name = -1) => {
-	type = ensureIsClass(type);
-	let output = exports.dereference(type),
-		cannons = [
-			{
-				POSITION: [13, 8, 1, 0, 0, 180, 0]
-			},
-			{
-				POSITION: [4, 8, 1.7, 13, 0, 180, 0],
-				PROPERTIES: {
-					SHOOT_SETTINGS: exports.combineStats([g.trap]),
-					TYPE: 'trap',
-					STAT_CALCULATOR: 'trap'
-				}
-			}
-		];
-	output.GUNS = type.GUNS == null ? cannons : type.GUNS.concat(cannons);
-	output.LABEL = name == -1 ? type.LABEL + ' Guard' : name;
-	return output;
-};
-exports.addBackGunner = (type, name = -1) => {
-	type = ensureIsClass(type);
-	let output = exports.dereference(type);
-	let cannons = [
-		{
-			POSITION: [19, 2, 1, 0, -2.5, 180, 0],
-			PROPERTIES: {
-				SHOOT_SETTINGS: exports.combineStats([
-					g.basic,
-					g.pelleter,
-					g.power,
-					g.twin,
-					{ recoil: 4 },
-					{ recoil: 1.8 }
-				]),
-				TYPE: 'bullet'
-			}
-		},
-		{
-			POSITION: [19, 2, 1, 0, 2.5, 180, 0.5],
-			PROPERTIES: {
-				SHOOT_SETTINGS: exports.combineStats([
-					g.basic,
-					g.pelleter,
-					g.power,
-					g.twin,
-					{ recoil: 4 },
-					{ recoil: 1.8 }
-				]),
-				TYPE: 'bullet'
-			}
-		},
-		{
-			POSITION: [12, 11, 1, 0, 0, 180, 0]
-		}
-	];
-	output.GUNS = type.GUNS == null ? cannons : type.GUNS.concat(cannons);
-	output.LABEL = name == -1 ? type.LABEL : name;
-	return output;
-};
+    type = ensureIsClass(type);
+    let output = exports.dereference(type),
+    cannons = [{
+        POSITION: [13, 8, 1, 0, 0, 180, 0],
+    }, {
+        POSITION: [4, 8, 1.7, 13, 0, 180, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: exports.combineStats([g.trap]),
+            TYPE: "trap",
+            STAT_CALCULATOR: "trap",
+        },
+    }];
+    output.GUNS = type.GUNS == null ? cannons : type.GUNS.concat(cannons);
+    output.LABEL = name == -1 ? type.LABEL + " Guard" : name;
+    return output;
+}
+exports.makeRearGunner = (type, name = -1) => {
+    type = ensureIsClass(type);
+    let output = exports.dereference(type);
+    let cannons = [{
+        POSITION: [19, 2, 1, 0, -2.5, 180, 0],
+        PROPERTIES: {
+            SHOOT_SETTINGS: exports.combineStats([g.basic, g.pelleter, g.power, g.twin, { recoil: 4 }, { recoil: 1.8 }]),
+            TYPE: "bullet",
+        },
+    }, {
+        POSITION: [19, 2, 1, 0, 2.5, 180, 0.5],
+        PROPERTIES: {
+            SHOOT_SETTINGS: exports.combineStats([g.basic, g.pelleter, g.power, g.twin, { recoil: 4 }, { recoil: 1.8 }]),
+            TYPE: "bullet",
+        },
+    }, {
+        POSITION: [12, 11, 1, 0, 0, 180, 0],
+    }];
+    output.GUNS = type.GUNS == null ? cannons : type.GUNS.concat(cannons);
+    output.LABEL = name == -1 ? type.LABEL : name;
+    return output;
+}
 exports.makeBird = (type, name = -1, options = {}) => {
 	type = ensureIsClass(type);
 	let output = exports.dereference(type);
@@ -258,152 +229,141 @@ exports.makeOver = (type, name = -1, options = {}) => {
 	type = ensureIsClass(type);
 	let output = exports.dereference(type);
 
-	let angle = 180 - (options.angle ?? 125);
-	let count = options.count ?? 2;
-	let independent = options.independent ?? false;
-	let cycle = options.cycle ?? true;
-	let maxChildren = options.maxDrones ?? 3;
-	let stats = options.extraStats ?? [];
-	let spawnerProperties = {
-		SHOOT_SETTINGS: exports.combineStats([g.drone, g.overseer, ...stats]),
-		TYPE: ['drone', { INDEPENDENT: independent }],
-		AUTOFIRE: true,
-		SYNCS_SKILLS: true,
-		STAT_CALCULATOR: 'drone',
-		WAIT_TO_CYCLE: cycle,
-		MAX_CHILDREN: maxChildren
-	};
+    let angle = 180 - (options.angle ?? 125);
+    let count = options.count ?? 2;
+    let independent = options.independent ?? false;
+    let cycle = options.cycle ?? true;
+    let maxChildren = options.maxDrones ?? 3;
+    let stats = options.extraStats ?? [];
+    let spawnerType = options.spawnerType;
 
-	let spawners = [];
-	if (count % 2 == 1) {
-		spawners.push({
-			POSITION: [6, 12, 1.2, 8, 0, 180, 0],
-			PROPERTIES: spawnerProperties
-		});
-	}
-	for (let i = 2; i <= count - (count % 2); i += 2) {
-		spawners.push(
-			{
-				POSITION: [6, 12, 1.2, 8, 0, 180 - (angle * i) / 2, 0],
-				PROPERTIES: spawnerProperties
-			},
-			{
-				POSITION: [6, 12, 1.2, 8, 0, 180 + (angle * i) / 2, 0],
-				PROPERTIES: spawnerProperties
-			}
-		);
-	}
+    let spawners = [];
+    if (spawnerType == "swarm") {
+        let spawnerProperties = {
+            SHOOT_SETTINGS: exports.combineStats([g.swarm, ...stats]),
+            TYPE: independent ? "autoswarm" : "swarm",
+            STAT_CALCULATOR: "swarm",
+        }
+        if (count % 2 == 1) {
+            spawners.push({
+                POSITION: [7, 7.5, 0.6, 7, 4, 180, 0],
+                PROPERTIES: spawnerProperties,
+            }, {
+                POSITION: [7, 7.5, 0.6, 7, -4, 180, 0.5],
+                PROPERTIES: spawnerProperties,
+            })
+        }
+        for (let i = 2; i <= (count - count % 2); i += 2) {
+            spawners.push({
+                POSITION: [7, 7.5, 0.6, 7, 4, 180 - angle * i / 2, 0],
+                PROPERTIES: spawnerProperties,
+            }, {
+                POSITION: [7, 7.5, 0.6, 7, -4, 180 - angle * i / 2, 0.5],
+                PROPERTIES: spawnerProperties,
+            }, {
+                POSITION: [7, 7.5, 0.6, 7, 4, 180 + angle * i / 2, 0],
+                PROPERTIES: spawnerProperties,
+            }, {
+                POSITION: [7, 7.5, 0.6, 7, -4, 180 + angle * i / 2, 0.5],
+                PROPERTIES: spawnerProperties,
+            })
+        }
+    } else {
+        let spawnerProperties = {
+            SHOOT_SETTINGS: exports.combineStats([g.drone, g.overseer, ...stats]),
+            TYPE: ["drone", {INDEPENDENT: independent}],
+            AUTOFIRE: true,
+            SYNCS_SKILLS: true,
+            STAT_CALCULATOR: "drone",
+            WAIT_TO_CYCLE: cycle,
+            MAX_CHILDREN: maxChildren,
+        }
+        if (count % 2 == 1) {
+            spawners.push({
+                POSITION: [6, 12, 1.2, 8, 0, 180, 0],
+                PROPERTIES: spawnerProperties,
+            })
+        }
+        for (let i = 2; i <= (count - count % 2); i += 2) {
+            spawners.push({
+                POSITION: [6, 12, 1.2, 8, 0, 180 - angle * i / 2, 0],
+                PROPERTIES: spawnerProperties,
+            }, {
+                POSITION: [6, 12, 1.2, 8, 0, 180 + angle * i / 2, 0],
+                PROPERTIES: spawnerProperties,
+            })
+        }
+    }
 
-	output.GUNS = type.GUNS == null ? spawners : type.GUNS.concat(spawners);
-	output.LABEL = name == -1 ? 'Over' + type.LABEL.toLowerCase() : name;
-	return output;
-};
-exports.makeBattle = (type, name = -1, options = {}) => {
-	type = ensureIsClass(type);
-	let output = exports.dereference(type);
-
-	let angle = 180 - (options.angle ?? 125);
-	let count = options.count ?? 2;
-	let independent = options.independent ?? false;
-	let stats = options.extraStats ?? [];
-	let spawnerProperties = {
-		SHOOT_SETTINGS: exports.combineStats([g.swarm, ...stats]),
-		TYPE: independent ? 'autoswarm' : 'swarm',
-		STAT_CALCULATOR: 'swarm'
-	};
-
-	let spawners = [];
-	if (count % 2 == 1) {
-		spawners.push(
-			{
-				POSITION: [7, 7.5, 0.6, 7, 4, 180, 0],
-				PROPERTIES: spawnerProperties
-			},
-			{
-				POSITION: [7, 7.5, 0.6, 7, -4, 180, 0.5],
-				PROPERTIES: spawnerProperties
-			}
-		);
-	}
-	for (let i = 2; i <= count - (count % 2); i += 2) {
-		spawners.push(
-			{
-				POSITION: [7, 7.5, 0.6, 7, 4, 180 - (angle * i) / 2, 0],
-				PROPERTIES: spawnerProperties
-			},
-			{
-				POSITION: [7, 7.5, 0.6, 7, -4, 180 - (angle * i) / 2, 0.5],
-				PROPERTIES: spawnerProperties
-			},
-			{
-				POSITION: [7, 7.5, 0.6, 7, 4, 180 + (angle * i) / 2, 0],
-				PROPERTIES: spawnerProperties
-			},
-			{
-				POSITION: [7, 7.5, 0.6, 7, -4, 180 + (angle * i) / 2, 0.5],
-				PROPERTIES: spawnerProperties
-			}
-		);
-	}
-
-	output.GUNS = type.GUNS == null ? spawners : type.GUNS.concat(spawners);
-	output.LABEL = name == -1 ? 'Battle' + type.LABEL.toLowerCase() : name;
-	return output;
-};
+    output.GUNS = type.GUNS == null ? spawners : type.GUNS.concat(spawners);
+    output.LABEL = name == -1 ? "Over" + type.LABEL.toLowerCase() : name;
+    return output;
+}
 
 // turret functions
 exports.makeAuto = (type, name = -1, options = {}) => {
-	type = ensureIsClass(type);
-	let turret = {
-		type: 'autoTurret',
-		size: 10,
-		independent: true,
-		color: 16,
-		angle: 180
-	};
-	if (options.type != null) {
-		turret.type = options.type;
-	}
-	if (options.size != null) {
-		turret.size = options.size;
-	}
-	if (options.independent != null) {
-		turret.independent = options.independent;
-	}
-	if (options.color != null) {
-		turret.color = options.color;
-	}
-	if (options.angle != null) {
-		turret.angle = options.angle;
-	}
-	let output = exports.dereference(type);
-	let autogun = {
-		POSITION: [turret.size, 0, 0, turret.angle, 360, 1],
-		TYPE: [
-			turret.type,
-			{
-				CONTROLLERS: ['nearestDifferentMaster'],
-				INDEPENDENT: turret.independent,
-				COLOR: turret.color
-			}
-		]
-	};
-	if (type.GUNS != null) {
-		output.GUNS = type.GUNS;
-	}
-	if (type.TURRETS == null) {
-		output.TURRETS = [autogun];
-	} else {
-		output.TURRETS = [...type.TURRETS, autogun];
-	}
-	if (name == -1) {
-		output.LABEL = 'Auto-' + type.LABEL;
-	} else {
-		output.LABEL = name;
-	}
-	output.DANGER = type.DANGER + 1;
-	return output;
-};
+    type = ensureIsClass(type);
+    let turret = {
+        type: "autoTurret",
+        size: 10,
+        independent: true,
+        color: 16,
+        angle: 180,
+        total: 1,
+    };
+    if (options.type != null) {
+        turret.type = options.type;
+    }
+    if (options.size != null) {
+        turret.size = options.size;
+    }
+    if (options.independent != null) {
+        turret.independent = options.independent;
+    }
+    if (options.color != null) {
+        turret.color = options.color;
+    }
+    if (options.angle != null) {
+        turret.angle = options.angle;
+    }
+    if (options.total != null) {
+        turret.total = options.total;
+    }
+    let output = exports.dereference(type);
+    let autogun = exports.weaponArray({
+        POSITION: {
+            SIZE: turret.size,
+            ANGLE: turret.angle,
+            ARC: 360 / turret.total,
+            LAYER: 1
+        },
+        TYPE: [
+            turret.type,
+            {
+                CONTROLLERS: ["nearestDifferentMaster"],
+                INDEPENDENT: turret.independent,
+                COLOR: turret.color,
+            },
+        ],
+    }, turret.total);
+    if (type.GUNS != null) {
+        output.GUNS = type.GUNS;
+    }
+    if (type.TURRETS == null) {
+        output.TURRETS = [...autogun];
+    } else {
+        output.TURRETS = [...type.TURRETS, ...autogun];
+    }
+    if (name == -1) {
+        output.LABEL = "Auto-" + type.LABEL;
+        output.UPGRADE_LABEL = "Auto-" + type.LABEL;
+    } else {
+        output.LABEL = name;
+        output.UPGRADE_LABEL = name;
+    }
+    output.DANGER = type.DANGER + 1;
+    return output;
+}
 exports.makeCeption = (type, name = -1, options = {}) => {
 	type = ensureIsClass(type);
 	let turret = {
@@ -544,7 +504,7 @@ exports.makeRadialAuto = (type, options = {}) => {
 exports.makeTurret = (type, options = {}) => {
 	/*
     - type: what Class to turn into an auto turret
-    
+
     Available options:
     - canRepel: whether or not the auto turret can fire backwards with secondary fire
     - limitFov: whether or not the auto turret should bother to try to limit its FOV arc
@@ -589,57 +549,50 @@ exports.makeTurret = (type, options = {}) => {
 		]);
 	}
 
-	return {
-		PARENT: 'genericTank',
-		LABEL: options.label ?? '',
-		COLOR: options.color ?? 'grey',
-		BODY: { FOV: (options.fov ?? 2) / 2 },
-		INDEPENDENT: options.independent ?? false,
-		CONTROLLERS,
-		GUNS,
-		AI: options.aiSettings,
-		FACING_TYPE: options.facingType ?? null,
-		TURRETS: type.TURRETS
-	};
-};
-exports.addAura = (
-	damageFactor = 1,
-	sizeFactor = 1,
-	opacity = 0.3,
-	auraColor
-) => {
-	let isHeal = damageFactor < 0;
-	let auraType = isHeal ? 'healAura' : 'aura';
-	let symbolType = isHeal ? 'healerSymbol' : 'auraSymbol';
-	auraColor = auraColor ?? (isHeal ? 12 : 0);
-	return {
-		PARENT: 'genericTank',
-		INDEPENDENT: true,
-		LABEL: '',
-		COLOR: 17,
-		GUNS: [
-			{
-				POSITION: [0, 20, 1, 0, 0, 0, 0],
-				PROPERTIES: {
-					SHOOT_SETTINGS: exports.combineStats([
-						g.aura,
-						{ size: sizeFactor, damage: damageFactor }
-					]),
-					TYPE: [auraType, { COLOR: auraColor, ALPHA: opacity }],
-					MAX_CHILDREN: 1,
-					AUTOFIRE: true,
-					SYNCS_SKILLS: true
-				}
-			}
-		],
-		TURRETS: [
-			{
-				POSITION: [20 - 7.5 * isHeal, 0, 0, 0, 360, 1],
-				TYPE: [symbolType, { COLOR: auraColor, INDEPENDENT: true }]
-			}
-		]
-	};
-};
+    return {
+        PARENT: 'genericTank',
+        LABEL: options.label ?? "",
+        COLOR: options.color ?? "grey",
+        BODY: { FOV: options.fov ?? 2 },
+        INDEPENDENT: options.independent ?? false,
+        CONTROLLERS,
+        GUNS,
+        AI: options.aiSettings,
+        FACING_TYPE: options.facingType ?? null,
+        TURRETS: type.TURRETS,
+    }
+}
+exports.makeAura = (damageFactor = 1, sizeFactor = 1, opacity = 0.3, auraColor) => {
+    let isHeal = damageFactor < 0;
+    let auraType = isHeal ? "healAura" : "aura";
+    let symbolType = isHeal ? "healerSymbol" : "auraSymbol";
+    auraColor = auraColor ?? (isHeal ? 12 : 0);
+    return {
+        PARENT: "genericTank",
+        INDEPENDENT: true,
+        LABEL: "",
+        COLOR: 17,
+        GUNS: [
+            {
+                POSITION: [0, 20, 1, 0, 0, 0, 0,],
+                PROPERTIES: {
+                    SHOOT_SETTINGS: exports.combineStats([g.aura, { size: sizeFactor, damage: damageFactor }]),
+                    TYPE: [auraType, {COLOR: auraColor, ALPHA: opacity}],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
+                    SYNCS_SKILLS: true,
+                },
+            },
+        ],
+        TURRETS: [
+            {
+                POSITION: [20 - 7.5 * isHeal, 0, 0, 0, 360, 1],
+                TYPE: [symbolType, {COLOR: auraColor, INDEPENDENT: true}],
+            },
+        ]
+    };
+}
+
 exports.setTurretProjectileRecoil = (type, recoilFactor) => {
 	type = exports.dereference(type);
 
@@ -671,38 +624,39 @@ exports.setTurretProjectileRecoil = (type, recoilFactor) => {
 };
 
 // misc functions
-exports.menu = (name = -1, color = -1, shape = 0, overrideGuns = false) => {
-	let defaultGun = {
-		POSITION: [18, 10, -1.4, 0, 0, 0, 0],
-		PROPERTIES: {
-			SHOOT_SETTINGS: exports.combineStats([g.basic]),
-			TYPE: 'bullet'
-		}
-	};
-	return {
-		PARENT: 'genericTank',
-		LABEL: name == -1 ? undefined : name,
-		GUNS: overrideGuns ? overrideGuns : [defaultGun],
-		COLOR: color == -1 ? null : color,
-		UPGRADE_COLOR: color == -1 ? null : color,
-		SHAPE: shape,
-		IGNORED_BY_AI: true
-	};
-};
-exports.weaponArray = (
-	weapons,
-	count,
-	delayIncrement = 0,
-	delayOverflow = false
-) => {
-	// delayIncrement: how much each side's delay increases by
-	// delayOverflow: false to constrain the delay value between [0, 1)
-	if (!Array.isArray(weapons)) {
-		weapons = [weapons];
-	}
-	let isTurret = weapons[0].TYPE != undefined;
-	let angleKey = isTurret ? 3 : 5;
-	let delayKey = 6;
+exports.makeMenu = (name = -1, color = "mirror", shape = 0, overrideLabel = false, overrideGuns = false) => {
+    let defaultGun = {
+        POSITION: {
+            LENGTH: 18,
+            WIDTH: 10,
+            ASPECT: -1.4
+        },
+        PROPERTIES: {
+            SHOOT_SETTINGS: exports.combineStats([g.basic]),
+            TYPE: "bullet",
+        },
+    };
+    return {
+        PARENT: "genericTank",
+        LABEL: name == -1 ? undefined : name,
+        GUNS: overrideGuns ? overrideGuns : [defaultGun],
+        COLOR: color == "mirror" ? null : color,
+        UPGRADE_COLOR: color == "mirror" ? null : color,
+        SHAPE: shape,
+        IGNORED_BY_AI: true,
+        SKILL_CAP: Array(10).fill(dfltskl),
+        RESET_CHILDREN: true,
+    };
+}
+exports.weaponArray = (weapons, count, delayIncrement = 0, delayOverflow = false) => {
+    // delayIncrement: how much each side's delay increases by
+    // delayOverflow: false to constrain the delay value between [0, 1)
+    if (!Array.isArray(weapons)) {
+        weapons = [weapons]
+    }
+    let isTurret = weapons[0].TYPE != undefined;
+    let angleKey = isTurret ? 3 : 5;
+    let delayKey = 6;
 
 	let output = [];
 	for (let weapon of weapons) {
@@ -716,20 +670,46 @@ exports.weaponArray = (
 				delayKey = 'DELAY';
 			}
 
-			newWeapon.POSITION[angleKey] =
-				(newWeapon.POSITION[angleKey] ?? 0) + angle;
-			if (!isTurret) {
-				newWeapon.POSITION[delayKey] =
-					(newWeapon.POSITION[delayKey] ?? 0) + delay;
-				if (!delayOverflow) {
-					newWeapon.POSITION[delayKey] %= 1;
-				}
-			}
-			output.push(newWeapon);
-		}
-	}
-	return output;
-};
+            newWeapon.POSITION[angleKey] = (newWeapon.POSITION[angleKey] ?? 0) + angle;
+            if (!isTurret) {
+                newWeapon.POSITION[delayKey] = (newWeapon.POSITION[delayKey] ?? 0) + delay;
+                if (!delayOverflow) {
+                    newWeapon.POSITION[delayKey] %= 1;
+                }
+            }
+            output.push(newWeapon);
+        }
+    }
+    return output;
+}
+exports.weaponMirror = (weapons, delayIncrement = 0.5, delayOverflow = false) => {
+    // delayIncrement: how much each side's delay increases by
+    // delayOverflow: false to constrain the delay value between [0, 1)
+    if (!Array.isArray(weapons)) {
+        weapons = [weapons]
+    }
+    let yKey = 4;
+    let angleKey = 5;
+    let delayKey = 6;
+
+    let output = [];
+    for (let weapon of weapons) {
+        let newWeapon = exports.dereference(weapon);
+
+        if (!Array.isArray(newWeapon.POSITION)) {
+            yKey = "Y";
+            angleKey = "ANGLE";
+            delayKey = "DELAY";
+        }
+
+        newWeapon.POSITION[yKey] = (newWeapon.POSITION[yKey] ?? 0) * -1;
+        newWeapon.POSITION[angleKey] = (newWeapon.POSITION[angleKey] ?? 0) * -1;
+        newWeapon.POSITION[delayKey] = (newWeapon.POSITION[delayKey] ?? 0) + delayIncrement;
+        output.push(weapon, newWeapon);
+
+    }
+    return output;
+}
 class LayeredBoss {
 	constructor(
 		identifier,
@@ -819,41 +799,35 @@ exports.LayeredBoss = LayeredBoss;
 
 // Food facilitators
 exports.makeRelic = (type, scale = 1, gem, SIZE, yBase = 8.25) => {
-	// Code by Damocles (https://discord.com/channels/366661839620407297/508125275675164673/1090010998053818488)
-	// Albeit heavily modified because the math in the original didn't work LOL
-	type = ensureIsClass(type);
-	let relicCasing = {
-			PARENT: 'genericEntity',
-			LABEL: 'Relic Casing',
-			LEVEL_CAP: 45,
-			COLOR: type.COLOR,
-			MIRROR_MASTER_ANGLE: true,
-			SHAPE: [
-				[-0.4, -1],
-				[0.4, -0.25],
-				[0.4, 0.25],
-				[-0.4, 1]
-			].map(r => r.map(s => s * scale))
-		},
-		relicBody = {
-			PARENT: 'genericEntity',
-			LABEL: 'Relic Mantle',
-			LEVEL_CAP: 45,
-			COLOR: type.COLOR,
-			MIRROR_MASTER_ANGLE: true,
-			SHAPE: type.SHAPE
-		};
-	Class[Math.random().toString(36)] = relicCasing;
-	Class[Math.random().toString(36)] = relicBody;
-	let width = 6 * scale,
-		y = yBase + (scale % 1) * 5,
-		isEgg = type.SHAPE == 0,
-		casings = isEgg ? 8 : type.SHAPE,
-		fraction = 360 / casings,
-		GUNS = [],
-		TURRETS = [{ POSITION: [32.5, 0, 0, 0, 0, 0], TYPE: relicBody }],
-		PARENT = type,
-		additionalAngle = type.SHAPE % 2 === 0 ? 0 : fraction / 2;
+    // Code by Damocles (https://discord.com/channels/366661839620407297/508125275675164673/1090010998053818488)
+    // Albeit heavily modified because the math in the original didn't work LOL
+    type = ensureIsClass(type);
+    let relicCasing = {
+        PARENT: 'genericEntity',
+        LABEL: 'Relic Casing',
+        level_cap: 45,
+        COLOR: type.COLOR,
+        MIRROR_MASTER_ANGLE: true,
+        SHAPE: [[-0.4,-1],[0.4,-0.25],[0.4,0.25],[-0.4,1]].map(r => r.map(s => s * scale))
+    }, relicBody = {
+        PARENT: 'genericEntity',
+        LABEL: 'Relic Mantle',
+        level_cap: 45,
+        COLOR: type.COLOR,
+        MIRROR_MASTER_ANGLE: true,
+        SHAPE: type.SHAPE
+    };
+    Class[Math.random().toString(36)] = relicCasing;
+    Class[Math.random().toString(36)] = relicBody;
+    let width = 6 * scale,
+        y = yBase + ((scale % 1) * 5),
+        isEgg = type.SHAPE == 0,
+        casings = isEgg ? 8 : type.SHAPE,
+        fraction = 360 / casings,
+        GUNS = [],
+        TURRETS = [{ POSITION: [32.5, 0, 0, 0, 0, 0], TYPE: relicBody }],
+        PARENT = type,
+        additionalAngle = type.SHAPE % 2 === 0 ? 0 : fraction / 2;
 
 	for (let i = 0; i < casings; i++) {
 		let angle = i * fraction,

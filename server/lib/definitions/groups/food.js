@@ -353,13 +353,13 @@ Class.icosahedron = {
 
 // PRESENTS
 Class.presentSymbol = {
-	SHAPE: Class.healerSymbol.SHAPE,
-	SIZE: 13,
-	COLOR: 'white'
-};
-Class.presentRY = makePresent('red', 'yellow');
-Class.presentRP = makePresent('red', 'purple');
-Class.presentRW = makePresent('red', 'white');
+    SHAPE: [[0.3, -0.3],[1,-0.3],[1,0.3],[0.3,0.3],[0.3,1],[-0.3,1],[-0.3,0.3],[-1,0.3],[-1,-0.3],[-0.3,-0.3],[-0.3,-1],[0.3,-1]],
+    SIZE: 13,
+    COLOR: "white"
+}
+Class.presentRY = makePresent("red", "yellow")
+Class.presentRP = makePresent("red", "purple")
+Class.presentRW = makePresent("red", "white")
 
 Class.presentGY = makePresent('green', 'yellow');
 Class.presentGP = makePresent('green', 'purple');
