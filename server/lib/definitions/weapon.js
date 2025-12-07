@@ -48,7 +48,8 @@ class Weapon {
 	/** @param {(position: Gun['POSITION'], index: number, gun: Gun) => Gun['POSITION']} f */
 	position(f) {
 		return this.modify((gun, i) => {
-			gun.POSITION = f(gun.POSITION, i, gun);
+			const pos = f(gun.POSITION, i, gun);
+			if (pos) gun.POSITION = pos;
 		});
 	}
 
@@ -150,7 +151,8 @@ class Weapon {
 		return this.modify((props, i, gun) => {
 			if (defined && !props.PROPERTIES) return;
 			else if (!defined) props.PROPERTIES = {};
-			props.PROPERTIES = f(props.PROPERTIES, i, gun);
+			const properties = f(props.PROPERTIES, i, gun);
+			if (properties) props.PROPERTIES = properties;
 		});
 	}
 
@@ -167,7 +169,8 @@ class Weapon {
 	shootSettings(f, override = false) {
 		return this.properties((props, i, gun) => {
 			if (!override && !props.SHOOT_SETTINGS) return props.SHOOT_SETTINGS;
-			props.SHOOT_SETTINGS = f(props.SHOOT_SETTINGS, i, gun);
+			const settings = f(props.SHOOT_SETTINGS, i, gun);
+			if (settings) props.SHOOT_SETTINGS = settings;
 		}, !override);
 	}
 

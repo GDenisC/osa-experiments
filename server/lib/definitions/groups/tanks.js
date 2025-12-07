@@ -235,22 +235,22 @@ Class.whirlwind = {
         }
     ],
     AI: {
-        SPEED: 2, 
+        SPEED: 2,
     },
-    GUNS: (() => { 
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 6; i++) { 
-            output.push({ 
+        for (let i = 0; i < 6; i++) {
+            output.push({
                 POSITION: {WIDTH: 8, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite]), 
-                    TYPE: ["satellite", {ANGLE: i * 60}], 
-                    MAX_CHILDREN: 1,   
-                    AUTOFIRE: true,  
+                    SHOOT_SETTINGS: combineStats([g.satellite]),
+                    TYPE: ["satellite", {ANGLE: i * 60}],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -420,22 +420,22 @@ Class.hurricane = {
         },
     ],
     AI: {
-        SPEED: 2, 
-    }, 
-    GUNS: (() => { 
+        SPEED: 2,
+    },
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 8; i++) { 
-            output.push({ 
+        for (let i = 0; i < 8; i++) {
+            output.push({
                 POSITION: {WIDTH: 8, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite]), 
-                    TYPE: ["satellite", {ANGLE: i * 45}], 
-                    MAX_CHILDREN: 1,   
-                    AUTOFIRE: true,  
+                    SHOOT_SETTINGS: combineStats([g.satellite]),
+                    TYPE: ["satellite", {ANGLE: i * 45}],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -582,22 +582,22 @@ Class.tornado = {
     HAS_NO_RECOIL: true,
     STAT_NAMES: statnames.whirlwind,
     AI: {
-        SPEED: 2, 
-    }, 
-    GUNS: (() => { 
+        SPEED: 2,
+    },
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 4; i++) { 
-            output.push({ 
+        for (let i = 0; i < 4; i++) {
+            output.push({
                 POSITION: {WIDTH: 12, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite, g.pounder]), 
-                    TYPE: ["satellite", {ANGLE: i * 90}], 
-                    MAX_CHILDREN: 1,   
-                    AUTOFIRE: true,  
+                    SHOOT_SETTINGS: combineStats([g.satellite, g.pounder]),
+                    TYPE: ["satellite", {ANGLE: i * 90}],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -813,35 +813,35 @@ Class.blizzard = {
     HAS_NO_RECOIL: true,
     STAT_NAMES: statnames.whirlwind,
     AI: {
-        SPEED: 2, 
-    }, 
-    GUNS: (() => { 
+        SPEED: 2,
+    },
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 5; i++) { 
-            output.push({ 
+        for (let i = 0; i < 5; i++) {
+            output.push({
                 POSITION: {WIDTH: 8, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite]), 
-                    TYPE: ["satellite", {ANGLE: i * 72}], 
-                    MAX_CHILDREN: 1,   
-                    AUTOFIRE: true,  
+                    SHOOT_SETTINGS: combineStats([g.satellite]),
+                    TYPE: ["satellite", {ANGLE: i * 72}],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
-        for (let i = 0; i < 5; i++) { 
-            output.push({ 
+        for (let i = 0; i < 5; i++) {
+            output.push({
                 POSITION: {WIDTH: 8, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite]), 
-                    TYPE: ["satellite", { ANGLE: i * 72, CONTROLLERS: [['orbit', {invert: true}]] }], 
-                    MAX_CHILDREN: 1,   
-                    AUTOFIRE: true,  
+                    SHOOT_SETTINGS: combineStats([g.satellite]),
+                    TYPE: ["satellite", { ANGLE: i * 72, CONTROLLERS: [['orbit', {invert: true}]] }],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -1417,22 +1417,22 @@ Class.hexaWhirl = {
         }
     ],
     AI: {
-        SPEED: 2, 
+        SPEED: 2,
     },
-    GUNS: (() => { 
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 4; i++) { 
-            output.push({ 
+        for (let i = 0; i < 4; i++) {
+            output.push({
                 POSITION: {WIDTH: 8, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite]), 
-                    TYPE: ["satellite", {ANGLE: i * 90}], 
+                    SHOOT_SETTINGS: combineStats([g.satellite]),
+                    TYPE: ["satellite", {ANGLE: i * 90}],
                     MAX_CHILDREN: 1,
                     AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -1570,22 +1570,22 @@ Class.megaTornado = {
     HAS_NO_RECOIL: true,
     STAT_NAMES: statnames.whirlwind,
     AI: {
-        SPEED: 2, 
-    }, 
-    GUNS: (() => { 
+        SPEED: 2,
+    },
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 2; i++) { 
-            output.push({ 
+        for (let i = 0; i < 2; i++) {
+            output.push({
                 POSITION: {WIDTH: 16, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite, g.pounder, g.destroyer]), 
-                    TYPE: ["satellite", {ANGLE: i * 180}], 
-                    MAX_CHILDREN: 1,   
-                    AUTOFIRE: true,  
+                    SHOOT_SETTINGS: combineStats([g.satellite, g.pounder, g.destroyer]),
+                    TYPE: ["satellite", {ANGLE: i * 180}],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -1624,22 +1624,22 @@ Class.munition = {
         }
     ],
     AI: {
-        SPEED: 2, 
+        SPEED: 2,
     },
-    GUNS: (() => { 
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 4; i++) { 
-            output.push({ 
+        for (let i = 0; i < 4; i++) {
+            output.push({
                 POSITION: {WIDTH: 8, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite]), 
-                    TYPE: ["satellite", {ANGLE: i * 90}], 
+                    SHOOT_SETTINGS: combineStats([g.satellite]),
+                    TYPE: ["satellite", {ANGLE: i * 90}],
                     MAX_CHILDREN: 1,
                     AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -1965,22 +1965,22 @@ Class.prophet = {
         }
     ],
     AI: {
-        SPEED: 2, 
+        SPEED: 2,
     },
-    GUNS: (() => { 
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 4; i++) { 
-            output.push({ 
+        for (let i = 0; i < 4; i++) {
+            output.push({
                 POSITION: {WIDTH: 8, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite]), 
-                    TYPE: ["squareSatellite", {ANGLE: i * 90}], 
+                    SHOOT_SETTINGS: combineStats([g.satellite]),
+                    TYPE: ["squareSatellite", {ANGLE: i * 90}],
                     MAX_CHILDREN: 1,
                     AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -2408,35 +2408,35 @@ Class.tempest = {
     HAS_NO_RECOIL: true,
     STAT_NAMES: statnames.whirlwind,
     AI: {
-        SPEED: 2, 
-    }, 
-    GUNS: (() => { 
+        SPEED: 2,
+    },
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 3; i++) { 
-            output.push({ 
+        for (let i = 0; i < 3; i++) {
+            output.push({
                 POSITION: {WIDTH: 12, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite, g.pounder]), 
-                    TYPE: ["satellite", {ANGLE: i * 120}], 
-                    MAX_CHILDREN: 1,   
-                    AUTOFIRE: true,  
+                    SHOOT_SETTINGS: combineStats([g.satellite, g.pounder]),
+                    TYPE: ["satellite", {ANGLE: i * 120}],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
-        for (let i = 0; i < 3; i++) { 
-            output.push({ 
+        for (let i = 0; i < 3; i++) {
+            output.push({
                 POSITION: {WIDTH: 12, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite, g.pounder]), 
-                    TYPE: ["satellite", { ANGLE: i * 120, CONTROLLERS: [['orbit', {invert: true}]] }], 
-                    MAX_CHILDREN: 1,   
-                    AUTOFIRE: true,  
+                    SHOOT_SETTINGS: combineStats([g.satellite, g.pounder]),
+                    TYPE: ["satellite", { ANGLE: i * 120, CONTROLLERS: [['orbit', {invert: true}]] }],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -2456,22 +2456,22 @@ Class.thunderbolt = {
     HAS_NO_RECOIL: true,
     STAT_NAMES: statnames.whirlwind,
     AI: {
-        SPEED: 2.5, 
-    }, 
-    GUNS: (() => { 
+        SPEED: 2.5,
+    },
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 4; i++) { 
-            output.push({ 
+        for (let i = 0; i < 4; i++) {
+            output.push({
                 POSITION: {WIDTH: 12, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite, g.pounder]), 
-                    TYPE: ["satellite", {ANGLE: i * 90}], 
-                    MAX_CHILDREN: 1,   
-                    AUTOFIRE: true,  
+                    SHOOT_SETTINGS: combineStats([g.satellite, g.pounder]),
+                    TYPE: ["satellite", {ANGLE: i * 90}],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -2543,22 +2543,22 @@ Class.typhoon = {
         },
     ],
     AI: {
-        SPEED: 2, 
-    }, 
-    GUNS: (() => { 
+        SPEED: 2,
+    },
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 10; i++) { 
-            output.push({ 
+        for (let i = 0; i < 10; i++) {
+            output.push({
                 POSITION: {WIDTH: 8, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite]), 
-                    TYPE: ["satellite", {ANGLE: i * 36}], 
-                    MAX_CHILDREN: 1,   
-                    AUTOFIRE: true,  
+                    SHOOT_SETTINGS: combineStats([g.satellite]),
+                    TYPE: ["satellite", {ANGLE: i * 36}],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -2581,22 +2581,22 @@ Class.vortex = {
         }
     ],
     AI: {
-        SPEED: 2, 
+        SPEED: 2,
     },
-    GUNS: (() => { 
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 4; i++) { 
-            output.push({ 
+        for (let i = 0; i < 4; i++) {
+            output.push({
                 POSITION: {WIDTH: 8, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite]), 
-                    TYPE: ["satellite", {ANGLE: i * 90}], 
+                    SHOOT_SETTINGS: combineStats([g.satellite]),
+                    TYPE: ["satellite", {ANGLE: i * 90}],
                     MAX_CHILDREN: 1,
                     AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -2629,22 +2629,22 @@ Class.whirlGuard = {
         }
     ],
     AI: {
-        SPEED: 2, 
+        SPEED: 2,
     },
-    GUNS: (() => { 
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 4; i++) { 
-            output.push({ 
+        for (let i = 0; i < 4; i++) {
+            output.push({
                 POSITION: {WIDTH: 8, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite]), 
-                    TYPE: ["satellite", {ANGLE: i * 90}], 
+                    SHOOT_SETTINGS: combineStats([g.satellite]),
+                    TYPE: ["satellite", {ANGLE: i * 90}],
                     MAX_CHILDREN: 1,
                     AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -2696,22 +2696,22 @@ Class.whirl3 = {
         }
     ],
     AI: {
-        SPEED: 2, 
+        SPEED: 2,
     },
-    GUNS: (() => { 
+    GUNS: (() => {
         let output = []
-        for (let i = 0; i < 4; i++) { 
-            output.push({ 
+        for (let i = 0; i < 4; i++) {
+            output.push({
                 POSITION: {WIDTH: 8, LENGTH: 1, DELAY: i * 0.25},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite]), 
-                    TYPE: ["satellite", {ANGLE: i * 90}], 
+                    SHOOT_SETTINGS: combineStats([g.satellite]),
+                    TYPE: ["satellite", {ANGLE: i * 90}],
                     MAX_CHILDREN: 1,
                     AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
-            }) 
+            })
         }
         return output
     })()
@@ -4087,7 +4087,7 @@ Class.undertowBullet = {
                     }
                     else if (instance.type == "food") {
                         forceMulti = (6 / instance.size)
-                    }      
+                    }
                     else {
                         forceMulti = (2 / instance.size)
                     }
@@ -4825,7 +4825,7 @@ Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "di
         Class.tripleShot.UPGRADES_TIER_3 = ["pentaShot", "spreadshot", "bentHybrid", "bentDouble", "triplet", "triplex"]
 
     Class.sniper.UPGRADES_TIER_2 = ["assassin", "hunter", "minigun", "rifle", "marksman"]
-        Class.sniper.UPGRADES_TIER_3 = ["bushwhacker", "railgun"]
+        Class.sniper.UPGRADES_TIER_3 = ["bushwhacker"/*, "railgun"*/]
         Class.assassin.UPGRADES_TIER_3 = ["ranger", "falcon", "stalker", "autoAssassin", "single", "deadeye"]
         Class.hunter.UPGRADES_TIER_3 = ["predator", "xHunter", "poacher", "ordnance", "dual", "nimrod"]
         Class.rifle.UPGRADES_TIER_3 = ["musket", "crossbow", "armsman", "revolver"]
@@ -4840,26 +4840,26 @@ Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "di
         Class.flankGuard.UPGRADES_TIER_3 = ["tripleTwin", "quadruplex"]
         Class.hexaTank.UPGRADES_TIER_3 = ["octoTank", "cyclone", "hexaTrapper", "hexaWhirl"]
         Class.triAngle.UPGRADES_TIER_3 = ["fighter", "booster", "falcon", "bomber", "autoTriAngle", "surfer", "eagle", "phoenix", "vulture"]
-        Class.auto3.UPGRADES_TIER_3 = ["auto5", "mega3", "auto4", "banshee", "whirl3", "crowbar"]
+        Class.auto3.UPGRADES_TIER_3 = ["auto5", "mega3", "auto4", "banshee"/*, "whirl3", "crowbar"*/]
 
     Class.director.UPGRADES_TIER_2 = ["overseer", "cruiser", "underseer", "spawner"]
         Class.director.UPGRADES_TIER_3 = ["manager", "bigCheese"]
         Class.overseer.UPGRADES_TIER_3 = ["overlord", "overtrapper", "overgunner", "banshee", "autoOverseer", "overdrive", "commander"]
         Class.cruiser.UPGRADES_TIER_3 = ["carrier", "battleship", "fortress", "autoCruiser", "commander"]
-        Class.underseer.UPGRADES_TIER_3 = ["necromancer", "maleficitor", "infestor", "prophet", "prodigy"]
-        Class.spawner.UPGRADES_TIER_3 = ["factory", "autoSpawner", "ranch", "megaSpawner", "spawnerdrive"]
+        Class.underseer.UPGRADES_TIER_3 = ["necromancer", "maleficitor", "infestor"/*, "prophet", "prodigy"*/]
+        Class.spawner.UPGRADES_TIER_3 = ["factory", "autoSpawner"/*, "ranch", "megaSpawner", "spawnerdrive"*/]
 
     Class.pounder.UPGRADES_TIER_2 = ["destroyer", "builder", "artillery", "launcher"]
         Class.pounder.UPGRADES_TIER_3 = ["shotgun", "eagle"]
         Class.destroyer.UPGRADES_TIER_3 = ["conqueror", "annihilator", "hybrid", "construct"]
-        Class.artillery.UPGRADES_TIER_3 = ["mortar", "ordnance", "beekeeper", "fieldGun", "munition"]
-        Class.launcher.UPGRADES_TIER_3 = ["skimmer", "twister", "swarmer", "rocketeer", "fieldGun", "vortex"]
+        Class.artillery.UPGRADES_TIER_3 = ["mortar", "ordnance", "beekeeper", "fieldGun"/*, "munition"*/]
+        Class.launcher.UPGRADES_TIER_3 = ["skimmer", "twister", "swarmer"/*, "rocketeer"*/, "fieldGun"/*, "vortex"*/]
 
     Class.trapper.UPGRADES_TIER_2 = ["builder", "triTrapper", "trapGuard", "autoTrapper"]
         Class.trapper.UPGRADES_TIER_3 = ["barricade", "overtrapper", "megaTrapper"]
         Class.builder.UPGRADES_TIER_3 = ["construct", "autoBuilder", "engineer", "boomer", "assembler", "architect", "conqueror"]
-        Class.triTrapper.UPGRADES_TIER_3 = ["fortress", "hexaTrapper", "septaTrapper", "architect", "prodigy"]
-        Class.trapGuard.UPGRADES_TIER_3 = ["bushwhacker", "gunnerTrapper", "bomber", "conqueror", "bulwark", "whirlGuard", "peashooter"]
+        Class.triTrapper.UPGRADES_TIER_3 = ["fortress", "hexaTrapper", "septaTrapper", "architect"/*, "prodigy"*/]
+        Class.trapGuard.UPGRADES_TIER_3 = ["bushwhacker", "gunnerTrapper", "bomber", "conqueror", "bulwark"/*, "whirlGuard"*/, "peashooter"]
         Class.autoTrapper.UPGRADES_TIER_3 = ["autoBuilder", "hexaTrapper"]
 
     Class.whirlwind.UPGRADES_TIER_2 = ["tornado", "hurricane"]
@@ -4874,6 +4874,6 @@ Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "di
         Class.undertow.UPGRADES_TIER_3 = ["riptide"]
         Class.repeater.UPGRADES_TIER_3 = ["iterator", "duplicator"]*/ // TODO: MAKE NEW DESMOS TANKS WORK
 
-    
+
     Class.desmos.UPGRADES_TIER_2 = ["helix"]
         Class.helix.UPGRADES_TIER_3 = ["triplex", "quadruplex"]

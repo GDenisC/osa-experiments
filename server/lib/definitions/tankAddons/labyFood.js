@@ -22,7 +22,7 @@ Config.FOOD_TYPES = Array(3)
 					.fill()
 					.map((_, k, c) => [
 						// Chance of spawning, set to 200mil for regular polygons and exponents of 10 otherwise
-						k ? 3 ** (c.length - k - 1) : 500,
+						k ? 10 ** (c.length - k - 1) : 200000000,
 
 						disableCrashers // no crashers
 							? `laby_${i}_${j}_${k}_0`
@@ -54,7 +54,7 @@ Config.FOOD_TYPES_NEST = Array(2)
 					.fill()
 					.map((_, k, c) => [
 						// Chance of spawning, set to 200mil for regular polygons and exponents of 10 otherwise
-						k ? 3 ** (c.length - k - 1) : 500,
+						k ? 10 ** (c.length - k - 1) : 200000000,
 
 						disableCrashers // no crashers
 							? `laby_${i + 3}_${j}_${k}_0`

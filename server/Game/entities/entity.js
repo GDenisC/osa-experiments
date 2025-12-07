@@ -11,6 +11,7 @@ const forceTwiggle = [
 	'looseWithMotion'
 ];
 const { combineStats } = require('../../lib/definitions/facilitators.js');
+const { expandWeapons } = require('../../lib/definitions/weapon.js');
 class Prop {
 	// Used for split upgrades only
 	constructor(position, bond) {
@@ -90,6 +91,16 @@ class Prop {
 				newGuns.push(new Gun(this, set.GUNS[i]));
 			}
 			this.guns = newGuns;
+		}
+		if (set.WEAPONS != null) {
+			if (!set.GUNS) set.GUNS = [];
+			set.GUNS.push(...expandWeapons(set.WEAPONS));
+			let newGuns = set.GUNS.map(gun => new Gun(this, gun));
+			if (Array.isArray(this.guns)) {
+				this.guns.push(...newGuns);
+			} else {
+				this.guns = newGuns;
+			}
 		}
 	}
 	camera() {
@@ -600,6 +611,16 @@ class Entity extends EventEmitter {
 			for (let i = 0; i < set.GUNS.length; i++) {
 				newGuns.push(new Gun(this, set.GUNS[i]));
 			}
+			for (let guns of newGuns) {
+				this.guns.set(guns.id, guns);
+			}
+		} else if (set.WEAPONS) {
+			this.guns.clear();
+		}
+		if (set.WEAPONS != null) {
+			if (!set.GUNS) set.GUNS = [];
+			set.GUNS.push(...expandWeapons(set.WEAPONS));
+			let newGuns = set.GUNS.map(gun => new Gun(this, gun));
 			for (let guns of newGuns) {
 				this.guns.set(guns.id, guns);
 			}
