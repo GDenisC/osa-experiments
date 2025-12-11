@@ -6,7 +6,7 @@ module.exports = {
 
     // Server
     visible_list_interval: 250, // How often to update the list of the entities that players can see. Has effects of when entities are activated.
-    startup_logs: true, // Enable startup logs and log speed loop warnings in terminal
+    startup_logs: true, // Enable startup logs and log speed loop warnings in the terminal
     load_all_mockups: false, // Set to true if you want every mockup to be loaded when the server starts. May noticeably slow down server startup.
 
     servers: [ // Make sure to change the HOST, PORT and SERVER_ID between servers!
@@ -84,7 +84,7 @@ module.exports = {
     sanitize_chat_input: true, // If you don't want your players to color their messages. They get sanitized after addons interpret them, but before they're added to the chat message dictionary.
 
     // Seasonal
-    spooky_theme: false, // Toggles the seasonal halloween theme (adds eyes to walls and replaces rocks to pumpkins)
+    spooky_theme: false, // Toggles the seasonal Halloween theme (adds eyes to walls and replaces rocks to pumpkins)
 
     // Gameplay
     game_speed: 1, // General game speed.
