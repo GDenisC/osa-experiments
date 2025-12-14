@@ -1773,3 +1773,14 @@ Class.rimflakTurret = makeTurret({
         }
     ]
 }, {canRepel: true, limitFov: true, extraStats: []})
+
+// LAMG
+Class.lamgSpinnerTurret = {
+    PARENT: "genericTank",
+    FACING_TYPE: ["spinOnFire", {speed: 0.5}],
+    LABEL: "Spinner Turret",
+    COLOR: "grey",
+    GUNS: weaponArray({
+        POSITION: [15, 3.5, 1, 0, 0, 0, 0]
+    }, 10)
+}

@@ -683,6 +683,54 @@ exports.weaponMirror = (weapons, delayIncrement = 0.5, delayOverflow = false) =>
     }
     return output;
 }
+exports.weaponStack = (weapons, count, options = {}) => {
+
+    /*
+    - weapons: what guns to stack
+    
+    Available options:
+    - count: number of guns in the stack
+    - lengthOffset: distance between stack gun lengths
+    - xPosOffset: distance between stack gun x positions
+    - delay: delay increment between stack guns
+    - delayOverflow: whether the gun delay can exceed 1 or not, default false
+    */
+
+    if (!Array.isArray(weapons)) {
+        weapons = [weapons]
+    }
+    let lengthKey = 0;
+    let xPosKey = 3;
+    let delayKey = 6;
+
+    options.lengthOffset ??= 0
+    options.xPosOffset ??= 0
+    options.delayIncrement ??= 0
+    options.delayOverflow ??= false
+
+    let output = [];
+    for (let weapon of weapons) {
+        for (let i = 0; i < count; i++) {
+            let delay = options.delayIncrement * i;
+            let newWeapon = exports.dereference(weapon);
+
+            if (!Array.isArray(newWeapon.POSITION)) {
+                lengthKey = "LENGTH";
+                xPosKey = "X";
+                delayKey = "DELAY";
+            }
+
+            newWeapon.POSITION[lengthKey] = (newWeapon.POSITION[lengthKey] ?? 0) - (i * options.lengthOffset);
+            newWeapon.POSITION[xPosKey] = (newWeapon.POSITION[xPosKey] ?? 0) - (i * options.xPosOffset);
+            newWeapon.POSITION[delayKey] = (newWeapon.POSITION[delayKey] ?? 0) + delay;
+            if (!options.delayOverflow) {
+                newWeapon.POSITION[delayKey] %= 1;
+            }
+            output.push(newWeapon);
+        }
+    }
+    return output;
+}
 function rotatePoint(px, py, cx, cy, degrees) {
     const radians = degrees * (Math.PI / 180);
 

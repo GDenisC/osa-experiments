@@ -1648,6 +1648,48 @@ Class.prober_AR = {
         }
     ]
 }
+Class.productionist = {
+        PARENT: "genericTank",
+        LABEL: "Productionist",
+        DANGER: 7,
+        STAT_NAMES: statnames.drone,
+        BODY: {
+            SPEED: base.SPEED * 0.75,
+            FOV: 1.1,
+        },
+        GUNS: [
+            {
+                POSITION: [4.5, 6, 1, 10, 4.75, 0, 0],
+            },
+            {
+                POSITION: [1, 7.25, 1, 14.25, 4.75, 0, 0],
+                PROPERTIES: {
+                    SHOOT_SETTINGS: combineStats([g.productionist]),
+                    TYPE: "tinyMinion",
+                    STAT_CALCULATOR: "drone",
+                    SYNCS_SKILLS: true,
+                },
+            },
+            {
+                POSITION: [7.5, 7.25, -1.3, 3.5, 4.75, 0, 0],
+            },
+            {
+                POSITION: [4.5, 6, 1, 10, -4.75, 0, 0.5],
+            },
+            {
+                POSITION: [1, 7.25, 1, 14.25, -4.75, 0, 0.5],
+                PROPERTIES: {
+                    SHOOT_SETTINGS: combineStats([g.productionist]),
+                    TYPE: "tinyMinion",
+                    STAT_CALCULATOR: "drone",
+                    SYNCS_SKILLS: true,
+                },
+            },
+            {
+                POSITION: [7.5, 7.25, -1.3, 3.5, -4.75, 0, 0.5],
+            },
+        ],
+}
 Class.psychiatrist_AR = {
     PARENT: "genericHealer",
     LABEL: "Psychiatrist",
@@ -3404,6 +3446,50 @@ Class.professor_AR = {
         }
     ]
 }
+Class.quintuplet_AR = {
+    PARENT: "genericTank",
+    LABEL: "Quintuplet",
+    DANGER: 7,
+    BODY: {
+        FOV: 1.1 * base.FOV
+    },
+    GUNS: [
+        ...weaponMirror([{
+            POSITION: {
+                LENGTH: 16,
+                WIDTH: 10,
+                Y: 5,
+                DELAY: 2/3
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet, g.quint]),
+                TYPE: "bullet"
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 19,
+                WIDTH: 10,
+                Y: 3,
+                DELAY: 1/3
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet, g.quint]),
+                TYPE: "bullet"
+            }
+        }], 0),
+        {
+            POSITION: {
+                LENGTH: 22,
+                WIDTH: 10
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet, g.quint]),
+                TYPE: "bullet"
+            }
+        }
+    ]
+}
 Class.quintuplex_AR = {
     PARENT: "genericTank",
     LABEL: "Quintuplex",
@@ -3752,6 +3838,84 @@ Class.tripleHelix_AR = {
             }
         })
     ], 3)
+}
+Class.vulcan_AR = {
+    PARENT: "genericTank",
+    LABEL: "Vulcan",
+    DANGER: 7,
+    GUNS: [ // Each gun will be stacked to mimic a "back-forth" firing pattern, isn't present right now
+        {
+            POSITION: {
+                LENGTH: 30,
+                WIDTH: 1.5,
+                Y: -4.45
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.gunner, g.fast]),
+                TYPE: "bullet",
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 30,
+                WIDTH: 1.5,
+                Y: 4.45,
+                DELAY: 0.8
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.gunner, g.fast]),
+                TYPE: "bullet",
+            },
+        },
+        {
+            POSITION: {
+                LENGTH: 30,
+                WIDTH: 1.5,
+                Y: 2.5,
+                DELAY: 0.2
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.gunner, g.fast]),
+                TYPE: "bullet",
+            },
+        },
+        {
+            POSITION: {
+                LENGTH: 30,
+                WIDTH: 1.5,
+                Y: -2.5,
+                DELAY: 0.6
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.gunner, g.fast]),
+                TYPE: "bullet",
+            },
+        },
+        {
+            POSITION: {
+                LENGTH: 30,
+                WIDTH: 1.5,
+                DELAY: 0.4
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.gunner, g.fast]),
+                TYPE: "bullet",
+            },
+        },
+        {
+            POSITION: {
+                LENGTH: 12,
+                WIDTH: 14
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 14,
+                X: 20
+            }
+        }
+    ]
 }
 
 // Class Tree

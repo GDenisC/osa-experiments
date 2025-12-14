@@ -75,7 +75,7 @@ Class.arrasMenu_specialTanks.UPGRADES_TIER_0 = [
     "mothership",
     "flagship",
     "turkey",
-    //"arrasMenu_developer",
+    //"arrasMenu_developer", // existed here at one point
     "undercoverCop",
 ]
 
@@ -133,9 +133,9 @@ Class.arrasMenu_dominators.UPGRADES_TIER_0 = [
     "destroyerDominator",
     "gunnerDominator",
     "trapperDominator",
-    //"destroyerDominator_armsRace",
-    //"gunnerDominator_armsRace",
-    //"trapperDominator_armsRace",
+    //"destroyerDominator_AR",
+    //"gunnerDominator_AR",
+    //"trapperDominator_AR",
     "antiTankMachineGun",
     "baseProtector",
 ]
@@ -162,15 +162,15 @@ Class.arrasMenu_nostalgia.UPGRADES_TIER_0 = [
     "spreadshot_old",
     "boomer_old",
     "quadBuilder",
-    "quintuplet",
-    "vulcan",
+    //"quintuplet_AR",
+    //"vulcan_AR",
     "sniper3_AR",
     "spike_old",
     "master",
     "commander_old",
     "blunderbuss",
     "rimfire_old",
-    "armsman_old",
+    "ransacker_AR",
 ]
 
 // Scrapped Menu(s)
@@ -196,7 +196,7 @@ Class.arrasMenu_scrapped2.UPGRADES_TIER_0 = [
     "prodigy",
     "spawnerdrive_AR",
     "rimfire_AR",
-    "productionist",
+    //"productionist_AR",
     "vulture",
 ]
 

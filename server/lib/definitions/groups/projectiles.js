@@ -30,6 +30,60 @@ Class.casing = {
     LABEL: "Shell",
     TYPE: "swarm"
 }
+Class.masterBullet = {
+    PARENT: "missile",
+    FACING_TYPE: ["spin", {speed: 2}],
+    MOTION_TYPE: "motor",
+    HAS_NO_RECOIL: false,
+    DIE_AT_RANGE: false,
+    GUNS: [
+        {
+            POSITION: [18, 8, 1, 0, 0, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.triAngleFront]),
+                TYPE: "bullet",
+                LABEL: "Front",
+                AUTOFIRE: true,
+            },
+        },
+        {
+            POSITION: [13, 8, 1, 0, -1, 140, 0.6],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster]),
+                TYPE: "bullet",
+                LABEL: "Thruster",
+                AUTOFIRE: true,
+            },
+        },
+        {
+            POSITION: [13, 8, 1, 0, 1, 220, 0.6],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster]),
+                TYPE: "bullet",
+                LABEL: "Thruster",
+                AUTOFIRE: true,
+            },
+        },
+        {
+            POSITION: [16, 8, 1, 0, 0, 150, 0.1],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster]),
+                TYPE: "bullet",
+                LABEL: "Thruster",
+                AUTOFIRE: true,
+            },
+        },
+        {
+            POSITION: [16, 8, 1, 0, 0, 210, 0.1],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster]),
+                TYPE: "bullet",
+                LABEL: "Thruster",
+                AUTOFIRE: true,
+            },
+        },
+    ],
+}
 Class.undertowEffect = {
     PARENT: "genericTank",
     TYPE: "undertowEffect",
@@ -516,7 +570,11 @@ Class.medkit = {
 }
 
 // Drones
-Class.turretedDrone = makeAuto('drone', "Auto-Drone", {type: 'droneAutoTurret'})
+Class.bigBall = {
+    PARENT: "drone",
+    SHAPE: 8
+}
+Class.turretedDrone = makeAuto("drone", "Auto-Drone", {type: "droneAutoTurret"})
 
 // Sunchips
 Class.sunchip = {
