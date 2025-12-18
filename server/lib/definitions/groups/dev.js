@@ -1,4 +1,4 @@
-const { combineStats, LayeredBoss, makeAura, makeAuto, makeDeco, makeMenu, makeRadialAuto, makeTurret, weaponArray, weaponMirror } = require('../facilitators.js')
+const { combineStats, LayeredBoss, makeAura, makeAuto, makeDeco, makeMenu, makeRadialAuto, makeTurret, weaponArray, weaponMirror2 } = require('../facilitators.js')
 const { base, basePolygonDamage, basePolygonHealth, dfltskl, statnames } = require('../constants.js')
 const g = require('../gunvals.js')
 require('./tanks.js')
@@ -136,7 +136,7 @@ Class.guillotine = {
                 ANGLE: 90
             }
         },
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 40,
                 WIDTH: 2,
