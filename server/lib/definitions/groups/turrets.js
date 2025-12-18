@@ -1,4 +1,4 @@
-const { combineStats, makeTurret, weaponArray, weaponMirror } = require('../facilitators.js')
+const { combineStats, makeTurret, weaponArray, weaponMirror2 } = require('../facilitators.js')
 const { base } = require('../constants.js')
 const g = require('../gunvals.js')
 
@@ -768,14 +768,14 @@ Class.bulletAutoTurret = makeTurret({
     ]
 }, {label: "Turret", fov: 0.8, extraStats: []})
 Class.autoSmasherTurret = makeTurret({
-    GUNS: weaponMirror({
+    GUNS: weaponMirror2({
         POSITION: [20, 6, 1, 0, 5, 0, 0],
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, { recoil: 1.15 }, g.turret, { speed: 1.2 }, g.machineGun, g.pounder, { reload: 0.75 }, { reload: 0.75 }]),
             TYPE: "bullet",
             STAT_CALCULATOR: "fixedReload",
         },
-    })
+    }, { delayIncrement: 0.5 })
 }, {label: "Turret", fov: 0.8, extraStats: []})
 Class.pillboxTurret = makeTurret({
     HAS_NO_RECOIL: true,
@@ -1552,7 +1552,7 @@ Class.engineerTurret = makeTurret({
         ],
 }, {canRepel: true, limitFov: true, extraStats: []})
 Class.warkTurret = makeTurret({
-    GUNS: weaponMirror([
+    GUNS: weaponMirror2([
         {
             POSITION: [14, 7, 1, 0, -5.5, -5, 0]
         },
@@ -1564,10 +1564,10 @@ Class.warkTurret = makeTurret({
                 STAT_CALCULATOR: "trap"
             }
         },
-    ])
+    ], { delayIncrement: 0.5 })
 }, {canRepel: true, limitFov: true, extraStats: []})
 Class.ullrLowerTurret = makeTurret({
-    GUNS: weaponMirror([
+    GUNS: weaponMirror2([
         {
             POSITION: [4.5, 6, 1, 10.5, -5.5, 0, 0],
         },
@@ -1585,7 +1585,7 @@ Class.ullrLowerTurret = makeTurret({
         {
             POSITION: [11.5, 8, 1, 0, -5.5, 0, 0],
         },
-    ])
+    ], { delayIncrement: 0.5 })
 }, {canRepel: true, limitFov: true, extraStats: []})
 Class.isisLowerTurret = makeTurret({
     GUNS: [
@@ -1692,7 +1692,7 @@ Class.blunderbussTurret = makeTurret({
             ],
 }, {canRepel: true, limitFov: true, extraStats: []})
 Class.bentBuilderTurret = makeTurret({
-    GUNS: weaponMirror([
+    GUNS: weaponMirror2([
         {
         POSITION: [16, 11, 1, 0, -2, -35, 0],
         },
@@ -1704,7 +1704,7 @@ Class.bentBuilderTurret = makeTurret({
                 STAT_CALCULATOR: "block"
             }
         }
-    ]),
+    ], { delayIncrement: 0.5 }),
 }, {canRepel: true, limitFov: true, extraStats: []})
 Class.volleyTurret = makeTurret({
     GUNS: [

@@ -2353,7 +2353,7 @@ Class.tgsBoss = {
     },
     UPGRADE_TOOLTIP: "Someone has taken their love of Shiny Squares one step too far.",
     GUNS: weaponArray([
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: [2.5, 3, 1.2, 8, 5, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.pounder, { speed: 2.5 }, g.machineGun, { spray: 50, speed: 1.25, shudder: 1.25 }]),
@@ -2365,7 +2365,7 @@ Class.tgsBoss = {
                 WAIT_TO_CYCLE: true,
                 NO_LIMITATIONS: true,
             }
-        }, 0),
+        }),
         {
             POSITION: [3.5, 8.65, 1.2, 8, 0, 0, 0],
             PROPERTIES: {

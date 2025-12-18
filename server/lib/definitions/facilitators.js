@@ -170,7 +170,7 @@ exports.makeBird = (type, name = -1, options = {}) => {
     let backRecoil = 0.5 * backRecoilFactor;
     let thrusterProperties = { SHOOT_SETTINGS: exports.combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster, { recoil: backRecoil }]), TYPE: "bullet", LABEL: "thruster" };
     let shootyBois = [
-        ...exports.weaponMirror({
+        ...exports.weaponMirror2({
             POSITION: {
                 LENGTH: 16,
                 WIDTH: 8,
@@ -178,7 +178,7 @@ exports.makeBird = (type, name = -1, options = {}) => {
                 DELAY: 0.1
             },
             PROPERTIES: thrusterProperties
-        }, 0),
+        }),
         {
             POSITION: {
                 LENGTH: 18,
@@ -190,10 +190,10 @@ exports.makeBird = (type, name = -1, options = {}) => {
         }
     ];
     if (superBird) {
-        shootyBois.splice(0, 0, ...exports.weaponMirror({
+        shootyBois.splice(0, 0, ...exports.weaponMirror2({
             POSITION: [14, 8, 1, 0, 0, 130, 0.6],
             PROPERTIES: thrusterProperties
-        }, 0))
+        }))
     }
     // Assign thruster color
     if (color) for (let gun of shootyBois) {
@@ -683,6 +683,47 @@ exports.weaponMirror = (weapons, delayIncrement = 0.5, delayOverflow = false) =>
     }
     return output;
 }
+exports.weaponMirror2 = (weapons, options = {}) => {
+
+    /*
+    - weapons: what guns to mirror
+    
+    Available options:
+    - delayIncrement: delay increment for mirrored guns
+    - delayOverflow: whether the gun delay can exceed 1 or not, default false
+    */
+
+    if (!Array.isArray(weapons)) {
+        weapons = [weapons]
+    }
+    let yKey = 4;
+    let angleKey = 5;
+    let delayKey = 6;
+
+    options.delayIncrement ??= 0
+    options.delayOverflow ??= false
+
+    let output = [];
+    for (let weapon of weapons) {
+        let newWeapon = exports.dereference(weapon);
+
+        if (!Array.isArray(newWeapon.POSITION)) {
+            yKey = "Y";
+            angleKey = "ANGLE";
+            delayKey = "DELAY";
+        }
+
+        newWeapon.POSITION[yKey] = (newWeapon.POSITION[yKey] ?? 0) * -1;
+        newWeapon.POSITION[angleKey] = (newWeapon.POSITION[angleKey] ?? 0) * -1;
+        newWeapon.POSITION[delayKey] = (newWeapon.POSITION[delayKey] ?? 0) + options.delayIncrement;
+        if (!options.delayOverflow) {
+            newWeapon.POSITION[delayKey] %= 1;
+        }
+        output.push(weapon, newWeapon);
+
+    }
+    return output;
+}
 exports.weaponStack = (weapons, count, options = {}) => {
 
     /*
@@ -692,7 +733,7 @@ exports.weaponStack = (weapons, count, options = {}) => {
     - count: number of guns in the stack
     - lengthOffset: distance between stack gun lengths
     - xPosOffset: distance between stack gun x positions
-    - delay: delay increment between stack guns
+    - delayIncrement: delay increment between stack guns
     - delayOverflow: whether the gun delay can exceed 1 or not, default false
     */
 

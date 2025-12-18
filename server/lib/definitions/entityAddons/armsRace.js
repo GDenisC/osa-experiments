@@ -1,4 +1,4 @@
-const { combineStats, makeAuto, makeBird, makeGuard, makeOver, makeRadialAuto, makeRearGunner, makeTurret, weaponArray, weaponMirror } = require('../facilitators.js')
+const { combineStats, makeAuto, makeBird, makeGuard, makeOver, makeRadialAuto, makeRearGunner, makeTurret, weaponArray, weaponMirror2 } = require('../facilitators.js')
 const { base, statnames } = require('../constants.js')
 const g = require('../gunvals.js')
 
@@ -231,7 +231,7 @@ Class.wark_AR = {
     LABEL: "Wark",
     DANGER: 6,
     STAT_NAMES: statnames.trap,
-    GUNS: weaponMirror([
+    GUNS: weaponMirror2([
         {
             POSITION: {
                 LENGTH: 15,
@@ -255,7 +255,7 @@ Class.wark_AR = {
                 STAT_CALCULATOR: "trap"
             }
         }
-    ])
+    ], { delayIncrement: 0.5 })
 }
 
 // Tier 3
@@ -316,7 +316,7 @@ Class.battery_AR = {
     LABEL: "Battery",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror([{
+        ...weaponMirror2([{
             POSITION: {
                 LENGTH: 12,
                 WIDTH: 3.5,
@@ -339,7 +339,7 @@ Class.battery_AR = {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.gunner, { speed: 1.2 }]),
                 TYPE: "bullet"
             }
-        }], 0.2),
+        }], { delayIncrement: 0.2 }),
         {
             POSITION: {
                 LENGTH: 20,
@@ -356,7 +356,7 @@ Class.bentGunner_AR = {
     PARENT: "genericTank",
     LABEL: "Bent Gunner",
     DANGER: 7,
-    GUNS: weaponMirror([
+    GUNS: weaponMirror2([
         {
             POSITION: {
                 LENGTH: 10,
@@ -380,7 +380,7 @@ Class.bentGunner_AR = {
                 Y: 3.75
             }
         }
-    ])
+    ], { delayIncrement: 0.5 })
 }
 Class.bentMinigun_AR = {
     PARENT: "genericTank",
@@ -390,7 +390,7 @@ Class.bentMinigun_AR = {
         FOV: base.FOV * 1.2
     },
     GUNS: [
-        ...weaponMirror([{
+        ...weaponMirror2([{
             POSITION: {
                 LENGTH: 19,
                 WIDTH: 8,
@@ -407,7 +407,7 @@ Class.bentMinigun_AR = {
                 Y: 2,
                 ANGLE: 16
             }
-        }]),
+        }], { delayIncrement: 0.5 }),
         {
             POSITION: {
                 LENGTH: 21,
@@ -520,7 +520,7 @@ Class.cog_AR = {
     PARENT: "genericTank",
     LABEL: "Cog",
     DANGER: 7,
-    GUNS: weaponMirror([
+    GUNS: weaponMirror2([
         {
             POSITION: {
                 LENGTH: 15,
@@ -547,7 +547,7 @@ Class.cog_AR = {
                 ANGLE: 10
             }
         }
-    ])
+    ], { delayIncrement: 0.5 })
 }
 Class.cockatiel_AR = makeBird("pen_AR", "Cockatiel")
 Class.combo_AR = {
@@ -725,7 +725,7 @@ Class.discharger_AR = {
     LABEL: "Discharger",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror([{
+        ...weaponMirror2([{
             POSITION: {
                 LENGTH: 15,
                 WIDTH: 3.5,
@@ -742,7 +742,7 @@ Class.discharger_AR = {
                 Y: -5.5,
                 ANGLE: -7
             }
-        }]),
+        }], { delayIncrement: 0.5 }),
         {
             POSITION: {
                 LENGTH: 19,
@@ -767,7 +767,7 @@ Class.doubleFlankTwin_AR = {
                 TYPE: "bullet"
             }
         },
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 20,
                 WIDTH: 8,
@@ -777,14 +777,14 @@ Class.doubleFlankTwin_AR = {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.doubleTwin]),
                 TYPE: "bullet"
             }
-        })
+        }, { delayIncrement: 0.5 })
     ], 2)
 }
 Class.doubleGunner_AR = {
     PARENT: "genericTank",
     LABEL: "Double Gunner",
     DANGER: 7,
-    GUNS: weaponArray(weaponMirror([
+    GUNS: weaponArray(weaponMirror2([
         {
             POSITION: {
                 LENGTH: 12,
@@ -808,7 +808,7 @@ Class.doubleGunner_AR = {
                 TYPE: "bullet"
             }
         }
-    ], 0.25), 2)
+    ], { delayIncrement: 0.25 }), 2)
 }
 Class.doubleHelix_AR = {
     PARENT: "genericTank",
@@ -847,7 +847,7 @@ Class.doubleHelix_AR = {
                 ASPECT: -9.25
             }
         },
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 4,
                 WIDTH: 5,
@@ -856,7 +856,7 @@ Class.doubleHelix_AR = {
                 Y: -7,
                 ANGLE: 90
             }
-        })
+        }, { delayIncrement: 0.5 })
     ], 2)
 }
 Class.drifter_AR = {
@@ -1000,7 +1000,7 @@ Class.expeller_AR = {
     PARENT: "genericTank",
     LABEL: "Expeller",
     DANGER: 7,
-    GUNS: weaponMirror([
+    GUNS: weaponMirror2([
         {
             POSITION: {
                 LENGTH: 15,
@@ -1020,7 +1020,7 @@ Class.expeller_AR = {
                 ANGLE: 5
             }
         }
-    ])
+    ], { delayIncrement: 0.5 })
 }
 Class.fashioner_AR = makeOver("builder", "Fashioner", hybridTankOptions)
 Class.faucet_AR = {
@@ -1028,7 +1028,7 @@ Class.faucet_AR = {
     LABEL: "Faucet",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 9,
                 WIDTH: 8.2,
@@ -1042,7 +1042,7 @@ Class.faucet_AR = {
                 TYPE: "swarm",
                 STAT_CALCULATOR: "swarm",
             },
-        }),
+        }, { delayIncrement: 0.5 }),
         {
             POSITION: {
                 LENGTH: 23,
@@ -1113,7 +1113,7 @@ Class.foctillery_AR = {
     LABEL: "Foctillery",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 17,
                 WIDTH: 5,
@@ -1125,7 +1125,7 @@ Class.foctillery_AR = {
                 TYPE: "bullet",
                 LABEL: "Secondary"
             }
-        }),
+        }, { delayIncrement: 0.5 }),
         {
             POSITION: {
                 LENGTH: 19,
@@ -1137,8 +1137,7 @@ Class.foctillery_AR = {
                 LABEL: "Heavy"
             }
         }
-    ],
-    TURRETS: []
+    ]
 }
 Class.force_AR = makeOver("artillery", "Force", hybridTankOptions)
 Class.forger_AR = {
@@ -1147,7 +1146,7 @@ Class.forger_AR = {
     DANGER: 7,
     STAT_NAMES: statnames.mixed,
     GUNS: [
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 17,
                 WIDTH: 5,
@@ -1160,7 +1159,7 @@ Class.forger_AR = {
                 TYPE: "bullet",
                 LABEL: "Secondary"
             }
-        }),
+        }, { delayIncrement: 0.5 }),
         {
             POSITION: {
                 LENGTH: 17,
@@ -1271,7 +1270,7 @@ Class.hutch_AR = {
     PARENT: "genericTank",
     LABEL: "Hutch",
     DANGER: 7,
-    GUNS: weaponMirror([
+    GUNS: weaponMirror2([
         {
             POSITION: {
                 LENGTH: 20.25,
@@ -1290,7 +1289,7 @@ Class.hutch_AR = {
                 ANGLE: 5
             }
         }
-    ])
+    ], { delayIncrement: 0.5 })
 }
 Class.incarcerator_AR = {
     PARENT: "genericTank",
@@ -1519,7 +1518,7 @@ Class.mingler_AR = {
 Class.nurse_AR = {
     PARENT: "genericHealer",
     LABEL: "Nurse",
-    GUNS: weaponMirror([
+    GUNS: weaponMirror2([
         {
             POSITION: {
                 LENGTH: 11,
@@ -1536,7 +1535,7 @@ Class.nurse_AR = {
                 Y: 5.5
             }
         }
-    ])
+    ], { delayIncrement: 0.5 })
 }
 Class.operator_AR = {
     PARENT: "genericTank",
@@ -1612,7 +1611,7 @@ Class.pentaseer_AR = {
         FOV: base.FOV * 1.1,
     },
     SHAPE: 5,
-    GUNS: weaponMirror({
+    GUNS: weaponMirror2({
         POSITION: {
             LENGTH: 6,
             WIDTH: 11,
@@ -1620,7 +1619,7 @@ Class.pentaseer_AR = {
             X: 7.4,
             ANGLE: 36
         }
-    }, 0)
+    })
 }
 Class.polluter_AR = makeOver("diesel_AR", "Polluter", hybridTankOptions)
 Class.prober_AR = {
@@ -1744,7 +1743,7 @@ Class.quadAngle_AR = {
             TYPE: "autoTankGun",
         },
     ],
-    GUNS: weaponMirror({
+    GUNS: weaponMirror2({
         POSITION: {
             LENGTH: 16,
             WIDTH: 8,
@@ -1756,14 +1755,14 @@ Class.quadAngle_AR = {
             TYPE: "bullet",
             LABEL: "thruster"
         }
-    }, 0)
+    })
 }
 Class.queller_AR = {
     PARENT: "genericTank",
     LABEL: "Queller",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 17,
                 WIDTH: 5,
@@ -1776,7 +1775,7 @@ Class.queller_AR = {
                 TYPE: "bullet",
                 LABEL: "Secondary"
             }
-        }),
+        }, { delayIncrement: 0.5 }),
         {
             POSITION: {
                 LENGTH: 19,
@@ -1847,7 +1846,7 @@ Class.recalibrator_AR = {
                 TYPE: ["healerBullet", {CONTROLLERS: ['snake']}]
             }
         },
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 5,
                 WIDTH: 5,
@@ -1856,7 +1855,7 @@ Class.recalibrator_AR = {
                 Y: -7,
                 ANGLE: 90
             }
-        })
+        }, { delayIncrement: 0.5 })
     ]
 }
 Class.rimfire_AR = {
@@ -2022,7 +2021,7 @@ Class.splitShot_AR = {
     LABEL: "Split Shot",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror([{
+        ...weaponMirror2([{
             POSITION: {
                 LENGTH: 11,
                 WIDTH: 8,
@@ -2039,7 +2038,7 @@ Class.splitShot_AR = {
                 Y: 0.5,
                 ANGLE: 15
             }
-        }]),
+        }], { delayIncrement: 0.5 }),
         {
             POSITION: {
                 LENGTH: 22,
@@ -2080,7 +2079,7 @@ Class.stormer_AR = {
     LABEL: "Stormer",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 30,
                 WIDTH: 2,
@@ -2091,7 +2090,7 @@ Class.stormer_AR = {
                 SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.twin, { speed: 0.7, maxSpeed: 0.7 }, g.flankGuard, { recoil: 1.8 }]),
                 TYPE: "bullet",
             },
-        }),
+        }, { delayIncrement: 0.5 }),
         {
             POSITION: {
                 LENGTH: 24,
@@ -2267,7 +2266,7 @@ Class.triTrapGuard_AR = makeGuard({
                 TYPE: "bullet"
             }
         },
-        ...weaponMirror([{
+        ...weaponMirror2([{
             POSITION: {
                 LENGTH: 13,
                 WIDTH: 8,
@@ -2287,7 +2286,7 @@ Class.triTrapGuard_AR = makeGuard({
                 TYPE: "trap",
                 STAT_CALCULATOR: "trap",
             }
-        }], 0)
+        }])
     ]
 }, "Tri-Trap Guard")
 Class.underdrive_AR = {
@@ -2362,7 +2361,7 @@ Class.waarrk_AR = {
     LABEL: "Waarrk",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror([{
+        ...weaponMirror2([{
             POSITION: {
                 LENGTH: 16,
                 WIDTH: 8,
@@ -2379,7 +2378,7 @@ Class.waarrk_AR = {
                 Y: 2,
                 ANGLE: 18
             }
-        }]),
+        }], { delayIncrement: 0.5 }),
         {
             POSITION: {
                 LENGTH: 18,
@@ -2402,7 +2401,7 @@ Class.warkwark_AR = {
     LABEL: "Warkwark",
     DANGER: 7,
     STAT_NAMES: statnames.trap,
-    GUNS: weaponArray(weaponMirror([
+    GUNS: weaponArray(weaponMirror2([
         {
             POSITION: {
                 LENGTH: 15,
@@ -2426,7 +2425,7 @@ Class.warkwark_AR = {
                 STAT_CALCULATOR: "trap"
             }
         }
-    ]), 2)
+    ], { delayIncrement: 0.5 }), 2)
 }
 Class.widget_AR = {
     PARENT: "genericTank",
@@ -2467,7 +2466,7 @@ Class.zipper_AR = {
         FOV: base.FOV * 1.2
     },
     GUNS: [
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 9,
                 WIDTH: 8.2,
@@ -2481,7 +2480,7 @@ Class.zipper_AR = {
                 TYPE: "swarm",
                 STAT_CALCULATOR: "swarm",
             },
-        }),
+        }, { delayIncrement: 0.5 }),
         {
             POSITION: {
                 LENGTH: 21,
@@ -2668,7 +2667,7 @@ Class.antidote_AR = {
     PARENT: "genericHealer",
     LABEL: "Antidote",
     STAT_NAMES: statnames.swarm,
-    GUNS: weaponMirror([
+    GUNS: weaponMirror2([
         {
             POSITION: {
                 LENGTH: 6.5,
@@ -2687,7 +2686,7 @@ Class.antidote_AR = {
                 Y: 4
             }
         }
-    ])
+    ], { delayIncrement: 0.5 })
 }
 Class.autoCoil_AR = makeAuto("coil")
 Class.autoDoubleHelix_AR = makeAuto("doubleHelix_AR")
@@ -2746,7 +2745,7 @@ Class.clerk_AR = {
 Class.clinician_AR = {
     PARENT: "genericHealer",
     LABEL: "Clinician",
-    GUNS: weaponArray(weaponMirror([
+    GUNS: weaponArray(weaponMirror2([
         {
             POSITION: {
                 LENGTH: 11,
@@ -2763,7 +2762,7 @@ Class.clinician_AR = {
                 Y: 5.5
             }
         }
-    ]), 2)
+    ], { delayIncrement: 0.5 }), 2)
 }
 Class.doctor_AR = {
     PARENT: "genericHealer",
@@ -2801,7 +2800,7 @@ Class.doubleCoil_AR = {
                 TYPE: ["bullet", {CONTROLLERS: [["snake", {invert: true}]]}]
             },
         },
-        ...weaponMirror([{
+        ...weaponMirror2([{
             POSITION: [21, 4, 0.75, 0, 5, 0, 0]
         },
         {
@@ -2832,7 +2831,7 @@ Class.doubleDuplicator_AR = {
                 TYPE: ["splitterBullet", {CONTROLLERS: [["snake", {invert: true}]]}]
             }
         },
-        ...weaponMirror([{
+        ...weaponMirror2([{
             POSITION: [5.625, 9.5, 2, 0.375-1, -8, 111.5, 0]
         },
         {
@@ -2889,7 +2888,7 @@ Class.doubleTriplex_AR = {
                 TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
             },
         },
-        ...weaponMirror([{
+        ...weaponMirror2([{
             POSITION: {
                 LENGTH: 5,
                 WIDTH: 5,
@@ -2906,7 +2905,7 @@ Class.doubleTriplex_AR = {
                 ASPECT: -4,
                 ANGLE: 22.5
             }
-        }]),
+        }], { delayIncrement: 0.5 }),
     ], 2)
 }
 Class.duster_AR = {
@@ -2941,7 +2940,7 @@ Class.geneticist_AR = {
     PARENT: "genericHealer",
     LABEL: "Geneticist",
     GUNS: [
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 11,
                 WIDTH: 5,
@@ -2949,7 +2948,7 @@ Class.geneticist_AR = {
                 X: 11.5,
                 Y: 5
             }
-        }),
+        }, { delayIncrement: 0.5 }),
         {
             POSITION: {
                 LENGTH: 20,
@@ -2981,7 +2980,7 @@ Class.geneticist_AR = {
                 ASPECT: -9.25
             }
         },
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 4,
                 WIDTH: 5,
@@ -2990,7 +2989,7 @@ Class.geneticist_AR = {
                 Y: -7,
                 ANGLE: 90
             }
-        })
+        }, { delayIncrement: 0.5 })
     ]
 }
 Class.guru_AR = {
@@ -3172,7 +3171,7 @@ Class.hextuplex_AR = {
                 TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: false, amplitude: 180, yOffset: -50}]]}]
             }
         },
-        ...weaponArray(weaponMirror({
+        ...weaponArray(weaponMirror2({
             POSITION: {
                 LENGTH: 5,
                 WIDTH: 5,
@@ -3182,7 +3181,7 @@ Class.hextuplex_AR = {
                 ANGLE: 150
             }
         }), 3),
-        ...weaponArray(weaponMirror({
+        ...weaponArray(weaponMirror2({
             POSITION: {
                 LENGTH: 5,
                 WIDTH: 5,
@@ -3454,7 +3453,7 @@ Class.quintuplet_AR = {
         FOV: 1.1 * base.FOV
     },
     GUNS: [
-        ...weaponMirror([{
+        ...weaponMirror2([{
             POSITION: {
                 LENGTH: 16,
                 WIDTH: 10,
@@ -3477,7 +3476,7 @@ Class.quintuplet_AR = {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet, g.quint]),
                 TYPE: "bullet"
             }
-        }], 0),
+        }]),
         {
             POSITION: {
                 LENGTH: 22,
@@ -3559,7 +3558,7 @@ Class.quintuplex_AR = {
                 TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
             },
         },
-        ...weaponMirror([{
+        ...weaponMirror2([{
             POSITION: {
                 LENGTH: 5,
                 WIDTH: 5,
@@ -3584,7 +3583,7 @@ Class.quintuplex_AR = {
                 ASPECT: -4,
                 ANGLE: 67.5
             }
-        }]),
+        }], { delayIncrement: 0.5 }),
     ]
 }
 Class.ransacker_AR = makeGuard("rifle", "Ransacker")
@@ -3754,7 +3753,7 @@ Class.spiker_AR = {
 Class.therapist_AR = {
     PARENT: "genericHealer",
     LABEL: "Therapist",
-    GUNS: weaponMirror([
+    GUNS: weaponMirror2([
         {
             POSITION: {
                 LENGTH: 5,
@@ -3787,7 +3786,7 @@ Class.therapist_AR = {
                 Y: 3.75
             }
         }
-    ])
+    ], { delayIncrement: 0.5 })
 }
 Class.tommy_AR = makeGuard("minigun", "Tommy")
 Class.tripleHelix_AR = {
@@ -3827,7 +3826,7 @@ Class.tripleHelix_AR = {
                 ASPECT: -9.25
             }
         },
-        ...weaponMirror({
+        ...weaponMirror2({
             POSITION: {
                 LENGTH: 4,
                 WIDTH: 5,
@@ -3836,7 +3835,7 @@ Class.tripleHelix_AR = {
                 Y: -7,
                 ANGLE: 90
             }
-        })
+        }, { delayIncrement: 0.5 })
     ], 3)
 }
 Class.vulcan_AR = {
