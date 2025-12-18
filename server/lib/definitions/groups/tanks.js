@@ -1,4 +1,4 @@
-const { combineStats, makeAuto, makeBird, makeGuard, makeOver, makeRadialAuto, weaponArray, weaponMirror2, weaponStack } = require('../facilitators.js')
+const { combineStats, makeAuto, makeBird, makeGuard, makeOver, makeRadialAuto, weaponArray, weaponMirror, weaponStack } = require('../facilitators.js')
 const { base, dfltskl, smshskl, statnames } = require('../constants.js')
 const g = require('../gunvals.js')
 
@@ -69,7 +69,7 @@ Class.desmos = {
                 TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             }
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 5,
                 WIDTH: 5,
@@ -222,7 +222,7 @@ Class.trapper = {
 Class.twin = {
     PARENT: "genericTank",
     LABEL: "Twin",
-    GUNS: weaponMirror2({
+    GUNS: weaponMirror({
         POSITION: {
             LENGTH: 20,
             WIDTH: 8,
@@ -287,7 +287,7 @@ Class.whirlwind_bent = {
     PARENT: "genericTank",
     LABEL: "Whirlwind",
     UPGRADE_LABEL: "Bent Whirlwind",
-    GUNS: weaponMirror2([
+    GUNS: weaponMirror([
         {
             POSITION: {
                 LENGTH: 15,
@@ -326,7 +326,7 @@ Class.artillery = {
     LABEL: "Artillery",
     DANGER: 6,
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 17,
                 WIDTH: 5,
@@ -424,7 +424,7 @@ Class.cruiser = {
     BODY: {
         FOV: 1.2 * base.FOV,
     },
-    GUNS: weaponMirror2({
+    GUNS: weaponMirror({
         POSITION: {
             LENGTH: 9,
             WIDTH: 8.2,
@@ -479,7 +479,7 @@ Class.doubleTwin = {
     PARENT: "genericTank",
     LABEL: "Double Twin",
     DANGER: 6,
-    GUNS: weaponArray(weaponMirror2({
+    GUNS: weaponArray(weaponMirror({
         POSITION: {
             LENGTH: 20,
             WIDTH: 8,
@@ -496,7 +496,7 @@ Class.flangle = {
     LABEL: "Flangle",
     DANGER: 6,
     STAT_NAMES: statnames.mixed,
-    GUNS: weaponMirror2({
+    GUNS: weaponMirror({
         POSITION: [16, 8, 1, 0, 0, 150, 0.1],
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster]),
@@ -520,7 +520,7 @@ Class.gunner = {
     PARENT: "genericTank",
     LABEL: "Gunner",
     DANGER: 6,
-    GUNS: weaponMirror2([
+    GUNS: weaponMirror([
         {
             POSITION: {
                 LENGTH: 12,
@@ -613,7 +613,7 @@ Class.helix = {
                 ASPECT: -9.25
             }
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 4,
                 WIDTH: 5,
@@ -785,7 +785,7 @@ Class.maelstrom_bent = {
     PARENT: "genericTank",
     LABEL: "Maelstrom",
     GUNS: [
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 15,
                 WIDTH: 8,
@@ -876,7 +876,7 @@ Class.monsoon_bent = {
     PARENT: "genericTank",
     LABEL: "Monsoon",
     STAT_NAMES: statnames.trap,
-    GUNS: weaponMirror2([
+    GUNS: weaponMirror([
         {
             POSITION: {
                 LENGTH: 15,
@@ -952,7 +952,7 @@ Class.repeater = {
                 TYPE: ["splitterBullet", {CONTROLLERS: ['snake']}]
             }
         },
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: [4.625, 9.5, 2, 0.375, -8, 91.5, 0]
         },
         {
@@ -1061,7 +1061,7 @@ Class.spiral = {
                 TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             }
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: [4.25, 11, 2, 2.25, -4.25, 92.5, 0]
         })
     ],
@@ -1199,7 +1199,7 @@ Class.triAngle = {
                 LABEL: "Front"
             }
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 16,
                 WIDTH: 8,
@@ -1249,7 +1249,7 @@ Class.tripleShot = {
         SPEED: base.SPEED * 0.9
     },
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 19,
                 WIDTH: 8,
@@ -1341,7 +1341,7 @@ Class.undertow = {
                 TYPE: 'undertowBullet'
             }
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: [11.25, 8, 0.15, 4.25, 4, 13.5, 0]
         })
     ],
@@ -1362,7 +1362,7 @@ Class.volute = {
                 TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             }
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: [5, 10, 2.125, 1, -6.375, 90, 0],
         })
     ],
@@ -1442,7 +1442,7 @@ Class.ambulance = {
                 LABEL: "Front"
             }
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 16,
                 WIDTH: 8,
@@ -1642,7 +1642,7 @@ Class.battleship = {
         FOV: 1.2 * base.FOV
     },
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 9,
                 WIDTH: 8.2,
@@ -1658,7 +1658,7 @@ Class.battleship = {
                 LABEL: "Guided"
             }
         }, { delayIncrement: 0.5 }),
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 9,
                 WIDTH: 8.2,
@@ -1681,7 +1681,7 @@ Class.beekeeper = {
     LABEL: "Beekeeper",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 14,
                 WIDTH: 5,
@@ -1738,7 +1738,7 @@ Class.bender = {
         {
             POSITION: [11.5, 12, 1, 0, 0, 0, 0]
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: [5, 7.5, 2.5, 1, -4.5, 95, 0]
         })
     ]
@@ -1748,7 +1748,7 @@ Class.bentDouble = {
     LABEL: "Bent Double",
     DANGER: 7,
     GUNS: weaponArray([
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 19,
                 WIDTH: 8,
@@ -1872,7 +1872,7 @@ Class.blunderbuss = {
         FOV: base.FOV * 1.225
     },
     GUNS: [
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 13,
                 WIDTH: 4,
@@ -1947,7 +1947,7 @@ Class.bomber = makeGuard({
                 LABEL: "Front"
             }
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 18,
                 WIDTH: 8,
@@ -2011,7 +2011,7 @@ Class.boomer_old = {
         SPEED: 0.8 * base.SPEED,
         FOV: 1.15 * base.FOV,
     },
-    GUNS: weaponMirror2([
+    GUNS: weaponMirror([
         {
             POSITION: [8, 10, 1, 8, -2, -35, 0]
         },
@@ -2045,7 +2045,7 @@ Class.booster = {
                 LABEL: "Front"
             }
         },
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 14,
                 WIDTH: 8,
@@ -2078,7 +2078,7 @@ Class.bulwark = {
     LABEL: "Bulwark",
     STAT_NAMES: statnames.mixed,
     DANGER: 7,
-    GUNS: weaponMirror2([
+    GUNS: weaponMirror([
         {
             POSITION: {
                 LENGTH: 20,
@@ -2128,7 +2128,7 @@ Class.carrier = {
         FOV: base.FOV * 1.2
     },
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 9,
                 WIDTH: 8.2,
@@ -2241,7 +2241,7 @@ Class.coil = {
                 TYPE: ["bullet", {CONTROLLERS: [["snake", {invert: true}]]}]
             },
         },
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: [21, 4, 0.75, 0, 5, 0, 0]
         },
         {
@@ -2400,7 +2400,7 @@ Class.crossbow = {
         FOV: base.FOV * 1.225
     },
     GUNS: [
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 13,
                 WIDTH: 3,
@@ -2590,7 +2590,7 @@ Class.dual = {
     },
     CONTROLLERS: ["zoom"],
     TOOLTIP: "Hold right click to zoom.",
-    GUNS: weaponMirror2([
+    GUNS: weaponMirror([
         {
             POSITION: {
                 LENGTH: 18,
@@ -2637,7 +2637,7 @@ Class.duplicator = {
                 TYPE: ["splitterBullet", {CONTROLLERS: [["snake", {invert: true}]]}]
             }
         },
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: [5.625, 9.5, 2, 0.375-1, -8, 111.5, 0]
         },
         {
@@ -2749,7 +2749,7 @@ Class.fieldGun = {
         FOV: base.FOV * 1.1,
     },
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 14.5,
                 WIDTH: 3,
@@ -2802,7 +2802,7 @@ Class.fighter = {
                 LABEL: "Front"
             }
         },
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 16,
                 WIDTH: 8,
@@ -2835,7 +2835,7 @@ Class.flace = {
     LABEL: "Flace",
     DANGER: 7,
     STAT_NAMES: statnames.mixed,
-    GUNS: weaponMirror2({
+    GUNS: weaponMirror({
         POSITION: [16, 8, 1, 0, 0, 150, 0.1],
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster]),
@@ -2856,7 +2856,7 @@ Class.flooster = {
     LABEL: "Flooster",
     DANGER: 7,
     STAT_NAMES: statnames.mixed,
-    GUNS: weaponMirror2([
+    GUNS: weaponMirror([
         {
             POSITION: [13, 8, 1, 0, -1, 140, 0.6],
             PROPERTIES: {
@@ -2996,7 +2996,7 @@ Class.gunnerTrapper = {
         FOV: 1.25 * base.FOV
     },
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 19,
                 WIDTH: 2,
@@ -3042,7 +3042,7 @@ Class.hewnDouble = {
     LABEL: "Hewn Double",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 19,
                 WIDTH: 8,
@@ -3054,7 +3054,7 @@ Class.hewnDouble = {
                 TYPE: "bullet"
             }
         }, { delayIncrement: 0.5 }),
-        ...weaponArray(weaponMirror2({
+        ...weaponArray(weaponMirror({
             POSITION: {
                 LENGTH: 20,
                 WIDTH: 8,
@@ -3153,7 +3153,7 @@ Class.infestor = {
         SPEED: base.SPEED * 0.9,
         FOV: base.FOV * 1.1,
     },
-    GUNS: weaponArray(weaponMirror2({
+    GUNS: weaponArray(weaponMirror({
         POSITION: {
             LENGTH: 10,
             WIDTH: 6,
@@ -3199,7 +3199,7 @@ Class.iterator = {
                 TYPE: ["superSplitterBullet", {CONTROLLERS: ['snake']}]
             }
         },
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: [4.625, 10.5, 2.75, 0.375, 7, -91.5, 0]
         },
         {
@@ -3274,7 +3274,7 @@ Class.machineGunner = {
         SPEED: 0.9 * base.SPEED
     },
     GUNS: [
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 14,
                 WIDTH: 3,
@@ -3403,7 +3403,7 @@ Class.master = {
                 DESTROY_OLDEST_CHILD: true
             }
         },
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: [13, 8, 1, 0, -1, 140, 0.6],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster]),
@@ -3534,7 +3534,7 @@ Class.mender = {
     DANGER: 7,
     TOOLTIP: "Right click to heal yourself (use sparingly, has a long cooldown once used!)",
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: [17, 3, 1, 0, -6, -7, 0.25],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.gunner, g.artillery]),
@@ -3624,7 +3624,7 @@ Class.mortar = {
     LABEL: "Mortar",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 13,
                 WIDTH: 3,
@@ -3701,7 +3701,7 @@ Class.munition = {
     })()
 }
 Class.munition.GUNS.push(
-    ...weaponMirror2({
+    ...weaponMirror({
         POSITION: {
             LENGTH: 17,
             WIDTH: 5,
@@ -3734,7 +3734,7 @@ Class.musket = {
     BODY: {
         FOV: base.FOV * 1.225
     },
-    GUNS: weaponMirror2([
+    GUNS: weaponMirror([
         {
             POSITION: {
                 LENGTH: 15.5,
@@ -3764,7 +3764,7 @@ Class.nailgun = {
         SPEED: base.SPEED * 0.9
     },
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 19,
                 WIDTH: 3,
@@ -3918,7 +3918,7 @@ Class.ordnance = {
     CONTROLLERS: ["zoom"],
     TOOLTIP: "Hold right click to zoom.",
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 17,
                 WIDTH: 5,
@@ -4005,7 +4005,7 @@ Class.overgunner = makeOver({
     LABEL: "Gunner",
     DANGER: 6,
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 19,
                 WIDTH: 2,
@@ -4089,7 +4089,7 @@ Class.paramedic = {
         SPEED: base.SPEED * 0.9
     },
     GUNS: [
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 11,
                 WIDTH: 6,
@@ -4140,7 +4140,7 @@ Class.pentaShot = {
         SPEED: 0.85 * base.SPEED
     },
     GUNS: [
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 16,
                 WIDTH: 8,
@@ -4421,7 +4421,7 @@ Class.quadruplex = {
                 TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: false, amplitude: 180, yOffset: 50}]]}]
             }
         },
-        ...weaponArray(weaponMirror2({
+        ...weaponArray(weaponMirror({
             POSITION: {
                 LENGTH: 5,
                 WIDTH: 5,
@@ -4550,7 +4550,7 @@ Class.riptide = {
                 TYPE: "undertowBullet"
             }
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: [17, 16, 0.1, 0.25, 4, 13.5, 0]
         })
     ]
@@ -4560,7 +4560,7 @@ Class.rimfire_old = {
     LABEL: "Rimfire",
     UPGRADE_LABEL: "Old Rimfire",
     DANGER: 7,
-    GUNS: weaponMirror2([
+    GUNS: weaponMirror([
         {
             POSITION: {
                 LENGTH: 12,
@@ -4606,7 +4606,7 @@ Class.rocketSegment = {
                 LABEL: "Front"
             }
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: [14, 8, 1, 0, -1, 140, 0.1],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster]),
@@ -4634,7 +4634,7 @@ Class.rocket = {
                 LABEL: "Front"
             }
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: [14, 8, 1, 0, -1, 140, 0.1],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster]),
@@ -4719,7 +4719,7 @@ Class.shotgun = {
     LABEL: "Shotgun",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 4,
                 WIDTH: 3,
@@ -4931,7 +4931,7 @@ Class.spreadshot = {
     LABEL: "Spreadshot",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 13,
                 WIDTH: 4,
@@ -5018,7 +5018,7 @@ Class.spreadshot_old = {
     LABEL: "Old Spreadshot",
     DANGER: 7,
     GUNS: [
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 13,
                 WIDTH: 4,
@@ -5162,7 +5162,7 @@ Class.superSpiral = {
                 TYPE: ["bullet", {CONTROLLERS: ['snake']}]
             }
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: [4.25, 9.5, 2.5, 2.25, -6.25, 92.5, 0]
         })
     ],
@@ -5186,7 +5186,7 @@ Class.surfer = {
                 LABEL: "Front"
             }
         },
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 7,
                 WIDTH: 7.5,
@@ -5437,7 +5437,7 @@ Class.tripleTwin = {
     PARENT: "genericTank",
     LABEL: "Triple Twin",
     DANGER: 7,
-    GUNS: weaponArray(weaponMirror2({
+    GUNS: weaponArray(weaponMirror({
         POSITION: {
             LENGTH: 20,
             WIDTH: 8,
@@ -5457,7 +5457,7 @@ Class.triplet = {
         FOV: 1.05 * base.FOV
     },
     GUNS: [
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 17.5,
                 WIDTH: 8,
@@ -5524,7 +5524,7 @@ Class.triplex = {
                 TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
             },
         },
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 5,
                 WIDTH: 5,
@@ -5927,7 +5927,7 @@ Class.wrangler = { // old bender, fires train minions with 3 bodies (though only
         {
             POSITION: [11.5, 12, 1, 0, 0, 0, 0]
         },
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: [5, 7.5, 2.5, 1, -4.5, 95, 0]
         })
     ]
@@ -6063,7 +6063,7 @@ Class.machineShot = {
     DANGER: 7,
     BODY: Class.pentaShot.BODY,
     GUNS: [
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 16,
                 WIDTH: 8,
@@ -6186,7 +6186,7 @@ Class.tetraGunner = {
     LABEL: "Tetra Gunner",
     DANGER: 7,
     GUNS: weaponArray([
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: {
                 LENGTH: 14,
                 WIDTH: 4.5,
@@ -6255,7 +6255,7 @@ Class.worstTank = {
     DANGER: 7,
     BODY: Class.machineGunner.BODY,
     GUNS: [
-        ...weaponMirror2([{
+        ...weaponMirror([{
             POSITION: {
                 LENGTH: 14,
                 WIDTH: 3,

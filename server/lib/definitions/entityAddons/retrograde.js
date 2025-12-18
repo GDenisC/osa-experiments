@@ -180,7 +180,7 @@ Class.battery_RG = {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.gunner, { speed: 1.2 }]),
                 TYPE: "bullet"
             }
-        }], 0.2),
+        }], { delayIncrement: 0.2 }),
         {
             POSITION: {
                 LENGTH: 20,
@@ -281,7 +281,7 @@ Class.doubleTrapGuard_RG = {
                 STAT_CALCULATOR: "trap"
             }
         }
-    ])
+    ], { delayIncrement: 0.5 })
 }
 Class.halfNHalf_RG = {
     PARENT: "genericTank",
@@ -345,7 +345,7 @@ Class.quadTwin_RG = {
             SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.spam, g.doubleTwin, g.tripleTwin]),
             TYPE: "bullet"
         }
-    }), 4)
+    }, { delayIncrement: 0.5 }), 4)
 }
 Class.rifleGuard_RG = makeGuard("rifle_RG")
 Class.sniperRifle_RG = {
@@ -478,7 +478,7 @@ Class.spreadRifle_RG = {
                 SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.rifle, g.crossbow, { recoil: 0.5 }]),
                 TYPE: "bullet"
             }
-        }], 0),
+        }]),
         {
             POSITION: {
                 LENGTH: 22,
@@ -610,7 +610,7 @@ Class.triBlaster_RG = {
                 SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, { size: 0.92 }, g.blaster, g.tripleShot, { recoil: 0.2 }]),
                 TYPE: "bullet"
             }
-        }, 0),
+        }),
         {
             POSITION: {
                 LENGTH: 7.5,

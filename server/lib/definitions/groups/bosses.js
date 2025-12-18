@@ -1,4 +1,4 @@
-const { combineStats, makeAura, makeAuto, makeDeco, makeTurret, LayeredBoss, setTurretProjectileRecoil, skillSet, weaponArray, weaponMirror2 } = require('../facilitators.js')
+const { combineStats, makeAura, makeAuto, makeDeco, makeTurret, LayeredBoss, setTurretProjectileRecoil, skillSet, weaponArray, weaponMirror } = require('../facilitators.js')
 const { base, smshskl, statnames } = require('../constants.js')
 const g = require('../gunvals.js')
 require('./generics.js')
@@ -2353,7 +2353,7 @@ Class.tgsBoss = {
     },
     UPGRADE_TOOLTIP: "Someone has taken their love of Shiny Squares one step too far.",
     GUNS: weaponArray([
-        ...weaponMirror2({
+        ...weaponMirror({
             POSITION: [2.5, 3, 1.2, 8, 5, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.pounder, { speed: 2.5 }, g.machineGun, { spray: 50, speed: 1.25, shudder: 1.25 }]),

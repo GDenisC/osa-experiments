@@ -170,7 +170,7 @@ exports.makeBird = (type, name = -1, options = {}) => {
     let backRecoil = 0.5 * backRecoilFactor;
     let thrusterProperties = { SHOOT_SETTINGS: exports.combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster, { recoil: backRecoil }]), TYPE: "bullet", LABEL: "thruster" };
     let shootyBois = [
-        ...exports.weaponMirror2({
+        ...exports.weaponMirror({
             POSITION: {
                 LENGTH: 16,
                 WIDTH: 8,
@@ -190,7 +190,7 @@ exports.makeBird = (type, name = -1, options = {}) => {
         }
     ];
     if (superBird) {
-        shootyBois.splice(0, 0, ...exports.weaponMirror2({
+        shootyBois.splice(0, 0, ...exports.weaponMirror({
             POSITION: [14, 8, 1, 0, 0, 130, 0.6],
             PROPERTIES: thrusterProperties
         }))
@@ -655,35 +655,7 @@ exports.weaponArray = (weapons, count, delayIncrement = 0, delayOverflow = false
     }
     return output;
 }
-exports.weaponMirror = (weapons, delayIncrement = 0.5, delayOverflow = false) => {
-    // delayIncrement: how much each side's delay increases by
-    // delayOverflow: false to constrain the delay value between [0, 1)
-    if (!Array.isArray(weapons)) {
-        weapons = [weapons]
-    }
-    let yKey = 4;
-    let angleKey = 5;
-    let delayKey = 6;
-
-    let output = [];
-    for (let weapon of weapons) {
-        let newWeapon = exports.dereference(weapon);
-
-        if (!Array.isArray(newWeapon.POSITION)) {
-            yKey = "Y";
-            angleKey = "ANGLE";
-            delayKey = "DELAY";
-        }
-
-        newWeapon.POSITION[yKey] = (newWeapon.POSITION[yKey] ?? 0) * -1;
-        newWeapon.POSITION[angleKey] = (newWeapon.POSITION[angleKey] ?? 0) * -1;
-        newWeapon.POSITION[delayKey] = (newWeapon.POSITION[delayKey] ?? 0) + delayIncrement;
-        output.push(weapon, newWeapon);
-
-    }
-    return output;
-}
-exports.weaponMirror2 = (weapons, options = {}) => {
+exports.weaponMirror = (weapons, options = {}) => {
 
     /*
     - weapons: what guns to mirror

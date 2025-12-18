@@ -299,8 +299,7 @@ Class.scenexeTurretTurret = makeTurret({
                 SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, { recoil: 1.15 }, g.turret]),
                 TYPE: "bullet",
             },
-        },
-    ),
+        }, { delayIncrement: 0.5 }),
 }, {label: "Turret", fov: 0.8, extraStats: []})
 Class.scenexeArtilleryTurret = makeTurret({
     GUNS: [
@@ -321,7 +320,7 @@ Class.scenexeTripletTurret = makeTurret({
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet, g.pelleter, g.power, g.turret]),
                 TYPE: "bullet"
             }
-        }, 0),
+        }),
         {
             POSITION: [21, 8.5, 1, 0, 0, 0, 0],
             PROPERTIES: {
@@ -425,7 +424,7 @@ Class.scenexeDuo = {
             SHOOT_SETTINGS: combineStats([g.basic, g.twin]),
             TYPE: "bullet"
         }
-    })
+    }, { delayIncrement: 0.5 })
 }
 
 Class.scenexeFlank = {
@@ -459,7 +458,7 @@ Class.scenexeSplit = {
                     SHOOT_SETTINGS: combineStats([g.basic, { damage: 0.75, pen: 1.15, recoil: 0.1 }]),
                     TYPE: "bullet"
                 }
-            }, 0
+            },
         ),
         {
             POSITION: { LENGTH: 21,  WIDTH: 10,  ASPECT: 1 },
@@ -509,7 +508,7 @@ Class.scenexeTrio = {
                 SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.triplet]),
                 TYPE: "bullet"
             }
-        }, 0),
+        }),
         {
             POSITION: [21, 8.5, 1, 0, 0, 0, 0],
             PROPERTIES: {
@@ -537,7 +536,7 @@ Class.scenexeGunner = {
                 TYPE: "bullet"
             }
         }
-    ], 0.25)
+    ], { delayIncrement: 0.25 }))
 }
 Class.scenexeArc = {
     PARENT: "scenexeNode",
@@ -556,7 +555,7 @@ Class.scenexeArc = {
                     SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.tripleShot, { recoil: 0.9 }]),
                     TYPE: "bullet"
                 }
-            }], 0),
+            }]),
         {
             POSITION: [21, 10, 1, 0, 0, 0, 0],
             PROPERTIES: {
@@ -609,7 +608,7 @@ Class.scenexeWake = {
                 TYPE: "bullet",
                 LABEL: "thruster"
             }
-        }, 0)
+        })
     ]
 }
 Class.scenexeConglomerate = {
@@ -649,7 +648,7 @@ Class.scenexeConglomerate = {
                 MAX_CHILDREN: 3,
                 WAIT_TO_CYCLE: true
             }
-        },0)
+        })
     ]
 }
 Class.scenexeSpread = {
@@ -678,7 +677,7 @@ Class.scenexeSpread = {
                     TYPE: "bullet"
                 }
             },
-        ], 0),
+        ]),
         {
             POSITION: { LENGTH: 21,  WIDTH: 10,  ASPECT: 1 },
             PROPERTIES: {
