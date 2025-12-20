@@ -1,4 +1,4 @@
-const { combineStats, makeGuard, makeMenu, makeRearGunner, weaponArray, weaponMirror } = require('../facilitators.js')
+const { combineStats, makeMenu, weaponArray, weaponMirror } = require('../facilitators.js')
 const { base } = require('../constants.js')
 const g = require('../gunvals.js')
 
@@ -6,6 +6,29 @@ const g = require('../gunvals.js')
 const add_to_main_class_tree = false // Set to true to enable Retrograde mode
 const public_retrograde_menu = false // Set to true to allow access to the Retrograde menu and everything inside it for all players
 const replace_newer_classes = false // Set to true to make the class tree replace certain entries with Retrograde equivalents
+
+// Presets
+const pelleter_rear = [
+    ...weaponMirror({
+        POSITION: {
+            LENGTH: 19,
+            WIDTH: 2,
+            Y: -2.5,
+            ANGLE: 180
+        },
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.twin, { recoil: 4 }, { recoil: 1.8 }]),
+            TYPE: "bullet",
+        },
+    }, { delayIncrement: 0.5 }),
+    {
+        POSITION: {
+            LENGTH: 12,
+            WIDTH: 11,
+            ANGLE: 180
+        }
+    }
+]
 
 // Menus
 Class.arrasMenu_diep2.UPGRADES_TIER_0.push(
@@ -212,8 +235,53 @@ Class.bonker_RG = {
         }
     ]
 }
-Class.blower_RG = makeRearGunner("destroyer", "Blower")
-Class.buttbuttin_RG = makeRearGunner("assassin", "Buttbuttin")
+Class.blower_RG = {
+    PARENT: "genericTank",
+    LABEL: "Blower",
+    DANGER: 7,
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 20.5,
+                WIDTH: 14
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer]),
+                TYPE: "bullet"
+            }
+        },
+        ...pelleter_rear
+    ]
+}
+Class.buttbuttin_RG = {
+    PARENT: "genericTank",
+    LABEL: "Buttbuttin",
+    DANGER: 7,
+    BODY: {
+        SPEED: 0.85 * base.SPEED,
+        FOV: 1.4 * base.FOV
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 27,
+                WIDTH: 8
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.assassin]),
+                TYPE: "bullet"
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 13,
+                WIDTH: 8,
+                ASPECT: -2.2
+            }
+        },
+        ...pelleter_rear
+    ]
+}
 Class.deathStar_RG = {
     PARENT: "genericTank",
     LABEL: "Death Star",
@@ -347,7 +415,53 @@ Class.quadTwin_RG = {
         }
     }, { delayIncrement: 0.5 }), 4)
 }
-Class.rifleGuard_RG = makeGuard("rifle_RG")
+Class.rifleGuard_RG = {
+    PARENT: "genericTank",
+    LABEL: "Rifle Guard",
+    DANGER: 8,
+    BODY: {
+        FOV: base.FOV * 1.225
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 22,
+                WIDTH: 7
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.rifle]),
+                TYPE: "bullet"
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 14,
+                WIDTH: 10.5
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 13,
+                WIDTH: 8,
+                ANGLE: 180
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 4,
+                WIDTH: 8,
+                ASPECT: 1.7,
+                X: 13,
+                ANGLE: 180
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.trap]),
+                TYPE: "trap",
+                STAT_CALCULATOR: "trap"
+            }
+        }
+    ]
+}
 Class.sniperRifle_RG = {
     PARENT: "genericTank",
     LABEL: "Sniper Rifle",

@@ -1,4 +1,4 @@
-const { combineStats, makeAuto, makeBird, makeGuard, makeOver, makeRadialAuto, makeRearGunner, makeTurret, weaponArray, weaponMirror } = require('../facilitators.js')
+const { combineStats, makeAuto, makeBird, makeDrive, makeOver, makeRadialAuto, makeTurret, weaponArray, weaponMirror, weaponStack } = require('../facilitators.js')
 const { base, statnames } = require('../constants.js')
 const g = require('../gunvals.js')
 
@@ -9,13 +9,50 @@ const use_original_tree = false // Set to true to enable the original arras.io A
 
 // Presets
 const hybrid_options = {count: 1, independent: true, cycle: false}
-const driveHat = {
-    TYPE: "squareHat",
-    POSITION: {
-        SIZE: 9,
-        LAYER: 1
+const pelleter_rear = [
+    ...weaponMirror({
+        POSITION: {
+            LENGTH: 19,
+            WIDTH: 2,
+            Y: -2.5,
+            ANGLE: 180
+        },
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.basic, g.pelleter, g.power, g.twin, { recoil: 4 }, { recoil: 1.8 }]),
+            TYPE: "bullet",
+        },
+    }, { delayIncrement: 0.5 }),
+    {
+        POSITION: {
+            LENGTH: 12,
+            WIDTH: 11,
+            ANGLE: 180
+        }
     }
-}
+]
+const trapGuard_rear = [
+    {
+        POSITION: {
+            LENGTH: 13,
+            WIDTH: 8,
+            ANGLE: 180
+        }
+    },
+    {
+        POSITION: {
+            LENGTH: 4,
+            WIDTH: 8,
+            ASPECT: 1.7,
+            X: 13,
+            ANGLE: 180
+        },
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.trap]),
+            TYPE: "trap",
+            STAT_CALCULATOR: "trap"
+        }
+    }
+]
 
 // Credits
 // - u/SkyShredder89: Default Tier 3/4 Sprayer upgrades
@@ -76,35 +113,7 @@ Class.diesel_AR = {
         }
     ]
 }
-Class.directordrive_AR = {
-    PARENT: "genericTank",
-    LABEL: "Directordrive",
-    DANGER: 6,
-    STAT_NAMES: statnames.drone,
-    BODY: {
-        FOV: base.FOV * 1.1
-    },
-    TURRETS: [driveHat],
-    GUNS: [
-        {
-            POSITION: {
-                LENGTH: 5,
-                WIDTH: 11,
-                ASPECT: 1.3,
-                X: 8
-            },
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone]),
-                TYPE: "turretedDrone",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-                STAT_CALCULATOR: "drone",
-                MAX_CHILDREN: 6,
-                WAIT_TO_CYCLE: true
-            }
-        }
-    ]
-}
+Class.directordrive_AR = makeDrive("director")
 Class.doper_AR = {
     PARENT: "genericTank",
     LABEL: "Doper",
@@ -428,7 +437,24 @@ Class.bentMinigun_AR = {
         }
     ]
 }
-Class.blower_AR = makeRearGunner("destroyer", "Blower")
+Class.blower_AR = {
+    PARENT: "genericTank",
+    LABEL: "Blower",
+    DANGER: 7,
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 20.5,
+                WIDTH: 14
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer]),
+                TYPE: "bullet"
+            }
+        },
+        ...pelleter_rear
+    ]
+}
 Class.bonker_AR = {
     PARENT: "genericSmasher",
     LABEL: "Bonker",
@@ -441,7 +467,35 @@ Class.bonker_AR = {
         }
     ]
 }
-Class.buttbuttin_AR = makeRearGunner("assassin", "Buttbuttin")
+Class.buttbuttin_AR = {
+    PARENT: "genericTank",
+    LABEL: "Buttbuttin",
+    DANGER: 7,
+    BODY: {
+        SPEED: 0.85 * base.SPEED,
+        FOV: 1.4 * base.FOV
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 27,
+                WIDTH: 8
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.assassin]),
+                TYPE: "bullet"
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 13,
+                WIDTH: 8,
+                ASPECT: -2.2
+            }
+        },
+        ...pelleter_rear
+    ]
+}
 Class.captain_AR = {
     PARENT: "genericTank",
     LABEL: "Captain",
@@ -1570,8 +1624,9 @@ Class.operator_AR = {
         }
     ]
 }
-Class.peashooter_AR = makeGuard({
+Class.peashooter_AR = {
     PARENT: "genericTank",
+    LABEL: "Peashooter",
     DANGER: 7,
     STAT_NAMES: statnames.mixed,
     GUNS: [
@@ -1597,9 +1652,10 @@ Class.peashooter_AR = makeGuard({
                 TYPE: "swarm",
                 STAT_CALCULATOR: "swarm"
             }
-        }
+        },
+        ...trapGuard_rear
     ]
-}, "Peashooter")
+}
 Class.pentaseer_AR = {
     PARENT: "genericTank",
     LABEL: "Pentaseer",
@@ -1975,47 +2031,7 @@ Class.soother_AR = {
         }
     ]
 }
-Class.spawnerdrive_AR = {
-    PARENT: "genericTank",
-    LABEL: "Spawnerdrive",
-    DANGER: 7,
-    STAT_NAMES: statnames.drone,
-    BODY: {
-        SPEED: base.SPEED * 0.8,
-        FOV: base.FOV * 1.1
-    },
-    TURRETS: [driveHat],
-    GUNS: [
-        {
-            POSITION: {
-                LENGTH: 4.5,
-                WIDTH: 10,
-                X: 10.5
-            },
-        },
-        {
-            POSITION: {
-                LENGTH: 1,
-                WIDTH: 12,
-                X: 15
-            },
-            PROPERTIES: {
-                MAX_CHILDREN: 4,
-                SHOOT_SETTINGS: combineStats([g.factory, g.babyfactory]),
-                TYPE: "turretedMinion",
-                STAT_CALCULATOR: "drone",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-            },
-        },
-        {
-            POSITION: {
-                LENGTH: 11.5,
-                WIDTH: 12
-            }
-        }
-    ]
-}
+Class.spawnerdrive_AR = makeDrive("spawner")
 Class.splitShot_AR = {
     PARENT: "genericTank",
     LABEL: "Split Shot",
@@ -2251,8 +2267,9 @@ Class.triPen_AR = {
         }
     ], 3)
 }
-Class.triTrapGuard_AR = makeGuard({
+Class.triTrapGuard_AR = {
     PARENT: "genericTank",
+    LABEL: "Tri-Trap Guard",
     DANGER: 7,
     STAT_NAMES: statnames.mixed,
     GUNS: [
@@ -2286,41 +2303,11 @@ Class.triTrapGuard_AR = makeGuard({
                 TYPE: "trap",
                 STAT_CALCULATOR: "trap",
             }
-        }])
+        }]),
+        ...trapGuard_rear
     ]
-}, "Tri-Trap Guard")
-Class.underdrive_AR = {
-    PARENT: "genericTank",
-    LABEL: "Underdrive",
-    DANGER: 7,
-    NECRO: [4],
-    STAT_NAMES: statnames.drone,
-    BODY: {
-        SPEED: base.SPEED * 0.9,
-        FOV: base.FOV * 1.1,
-    },
-    SHAPE: 4,
-    MAX_CHILDREN: 14,
-    TURRETS: [driveHat],
-    GUNS: weaponArray({
-        POSITION: {
-            LENGTH: 6,
-            WIDTH: 12,
-            ASPECT: 1.2,
-            X: 7.4,
-            ANGLE: 90
-        },
-        PROPERTIES: {
-            SHOOT_SETTINGS: combineStats([g.drone, g.sunchip, {reload: 0.8}]),
-            TYPE: "turretedSunchip",
-            AUTOFIRE: true,
-            SYNCS_SKILLS: true,
-            STAT_CALCULATOR: "necro",
-            WAIT_TO_CYCLE: true,
-            DELAY_SPAWN: false,
-        }
-    }, 2)
 }
+Class.underdrive_AR = makeDrive("underseer")
 Class.volley_AR = {
     PARENT: "genericTank",
     LABEL: "Volley",
@@ -2695,7 +2682,40 @@ Class.autoIterator_AR = makeAuto("iterator")
 Class.autoQuadruplex_AR = makeAuto("quadruplex")
 Class.autoSuperSpiral_AR = makeAuto("superSpiral")
 Class.autoTriplex_AR = makeAuto("triplex")
-Class.butcher_AR = makeGuard("hunter", "Butcher")
+Class.butcher_AR = {
+    LABEL: "Butcher",
+    DANGER: 8,
+    BODY: {
+        SPEED: base.SPEED * 0.9,
+        FOV: base.FOV * 1.25
+    },
+    CONTROLLERS: ["zoom"],
+    TOOLTIP: "Hold right click to zoom.",
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 24,
+                WIDTH: 8
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter, g.hunterSecondary]),
+                TYPE: "bullet"
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 21,
+                WIDTH: 11,
+                DELAY: 0.25
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.hunter]),
+                TYPE: "bullet"
+            }
+        },
+        ...trapGuard_rear
+    ]
+}
 Class.chemist_AR = {
     PARENT: "genericHealer",
     LABEL: "Chemist",
@@ -2935,7 +2955,35 @@ Class.duster_AR = {
         }
     ]
 }
-Class.executor_AR = makeGuard("assassin", "Executor")
+Class.executor_AR = {
+    PARENT: "genericTank",
+    LABEL: "Executor",
+    DANGER: 8,
+    BODY: {
+        SPEED: 0.85 * base.SPEED,
+        FOV: 1.4 * base.FOV
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 27,
+                WIDTH: 8
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.assassin]),
+                TYPE: "bullet"
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 13,
+                WIDTH: 8,
+                ASPECT: -2.2
+            }
+        },
+        ...trapGuard_rear
+    ]
+}
 Class.geneticist_AR = {
     PARENT: "genericHealer",
     LABEL: "Geneticist",
@@ -3586,7 +3634,33 @@ Class.quintuplex_AR = {
         }], { delayIncrement: 0.5 }),
     ]
 }
-Class.ransacker_AR = makeGuard("rifle", "Ransacker")
+Class.ransacker_AR = {
+    PARENT: "genericTank",
+    LABEL: "Ransacker",
+    DANGER: 8,
+    BODY: {
+        FOV: base.FOV * 1.225
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 20,
+                WIDTH: 12
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 24,
+                WIDTH: 7
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.rifle]),
+                TYPE: "bullet"
+            }
+        },
+        ...trapGuard_rear
+    ]
+}
 Class.renovator_AR = {
     PARENT: "genericHealer",
     LABEL: "Renovator",
@@ -3788,7 +3862,27 @@ Class.therapist_AR = {
         }
     ], { delayIncrement: 0.5 })
 }
-Class.tommy_AR = makeGuard("minigun", "Tommy")
+Class.tommy_AR = {
+    PARENT: "genericTank",
+    LABEL: "Tommy",
+    DANGER: 8,
+    BODY: {
+        FOV: base.FOV * 1.2
+    },
+    GUNS: [
+        ...weaponStack({
+            POSITION: {
+                LENGTH: 21,
+                WIDTH: 8
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.minigun]),
+                TYPE: "bullet"
+            }
+        }, 3, { lengthOffset: 2, delayIncrement: 1/3 }),
+        ...trapGuard_rear
+    ]
+}
 Class.tripleHelix_AR = {
     PARENT: "genericTank",
     LABEL: "Triple Helix",

@@ -1,12 +1,27 @@
 module.exports = {
+	// polygon stats
 	basePolygonDamage: 1,
 	basePolygonHealth: 2,
 
-	// SKILL DEFINITIONS
+	// default skill caps
 	dfltskl: 9,
 	smshskl: 12,
 
-	// NAMES
+	// base stats
+	base: {
+	    ACCEL: 1.6,
+	    SPEED: 5.25,
+	    HEALTH: 20,
+	    DAMAGE: 3,
+	    RESIST: 1,
+	    PENETRATION: 1.05,
+	    SHIELD: 5.75,
+	    REGEN: 0.01,
+	    FOV: 1.02,
+	    DENSITY: 0.5,
+	},
+
+	// stat names
 	statnames: {
 		generic: {
 			BODY_DAMAGE: 'Body Damage',
@@ -52,6 +67,13 @@ module.exports = {
 			BULLET_DAMAGE: 'Drone Damage',
 			RELOAD: 'Max Drone Count',
 		},
+		mixedNecro: {
+			BULLET_SPEED: 'Weapon Speed',
+			BULLET_HEALTH: 'Weapon Health',
+			BULLET_PEN: 'Weapon Penetration',
+			BULLET_DAMAGE: 'Weapon Damage',
+			RELOAD: 'Reload / Max Drone Count',
+		},
 		trap: {
 			BULLET_SPEED: 'Placement Speed',
 			BULLET_HEALTH: 'Trap Health',
@@ -81,17 +103,5 @@ module.exports = {
 			BULLET_DAMAGE: 'Ball Damage',
 			RELOAD: 'Ball Density',
 		},
-	},
-	base: {
-	    ACCEL: 1.6,
-	    SPEED: 5.25,
-	    HEALTH: 20,
-	    DAMAGE: 3,
-	    RESIST: 1,
-	    PENETRATION: 1.05,
-	    SHIELD: 5.75,
-	    REGEN: 0.01,
-	    FOV: 1.02,
-	    DENSITY: 0.5,
 	}
-};
+}

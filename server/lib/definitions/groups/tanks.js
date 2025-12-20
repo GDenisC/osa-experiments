@@ -1,9 +1,32 @@
-const { combineStats, makeAuto, makeBird, makeGuard, makeOver, makeRadialAuto, weaponArray, weaponMirror, weaponStack } = require('../facilitators.js')
+const { combineStats, makeAuto, makeBird, makeDrive, makeOver, makeRadialAuto, weaponArray, weaponMirror, weaponStack } = require('../facilitators.js')
 const { base, dfltskl, smshskl, statnames } = require('../constants.js')
 const g = require('../gunvals.js')
 
 // Presets
 const hybrid_options = {count: 1, independent: true, cycle: false}
+const trapGuard_rear = [
+    {
+        POSITION: {
+            LENGTH: 13,
+            WIDTH: 8,
+            ANGLE: 180
+        }
+    },
+    {
+        POSITION: {
+            LENGTH: 4,
+            WIDTH: 8,
+            ASPECT: 1.7,
+            X: 13,
+            ANGLE: 180
+        },
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.trap]),
+            TYPE: "trap",
+            STAT_CALCULATOR: "trap"
+        }
+    }
+]
 const triAngle_propeller = weaponMirror({
     POSITION: {
         LENGTH: 16,
@@ -1178,9 +1201,10 @@ Class.tornado = {
         "thunderbolt",
     ]
 }
-Class.trapGuard = makeGuard({
+Class.trapGuard = {
     PARENT: "genericTank",
-    LABEL: "Trap",
+    LABEL: "Trap Guard",
+    DANGER: 6,
     STAT_NAMES: statnames.mixed,
     GUNS: [
         {
@@ -1192,9 +1216,10 @@ Class.trapGuard = makeGuard({
                 SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.flankGuard]),
                 TYPE: "bullet"
             }
-        }
+        },
+        ...trapGuard_rear
     ]
-})
+}
 Class.triAngle = {
     PARENT: "genericTank",
     LABEL: "Tri-Angle",
@@ -1922,8 +1947,9 @@ Class.blunderbuss = {
         }
     ]
 }
-Class.bomber = makeGuard({
+Class.bomber = {
     PARENT: "genericTank",
+    LABEL: "Bomber",
     DANGER: 7,
     BODY: {
         DENSITY: base.DENSITY * 0.6
@@ -1952,9 +1978,10 @@ Class.bomber = makeGuard({
                 TYPE: "bullet",
                 LABEL: "Wing"
             }
-        })
+        }),
+        ...trapGuard_rear
     ]
-}, "Bomber")
+}
 Class.boomer = {
     PARENT: "genericTank",
     LABEL: "Boomer",
@@ -2086,7 +2113,27 @@ Class.bulwark = {
         }
     ], { delayIncrement: 0.5 })
 }
-Class.bushwhacker = makeGuard("sniper", "Bushwhacker")
+Class.bushwhacker = {
+    PARENT: "genericTank",
+    LABEL: "Bushwhacker",
+    DANGER: 7,
+    BODY: {
+        FOV: 1.2 * base.FOV
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 24,
+                WIDTH: 8
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.flankGuard, g.sniper]),
+                TYPE: "bullet"
+            }
+        },
+        ...trapGuard_rear
+    ]
+}
 Class.carrier = {
     PARENT: "genericTank",
     LABEL: "Carrier",
@@ -3891,44 +3938,7 @@ Class.oroboros = {
     STAT_NAMES: statnames.desmos,
     UPGRADE_TOOLTIP: "[DEV NOTE] This tank is a placeholder!"
 }
-Class.overdrive = {
-    PARENT: "genericTank",
-    LABEL: "Overdrive",
-    DANGER: 7,
-    STAT_NAMES: statnames.drone,
-    BODY: {
-        SPEED: 0.9 * base.SPEED,
-        FOV: 1.1 * base.FOV
-    },
-    TURRETS: [
-        {
-            TYPE: "squareHat",
-            POSITION: {
-                SIZE: 9,
-                LAYER: 1
-            }
-        }
-    ],
-    GUNS: weaponArray({
-        POSITION: {
-            LENGTH: 6,
-            WIDTH: 12,
-            ASPECT: 1.2,
-            X: 8,
-            ANGLE: 90
-        },
-        PROPERTIES: {
-            SHOOT_SETTINGS: combineStats([g.drone, g.overseer]),
-            TYPE: "turretedDrone",
-            AUTOFIRE: true,
-            NO_LIMITATIONS: true,
-            SYNCS_SKILLS: true,
-            STAT_CALCULATOR: "drone",
-            WAIT_TO_CYCLE: true,
-            MAX_CHILDREN: 4
-        }
-    }, 2)
-}
+Class.overdrive = makeDrive("overseer", "Overdrive")
 Class.overgunner = makeOver({
     PARENT: "genericTank",
     LABEL: "Gunner",
@@ -4158,7 +4168,7 @@ Class.prodigy = {
     PARENT: "genericTank",
     LABEL: "Prodigy",
     DANGER: 7,
-    STAT_NAMES: statnames.mixed,
+    STAT_NAMES: statnames.mixedNecro,
     SHAPE: 6,
     BODY: {
         SPEED: 0.8 * base.SPEED,

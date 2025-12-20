@@ -574,7 +574,6 @@ Class.bigBall = {
     PARENT: "drone",
     SHAPE: 8
 }
-Class.turretedDrone = makeAuto("drone", "Auto-Drone", {type: "droneAutoTurret"})
 
 // Sunchips
 Class.sunchip = {
@@ -769,7 +768,6 @@ Class.desmosMinion = {
         }
     ]
 }
-Class.turretedMinion = makeAuto("minion", {type: "droneAutoTurret"})
 Class.sentrySwarmMinion = {
     PARENT: 'drone',
     LABEL: 'sentry',

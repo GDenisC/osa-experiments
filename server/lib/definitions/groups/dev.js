@@ -1,4 +1,4 @@
-const { combineStats, LayeredBoss, makeAura, makeAuto, makeDeco, makeMenu, makeRadialAuto, makeTurret, weaponArray, weaponMirror } = require('../facilitators.js')
+const { combineStats, LayeredBoss, makeAura, makeAuto, makeDeco, makeDrive, makeMenu, makeRadialAuto, makeTurret, weaponArray, weaponMirror } = require('../facilitators.js')
 const { base, basePolygonDamage, basePolygonHealth, dfltskl, statnames } = require('../constants.js')
 const g = require('../gunvals.js')
 require('./tanks.js')
@@ -601,7 +601,17 @@ Class.menu_testing.UPGRADES_TIER_0 = [
     "airblast",
     "angleseer",
     "backwardsexports",
+    "basicdrive",
+    "directordrive",
+    "trapperdrive",
+    "desmosdrive"
 ]
+
+// testing shit
+Class.basicdrive = makeDrive("basic")
+Class.directordrive = makeDrive("director")
+Class.trapperdrive = makeDrive("trapper")
+Class.desmosdrive = makeDrive("desmos")
 
 // airblast testing
 Class.airblast = {
@@ -1118,7 +1128,7 @@ Class.vanquisher = {
     PARENT: "genericTank",
     DANGER: 8,
     LABEL: "Vanquisher",
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     CONTROLLERS: ['stackGuns'],
     BODY: {
         SPEED: 0.8 * base.SPEED,

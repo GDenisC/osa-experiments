@@ -106,58 +106,6 @@ exports.dereference = type => {
 }
 
 // gun functions
-exports.makeGuard = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type),
-    cannons = [
-        {
-            POSITION: {
-                LENGTH: 13,
-                WIDTH: 8,
-                ANGLE: 180
-            }
-        },
-        {
-            POSITION: {
-                LENGTH: 4,
-                WIDTH: 8,
-                ASPECT: 1.7,
-                X: 13,
-                ANGLE: 180
-            },
-            PROPERTIES: {
-                SHOOT_SETTINGS: exports.combineStats([g.trap]),
-                TYPE: "trap",
-                STAT_CALCULATOR: "trap"
-            }
-        }
-    ];
-    output.GUNS = type.GUNS == null ? cannons : type.GUNS.concat(cannons);
-    output.LABEL = name == -1 ? type.LABEL + " Guard" : name;
-    return output;
-}
-exports.makeRearGunner = (type, name = -1) => {
-    type = ensureIsClass(type);
-    let output = exports.dereference(type);
-    let cannons = [{
-        POSITION: [19, 2, 1, 0, -2.5, 180, 0],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.basic, g.pelleter, g.power, g.twin, { recoil: 4 }, { recoil: 1.8 }]),
-            TYPE: "bullet",
-        },
-    }, {
-        POSITION: [19, 2, 1, 0, 2.5, 180, 0.5],
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.basic, g.pelleter, g.power, g.twin, { recoil: 4 }, { recoil: 1.8 }]),
-            TYPE: "bullet",
-        },
-    }, {
-        POSITION: [12, 11, 1, 0, 0, 180, 0],
-    }];
-    output.GUNS = type.GUNS == null ? cannons : type.GUNS.concat(cannons);
-    output.LABEL = name == -1 ? type.LABEL : name;
-    return output;
-}
 exports.makeBird = (type, name = -1, options = {}) => {
     type = ensureIsClass(type);
     let output = exports.dereference(type);
@@ -402,6 +350,93 @@ exports.makeDeco = (shape = 0, color = 16) => {
         SHAPE: shape,
         COLOR: color
     }
+}
+function toPascalCase(string) {
+    if (!string) {
+        return -1
+    }
+    var newString = ""
+    for (var c = 0; c < string.length; c++) {
+        newString += c == 0 ? string[c].toUpperCase() : string[c].toLowerCase()
+    }
+    return newString
+}
+exports.makeDrive = (type, name = -1, options = {}) => {
+    type = ensureIsClass(type);
+    let turret = {
+        type: "droneAutoTurret",
+        independent: true,
+        color: "grey",
+        size: 10, // 7.5
+        x: 0,
+        y: 0,
+        angle: 180,
+        total: 1,
+    };
+    if (options.type != null) {
+        turret.type = options.type;
+    }
+    if (options.independent != null) {
+        turret.independent = options.independent;
+    }
+    if (options.color != null) {
+        turret.color = options.color;
+    }
+    if (options.total != null) {
+        turret.total = options.total;
+    }
+    if (options.size != null) {
+        turret.size = options.size;
+    }
+    if (options.x != null) {
+        turret.x = options.x;
+    }
+    if (options.y != null) {
+        turret.y = options.y;
+    }
+    if (options.angle != null) {
+        turret.angle = options.angle;
+    }
+    options.decoration ??= "squareHat"
+
+    let output = exports.dereference(type);
+    let bodyDeco = [
+        {
+            TYPE: options.decoration,
+            POSITION: {
+                SIZE: 9,
+                LAYER: 1
+            }
+        }
+    ];
+
+    let GUNS = output.GUNS;
+    for (let gun of GUNS) {
+        if (!gun.PROPERTIES) continue;
+        if (!gun.PROPERTIES.TYPE) continue;
+
+        const name = (Array.isArray(gun.PROPERTIES.TYPE) ? gun.PROPERTIES.TYPE[0][0] : gun.PROPERTIES.TYPE) + "Drived"
+        Class[name] = exports.makeAuto(gun.PROPERTIES.TYPE, ["Auto-" + name], turret) // TODO: Make projectile name work
+        gun.PROPERTIES.TYPE = name
+    }
+
+    if (type.GUNS != null) {
+        output.GUNS = GUNS;
+    }
+    if (type.TURRETS == null) {
+        output.TURRETS = [...bodyDeco];
+    } else {
+        output.TURRETS = [...type.TURRETS, ...bodyDeco];
+    }
+    if (name == -1) {
+        output.LABEL = type.LABEL + "drive";
+        output.UPGRADE_LABEL = type.LABEL + "drive";
+    } else {
+        output.LABEL = name;
+        output.UPGRADE_LABEL = name;
+    }
+    output.DANGER = type.DANGER + 1;
+    return output;
 }
 exports.makeRadialAuto = (type, options = {}) => {
 
