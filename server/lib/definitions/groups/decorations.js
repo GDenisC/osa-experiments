@@ -52,6 +52,9 @@ Class.healerHat = {
 
 // Bodies
 
+// 0-Bodies
+Class.circleBody = makeBody(0)
+
 // 3-Bodies
 Class.spikeBody = makeBody(3)
 Class.weirdSpikeBody1 = makeBody(3, "black", 0.20)

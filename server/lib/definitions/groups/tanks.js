@@ -70,19 +70,22 @@ const triAngle_propeller = weaponMirror({
         LABEL: "thruster"
     }
 })
-const triAngle_propeller2 = weaponMirror([{
-    POSITION: {
-        LENGTH: 14,
-        WIDTH: 8,
-        ANGLE: 135,
-        DELAY: 0.6
-    },
-    PROPERTIES: {
-        SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster]),
-        TYPE: "bullet",
-        LABEL: "thruster"
-    }
-}])
+const booster_propeller = [
+    ...weaponMirror({
+        POSITION: {
+            LENGTH: 14,
+            WIDTH: 8,
+            ANGLE: 135,
+            DELAY: 0.6
+        },
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster]),
+            TYPE: "bullet",
+            LABEL: "thruster"
+        }
+    }),
+    ...triAngle_propeller
+]
 
 // Basic Tank
 Class.basic = {
@@ -2095,8 +2098,7 @@ Class.booster = {
                 LABEL: "Front"
             }
         },
-        ...triAngle_propeller2,
-        ...triAngle_propeller
+        ...booster_propeller
     ]
 }
 Class.bulwark = {
@@ -2930,10 +2932,7 @@ Class.flooster = {
     LABEL: "Flooster",
     DANGER: 7,
     STAT_NAMES: statnames.mixed,
-    GUNS: [
-        ...triAngle_propeller2,
-        ...triAngle_propeller
-    ],
+    GUNS: booster_propeller,
     TURRETS: [{
         POSITION: [6, 10, 0, 0, 190, 0],
         TYPE: ["flailBolt3", {
@@ -4681,7 +4680,19 @@ Class.rocket = {
                 LABEL: "Front"
             }
         },
-        ...triAngle_propeller2
+        ...weaponMirror({
+            POSITION: {
+                LENGTH: 14,
+                WIDTH: 8,
+                ANGLE: 135,
+                DELAY: 0.1
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.triAngle, g.thruster]),
+                TYPE: "bullet",
+                LABEL: "thruster"
+            }
+        })
     ],
     ON: [
         {

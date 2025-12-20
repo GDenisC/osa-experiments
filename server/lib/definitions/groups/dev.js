@@ -585,7 +585,6 @@ Class.menu_testing.UPGRADES_TIER_0 = [
     "propTest",
     "weaponArrayTest",
     "radialAutoTest",
-    "makeAutoTest",
     "imageShapeTest",
     "screenShakeTest",
     "turretStatScaleTest",
@@ -602,16 +601,10 @@ Class.menu_testing.UPGRADES_TIER_0 = [
     "angleseer",
     "backwardsexports",
     "basicdrive",
-    "directordrive",
-    "trapperdrive",
-    "desmosdrive"
 ]
 
 // testing shit
 Class.basicdrive = makeDrive("basic")
-Class.directordrive = makeDrive("director")
-Class.trapperdrive = makeDrive("trapper")
-Class.desmosdrive = makeDrive("desmos")
 
 // airblast testing
 Class.airblast = {
@@ -660,7 +653,7 @@ Class.angleseer = {
     GUNS: weaponArray({
         POSITION: [5, 11, 1.3, 7, 0, 0, 0],
         PROPERTIES: {
-            SHOOT_SETTINGS: combineStats([g.drone, g.sunchip, {reload: 0.8}]),
+            SHOOT_SETTINGS: combineStats([g.drone, g.sunchip, { reload: 0.8 }]),
             TYPE: "trichip",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
@@ -896,15 +889,6 @@ Class.radialAutoTest = makeRadialAuto("gunner", {
     rotation: 0.04,
     danger: 10,
 })
-Class.makeAutoTestTurret = makeTurret("ranger", {canRepel: true, limitFov: true, extraStats: {reload: 0.5}});
-Class.makeAutoTest = {
-    PARENT: 'genericTank',
-    LABEL: "Make Auto Test",
-    TURRETS: weaponArray({
-        POSITION: [8, 10, 0, 0, 180, 0],
-        TYPE: 'makeAutoTestTurret'
-    }, 3)
-}
 Class.imageShapeTest = {
     PARENT: 'genericTank',
     LABEL: "Image Shape Test",

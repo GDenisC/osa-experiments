@@ -213,30 +213,16 @@ exports.makeAuto = (type, name = -1, options = {}) => {
         angle: 180,
         total: 1,
     };
-    if (options.type != null) {
-        turret.type = options.type;
-    }
-    if (options.independent != null) {
-        turret.independent = options.independent;
-    }
-    if (options.color != null) {
-        turret.color = options.color;
-    }
-    if (options.total != null) {
-        turret.total = options.total;
-    }
-    if (options.size != null) {
-        turret.size = options.size;
-    }
-    if (options.x != null) {
-        turret.x = options.x;
-    }
-    if (options.y != null) {
-        turret.y = options.y;
-    }
-    if (options.angle != null) {
-        turret.angle = options.angle;
-    }
+
+    options.type ??= turret.type
+    options.independent ??= turret.independent
+    options.color ??= turret.color
+    options.total ??= turret.total
+    options.size ??= turret.size
+    options.x ??= turret.x
+    options.y ??= turret.y
+    options.angle ??= turret.angle
+
     let output = exports.dereference(type);
     let autogun = exports.weaponArray({
         POSITION: {
@@ -291,15 +277,15 @@ exports.makeDeco = (shape = 0, color = 16) => {
         COLOR: color
     }
 }
-function toPascalCase(string) {
-    if (!string) {
+function toPascalCase(input) {
+    if (!input) {
         return -1
     }
-    var newString = ""
-    for (var c = 0; c < string.length; c++) {
-        newString += c == 0 ? string[c].toUpperCase() : string[c].toLowerCase()
+    var output = ""
+    for (var c = 0; c < input.length; c++) {
+        output += c == 0 ? input[c].toUpperCase() : input[c].toLowerCase()
     }
-    return newString
+    return output
 }
 exports.makeDrive = (type, name = -1, options = {}) => {
     type = ensureIsClass(type);
@@ -307,36 +293,21 @@ exports.makeDrive = (type, name = -1, options = {}) => {
         type: "droneAutoTurret",
         independent: true,
         color: "grey",
-        size: 10, // 7.5
+        size: 10,
         x: 0,
         y: 0,
         angle: 180,
         total: 1,
     };
-    if (options.type != null) {
-        turret.type = options.type;
-    }
-    if (options.independent != null) {
-        turret.independent = options.independent;
-    }
-    if (options.color != null) {
-        turret.color = options.color;
-    }
-    if (options.total != null) {
-        turret.total = options.total;
-    }
-    if (options.size != null) {
-        turret.size = options.size;
-    }
-    if (options.x != null) {
-        turret.x = options.x;
-    }
-    if (options.y != null) {
-        turret.y = options.y;
-    }
-    if (options.angle != null) {
-        turret.angle = options.angle;
-    }
+
+    options.type ??= turret.type
+    options.independent ??= turret.independent
+    options.color ??= turret.color
+    options.total ??= turret.total
+    options.size ??= turret.size
+    options.x ??= turret.x
+    options.y ??= turret.y
+    options.angle ??= turret.angle
     options.decoration ??= "squareHat"
 
     let output = exports.dereference(type);
@@ -354,9 +325,10 @@ exports.makeDrive = (type, name = -1, options = {}) => {
     for (let gun of GUNS) {
         if (!gun.PROPERTIES) continue;
         if (!gun.PROPERTIES.TYPE) continue;
+        projectile = exports.dereference(gun.PROPERTIES.TYPE)
 
-        const name = (Array.isArray(gun.PROPERTIES.TYPE) ? gun.PROPERTIES.TYPE[0][0] : gun.PROPERTIES.TYPE) + "Drived"
-        Class[name] = exports.makeAuto(gun.PROPERTIES.TYPE, ["Auto-" + name], turret) // TODO: Make projectile name work
+        const name = (Array.isArray(gun.PROPERTIES.TYPE) ? gun.PROPERTIES.TYPE[0][0] : gun.PROPERTIES.TYPE) + "_drivenProjectile"
+        Class[name] = exports.makeAuto(gun.PROPERTIES.TYPE, "Auto-" + projectile.LABEL, turret)
         gun.PROPERTIES.TYPE = name
     }
 
