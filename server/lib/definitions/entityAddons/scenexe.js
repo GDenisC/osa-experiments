@@ -821,7 +821,7 @@ Class.scenexeGamma = {
 Class.scenexeGuard = {
     PARENT: "scenexeNode",
     LABEL: "Guard",
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     GUNS: [
         {
             POSITION: { LENGTH: 15, WIDTH: 7, ANGLE: 180 }
@@ -1021,7 +1021,7 @@ Class.scenexeCommander = {
 Class.scenexeAlloy = {
     PARENT: "scenexeNode",
     LABEL: "Alloy",
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     GUNS: [
         {
             POSITION: { LENGTH: 21,  WIDTH: 10,  ASPECT: 1 },
@@ -1094,7 +1094,7 @@ Class.scenexeDirector = {
 Class.scenexeFusion = {
     PARENT: "scenexeNode",
     LABEL: "Fusion",
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     GUNS: [
         {
             POSITION: [9, 7, 1.3, 7, 0, 180, 0],

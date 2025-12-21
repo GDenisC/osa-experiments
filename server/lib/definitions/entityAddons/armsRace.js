@@ -1299,7 +1299,7 @@ Class.forger_AR = {
     PARENT: "genericTank",
     LABEL: "Forger",
     DANGER: 7,
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     GUNS: [
         ...weaponMirror({
             POSITION: {
@@ -1382,7 +1382,7 @@ Class.helicopter_AR = {
     ANGLE: 60,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     HEALING_TANK: true,
     TURRETS: [
         {
@@ -1729,7 +1729,7 @@ Class.peashooter_AR = {
     PARENT: "genericTank",
     LABEL: "Peashooter",
     DANGER: 7,
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     GUNS: [
         {
             POSITION: {
@@ -2372,7 +2372,7 @@ Class.triTrapGuard_AR = {
     PARENT: "genericTank",
     LABEL: "Tri-Trap Guard",
     DANGER: 7,
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     GUNS: [
         {
             POSITION: {
@@ -3553,7 +3553,7 @@ Class.physician_AR = {
 Class.professor_AR = {
     PARENT: "genericHealer",
     LABEL: "Professor",
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     GUNS: [
         {
             POSITION: {
@@ -3824,7 +3824,7 @@ Class.scatterer_AR = {
 Class.scribble_AR = {
     PARENT: "genericHealer",
     LABEL: "Scribble",
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     GUNS: [
         {
             POSITION: {

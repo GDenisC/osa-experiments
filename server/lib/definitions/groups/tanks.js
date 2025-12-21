@@ -321,7 +321,7 @@ Class.whirlwind = {
     ANGLE: 60,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     TURRETS: [
         {
             POSITION: {
@@ -576,7 +576,7 @@ Class.flangle = {
     PARENT: "genericFlail",
     LABEL: "Flangle",
     DANGER: 6,
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     GUNS: triAngle_propeller,
     TURRETS: [{
         POSITION: [6, 10, 0, 0, 190, 0],
@@ -755,7 +755,7 @@ Class.hurricane = {
     ANGLE: 45,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     TURRETS: [
         {
             POSITION: [8, 0, 0, 0, 360, 1],
@@ -1207,7 +1207,7 @@ Class.tornado = {
     ANGLE: 90,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     AI: {
         SPEED: 2, 
     }, 
@@ -1238,7 +1238,7 @@ Class.trapGuard = {
     PARENT: "genericTank",
     LABEL: "Trap Guard",
     DANGER: 6,
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     GUNS: [
         {
             POSITION: {
@@ -1440,7 +1440,7 @@ Class.whirlwind_old = {
     ANGLE: 60,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     TURRETS: [
         {
             POSITION: [24, 0, 0, 0, 360, 0],
@@ -1880,7 +1880,7 @@ Class.blizzard = {
     ANGLE: 72,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     AI: {
         SPEED: 2, 
     }, 
@@ -2104,7 +2104,7 @@ Class.booster = {
 Class.bulwark = {
     PARENT: "genericTank",
     LABEL: "Bulwark",
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     DANGER: 7,
     GUNS: weaponMirror([
         {
@@ -2370,7 +2370,7 @@ Class.conqueror = {
     PARENT: "genericTank",
     DANGER: 7,
     LABEL: "Conqueror",
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     BODY: {
         SPEED: 0.8 * base.SPEED
     },
@@ -2917,7 +2917,7 @@ Class.flace = {
     PARENT: "genericFlail",
     LABEL: "Flace",
     DANGER: 7,
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     GUNS: triAngle_propeller,
     TURRETS: [{
         POSITION: [6, 10, 0, 0, 190, 0],
@@ -2931,7 +2931,7 @@ Class.flooster = {
     PARENT: "genericFlail",
     LABEL: "Flooster",
     DANGER: 7,
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     GUNS: booster_propeller,
     TURRETS: [{
         POSITION: [6, 10, 0, 0, 190, 0],
@@ -3002,7 +3002,7 @@ Class.fortress = {
     PARENT: "genericTank",
     LABEL: "Fortress",
     DANGER: 7,
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     BODY: {
         SPEED: 0.8 * base.SPEED,
         FOV: 1.2 * base.FOV
@@ -3050,7 +3050,7 @@ Class.gunnerTrapper = {
     PARENT: "genericTank",
     LABEL: "Gunner Trapper",
     DANGER: 7,
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     BODY: {
         FOV: 1.25 * base.FOV
     },
@@ -3163,7 +3163,7 @@ Class.hexaWhirl = {
     ANGLE: 90,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     TURRETS: [
         {
             POSITION: [8, 0, 0, 0, 360, 1],
@@ -3558,7 +3558,7 @@ Class.megaTornado = {
     ANGLE: 180,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     AI: {
         SPEED: 2, 
     }, 
@@ -3638,7 +3638,7 @@ Class.monsoon = {
         FOV: 1.05 * base.FOV,
         DENSITY: 2 * base.DENSITY
     },
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     SKILL_CAP: Array(10).fill(smshskl),
     TURRETS: [
         {
@@ -3724,7 +3724,7 @@ Class.munition = {
     ANGLE: 90,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     TURRETS: [
         {
             POSITION: [8, 0, 0, 0, 360, 1],
@@ -4070,7 +4070,7 @@ Class.overtrapper = makeOver({
     PARENT: "genericTank",
     LABEL: "Trapper",
     DANGER: 6,
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     BODY: {
         SPEED: base.SPEED * 0.8,
         FOV: base.FOV * 1.2
@@ -4275,7 +4275,7 @@ Class.prodigy = {
     PARENT: "genericTank",
     LABEL: "Prodigy",
     DANGER: 7,
-    STAT_NAMES: statnames.genericNecro,
+    STAT_NAMES: statnames.mixedNecro,
     SHAPE: 6,
     BODY: {
         SPEED: 0.8 * base.SPEED,
@@ -4334,7 +4334,7 @@ Class.prophet = {
     ANGLE: 90,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     TURRETS: [
         {
             POSITION: [8, 0, 0, 0, 360, 1],
@@ -5346,7 +5346,7 @@ Class.tempest = {
     ANGLE: 120,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     AI: {
         SPEED: 2, 
     }, 
@@ -5394,7 +5394,7 @@ Class.thunderbolt = {
     ANGLE: 90,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     AI: {
         SPEED: 2.5, 
     }, 
@@ -5429,7 +5429,7 @@ Class.tornado_old = {
     ANGLE: 360,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     AI: {
         SPEED: 2, 
     }, 
@@ -5621,7 +5621,7 @@ Class.typhoon = {
     ANGLE: 36,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     TURRETS: [
         {
             POSITION: [8, 0, 0, 0, 360, 1],
@@ -5666,7 +5666,7 @@ Class.typhoon_old = {
     ANGLE: 60,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     AI: {
         SPEED: 2, 
     }, 
@@ -5711,7 +5711,7 @@ Class.vortex = {
     ANGLE: 90,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.generic,
+    STAT_NAMES: statnames.mixed,
     TURRETS: [
         {
             TYPE: "tornadoDeco",
@@ -5765,7 +5765,7 @@ Class.vortex_old = {
     ANGLE: 36,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     TURRETS: weaponArray({
         TYPE: "oldVortexBody",
         POSITION: { SIZE: 21.5 }
@@ -5847,7 +5847,7 @@ Class.whirlGuard = {
     ANGLE: 90,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     TURRETS: [
         {
             POSITION: [8, 0, 0, 0, 360, 1],
@@ -5902,7 +5902,7 @@ Class.whirl3 = {
     ANGLE: 90,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
-    STAT_NAMES: statnames.whirlwind,
+    STAT_NAMES: statnames.satellite,
     FACING_TYPE: "spin",
     TURRETS: [
         {
