@@ -218,8 +218,8 @@ class socketManager {
             case 's': { // spawn request
                 if (!socket.status.deceased) { socket.kick('Trying to spawn while already alive.'); return 1; }
                 if (!global.gameManager.webProperties.maxPlayers < 1 && this.clients.length > global.gameManager.webProperties.maxPlayers) return (
-                        socket.talk("message", "This server is full, please rejoin later."),
-                        socket.kick("Server full.")
+                    socket.talk("message", "This server is full, please rejoin later."),
+                    socket.kick("Server full.")
                 )
                 let b = bans.find((ban) => ban.ip === socket.ip);
                 if (b) {
