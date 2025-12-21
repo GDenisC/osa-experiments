@@ -5104,37 +5104,27 @@ Class.vulcan = {
 }
 
 // Tierless / Fun
-Class.helix = {
+Class.rapture = {
     PARENT: "genericTank",
-    LABEL: "Helix",
-    DANGER: 6,
-    STAT_NAMES: statnames.desmos,
+    LABEL: "Rapture",
+    DANGER: 7,
     GUNS: [
         {
-            POSITION: [20, 6, -4/3, 0, -5, 0, 0],
+            POSITION: [21, 19.5, 1, 0, 0, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
-                TYPE: ["bullet", {CONTROLLERS: ['snake']}]
-            },
+                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer, g.annihilator]),
+                TYPE: "speedBullet"
+            }
         },
         {
-            POSITION: [20, 6, -4/3, 0, 5, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
-                TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
-            },
+            POSITION: [15, 13, 1, 6, 0, 0, 0]
         },
         {
-            POSITION: [3.625, 7.5, 2.75, 5.75, -6.75, 90, 0],
-        },
-        {
-            POSITION: [3.625, 7.5, 2.75, 5.75, 6.75, -90, 0],
-        },
-        {
-            POSITION: [6, 8, 0.25, 10.5, 0, 0, 0],
-        },
-    ],
+            POSITION: [12, 13, -1.3, 4, 0, 0, 0]
+        }
+    ]
 }
+
 Class.sidewinder = {
     PARENT: "genericTank",
     LABEL: "Sidewinder",
@@ -5270,25 +5260,36 @@ Class.repeater = {
 }
 
 // Helix upgrades
-Class.rapture = {
+Class.helix = {
     PARENT: "genericTank",
-    LABEL: "Rapture",
-    DANGER: 7,
+    LABEL: "Helix",
+    DANGER: 6,
+    STAT_NAMES: statnames.desmos,
     GUNS: [
         {
-            POSITION: [21, 19.5, 1, 0, 0, 0, 0],
+            POSITION: [20, 6, -4/3, 0, -5, 0, 0],
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer, g.annihilator]),
-                TYPE: "speedBullet"
-            }
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
+                TYPE: ["bullet", {CONTROLLERS: ['snake']}]
+            },
         },
         {
-            POSITION: [15, 13, 1, 6, 0, 0, 0]
+            POSITION: [20, 6, -4/3, 0, 5, 0, 0],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.desmos]),
+                TYPE: ["bullet", {CONTROLLERS: [['snake', {invert: true}]]}]
+            },
         },
         {
-            POSITION: [12, 13, -1.3, 4, 0, 0, 0]
-        }
-    ]
+            POSITION: [3.625, 7.5, 2.75, 5.75, -6.75, 90, 0],
+        },
+        {
+            POSITION: [3.625, 7.5, 2.75, 5.75, 6.75, -90, 0],
+        },
+        {
+            POSITION: [6, 8, 0.25, 10.5, 0, 0, 0],
+        },
+    ],
 }
 
 // Upgrade Paths
