@@ -5104,7 +5104,7 @@ Class.vulcan = {
 }
 
 // Tierless / Fun
-Class.rapture = {
+Class.helix = {
     PARENT: "genericTank",
     LABEL: "Helix",
     DANGER: 6,
