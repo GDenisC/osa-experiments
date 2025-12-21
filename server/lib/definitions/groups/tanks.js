@@ -5270,9 +5270,8 @@ Class.repeater = {
 }
 
 // Helix upgrades
-Class.triplex = {
+Class.rapture = {
     PARENT: "genericTank",
-    LABEL: "Triplex",
     LABEL: "Rapture",
     DANGER: 7,
     GUNS: [
@@ -5342,4 +5341,4 @@ Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "di
     Class.desmos.UPGRADES_TIER_2 = ["helix"/*, "spiral", "repeater"*/]
         //Class.desmos.UPGRADES_TIER_3 = ["bender"]
         Class.helix.UPGRADES_TIER_3 = ["triplex", "quadruplex"]
-        Class.spiral.UPGRADES_TIER_3 = ["coil", "superSpiral"/*, "wrangler", "oroboros", "cocci", "rocket",*/]
+        //Class.spiral.UPGRADES_TIER_3 = ["coil", "superSpiral"/*, "wrangler", "oroboros", "cocci", "rocket",*/]

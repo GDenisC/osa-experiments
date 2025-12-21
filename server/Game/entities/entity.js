@@ -605,7 +605,7 @@ class Entity extends EventEmitter {
     refreshBodyAttributes() {
         const level = Math.min(Config.growth ? 120 : 45, this.level);
         let speedReduce = Math.min(
-            Config.growth ? 4 : 2,
+            Config.growth ? 3 : 2,
             this.size / (this.coreSize || this.SIZE)
         );
         this.acceleration = (1 * global.gameManager.runSpeed * this.ACCELERATION) / speedReduce;
@@ -727,11 +727,7 @@ class Entity extends EventEmitter {
             levelMultiplier += Math.min(45, level) / 45;
         }
         if (level > 45 && (this.isPlayer || this.isBot)) {
-            const scoreSince45 = this.skill.score - 26263;
-            // wall size is not accurate for some reason lol
-            const multiplier = 1.065;
-            const wallSize = (global.gameManager.room.width / 32 / 2) * Math.SQRT2 * multiplier;
-            levelMultiplier += ((scoreSince45 / 3e6) * wallSize) / Class.genericTank.SIZE / 2;
+            levelMultiplier += Config.defineGrowthMultiplier(this.skill.score, level);
         }
         return (this.coreSize || this.SIZE) * this.sizeMultiplier * levelMultiplier
     }

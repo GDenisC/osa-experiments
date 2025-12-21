@@ -115,7 +115,7 @@ Class.pentagon = {
 	BODY: {
 		DAMAGE: 6 * basePolygonDamage,
 		DENSITY: 8,
-		HEALTH: 10 * basePolygonHealth,
+		HEALTH: 40 * basePolygonHealth,
 		RESIST: 1.25,
 		PENETRATION: 1.1,
 		ACCELERATION: 0.0035
@@ -177,9 +177,9 @@ Class.hexagon = {
 	SIZE: 25,
 	COLOR: 'hexagon',
 	BODY: {
-		DAMAGE: 12 * basePolygonDamage,
+		DAMAGE: 6 * basePolygonDamage,
 		DENSITY: 8,
-		HEALTH: 20 * basePolygonHealth,
+		HEALTH: 320 * basePolygonHealth,
 		RESIST: 1.3,
 		SHIELD: 50 * basePolygonHealth,
 		PENETRATION: 1.1,
@@ -353,13 +353,26 @@ Class.icosahedron = {
 
 // PRESENTS
 Class.presentSymbol = {
-    SHAPE: [[0.3, -0.3],[1,-0.3],[1,0.3],[0.3,0.3],[0.3,1],[-0.3,1],[-0.3,0.3],[-1,0.3],[-1,-0.3],[-0.3,-0.3],[-0.3,-1],[0.3,-1]],
-    SIZE: 13,
-    COLOR: "white"
-}
-Class.presentRY = makePresent("red", "yellow")
-Class.presentRP = makePresent("red", "purple")
-Class.presentRW = makePresent("red", "white")
+	SHAPE: [
+		[0.3, -0.3],
+		[1, -0.3],
+		[1, 0.3],
+		[0.3, 0.3],
+		[0.3, 1],
+		[-0.3, 1],
+		[-0.3, 0.3],
+		[-1, 0.3],
+		[-1, -0.3],
+		[-0.3, -0.3],
+		[-0.3, -1],
+		[0.3, -1]
+	],
+	SIZE: 13,
+	COLOR: 'white'
+};
+Class.presentRY = makePresent('red', 'yellow');
+Class.presentRP = makePresent('red', 'purple');
+Class.presentRW = makePresent('red', 'white');
 
 Class.presentGY = makePresent('green', 'yellow');
 Class.presentGP = makePresent('green', 'purple');
@@ -427,7 +440,9 @@ Class.tesseract = {
 
 // LABY
 let polyNames = ['egg', 'square', 'triangle', 'pentagon', 'hexagon'],
-	shinyNames = ['', 'shiny', 'legendary', 'shadow', 'rainbow', 'trans'];
+	shinyNames = ['', 'shiny', 'legendary', 'shadow', 'rainbow', 'trans'].concat(
+		Array.from({ length: 0 }, (_, i) => `rarity${i+6}`)
+	);
 for (let tier = 0; tier < 6; tier++) {
 	for (let poly in polyNames) {
 		let polyName = polyNames[poly];
