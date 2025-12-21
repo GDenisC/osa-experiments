@@ -23,60 +23,56 @@ module.exports = {
 
 	// stat names
 	statnames: {
-		mixed: {
-			BULLET_SPEED: 'Weapon Speed',
-			BULLET_HEALTH: 'Weapon Health',
-			BULLET_PEN: 'Weapon Penetration',
-			BULLET_DAMAGE: 'Weapon Damage',
+		desmos: { BULLET_SPEED: "Wave Frequency" },
+		flail: {
+			BULLET_HEALTH: "Mace Longevity", // remove this, bullet health isn't a concern for flails
+			BULLET_PEN: "Mace Penetration",
+			BULLET_DAMAGE: "Mace Damage",
+			RELOAD: "Mace Density" // maybe remove this too?
 		},
-		swarm: {
-			BULLET_SPEED: 'Swarm Speed',
-			BULLET_HEALTH: 'Swarm Health',
-			BULLET_PEN: 'Swarm Penetration',
-			BULLET_DAMAGE: 'Swarm Damage',
+		healer: {
+			BULLET_PEN: "Heal Precision",
+			BULLET_DAMAGE: "Heal Amount"
+		},
+		mixed: {
+			BULLET_SPEED: "Weapon Speed",
+			BULLET_HEALTH: "Weapon Health",
+			BULLET_PEN: "Weapon Penetration",
+			BULLET_DAMAGE: "Weapon Damage"
 		},
 		necro: {
-			BULLET_SPEED: 'Drone Speed',
-			BULLET_HEALTH: 'Drone Health',
-			BULLET_PEN: 'Drone Penetration',
-			BULLET_DAMAGE: 'Drone Damage',
-			RELOAD: 'Max Drone Count',
+			BULLET_SPEED: "Drone Speed",
+			BULLET_HEALTH: "Drone Health",
+			BULLET_PEN: "Drone Penetration",
+			BULLET_DAMAGE: "Drone Damage",
+			RELOAD: "Max Drone Count"
 		},
-		mixedNecro: {
-			BULLET_SPEED: 'Weapon Speed',
-			BULLET_HEALTH: 'Weapon Health',
-			BULLET_PEN: 'Weapon Penetration',
-			BULLET_DAMAGE: 'Weapon Damage',
-			RELOAD: 'Reload / Max Drone Count',
-		},
-		trap: {
-			BULLET_SPEED: 'Placement Speed',
-			BULLET_HEALTH: 'Trap Health',
-			BULLET_PEN: 'Trap Penetration',
-			BULLET_DAMAGE: 'Trap Damage',
-		},
-		desmos: {
-			BULLET_SPEED: 'Wave Frequency',
+		necroMixed: {
+			BULLET_SPEED: "Weapon Speed",
+			BULLET_HEALTH: "Weapon Health",
+			BULLET_PEN: "Weapon Penetration",
+			BULLET_DAMAGE: "Weapon Damage",
+			RELOAD: "Reload / Max Drone Count"
 		},
 		satellite: {
-			BULLET_SPEED: 'Orbit Speed',
-			BULLET_HEALTH: 'Satellite Health',
-			BULLET_PEN: 'Satellite Penetration',
-			BULLET_DAMAGE: 'Satellite Damage',
-			RELOAD: 'Respawn Rate',
+			BULLET_SPEED: "Orbit Speed",
+			BULLET_HEALTH: "Satellite Health",
+			BULLET_PEN: "Satellite Penetration",
+			BULLET_DAMAGE: "Satellite Damage",
+			RELOAD: "Respawn Rate"
 		},
-		heal: {
-			BULLET_PEN: 'Healing Precision',
-			BULLET_DAMAGE: 'Healing Amount',
+		smasher: { RELOAD: "Engine Acceleration" },
+		swarm: {
+			BULLET_SPEED: "Swarm Speed",
+			BULLET_HEALTH: "Swarm Health",
+			BULLET_PEN: "Swarm Penetration",
+			BULLET_DAMAGE: "Swarm Damage"
 		},
-		smasher: {
-			RELOAD: "Engine Acceleration"
-		},
-		flail: {
-			BULLET_HEALTH: 'Ball Longevity',
-			BULLET_PEN: 'Ball Sharpness',
-			BULLET_DAMAGE: 'Ball Damage',
-			RELOAD: 'Ball Density',
-		},
+		trap: {
+			BULLET_SPEED: "Placement Speed",
+			BULLET_HEALTH: "Trap Health",
+			BULLET_PEN: "Trap Penetration",
+			BULLET_DAMAGE: "Trap Damage"
+		}
 	}
 }

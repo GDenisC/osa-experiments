@@ -4275,7 +4275,7 @@ Class.prodigy = {
     PARENT: "genericTank",
     LABEL: "Prodigy",
     DANGER: 7,
-    STAT_NAMES: statnames.mixedNecro,
+    STAT_NAMES: statnames.necroMixed,
     SHAPE: 6,
     BODY: {
         SPEED: 0.8 * base.SPEED,

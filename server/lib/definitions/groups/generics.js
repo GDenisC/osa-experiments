@@ -138,7 +138,7 @@ Class.genericFlail = {
 Class.genericHealer = {
     PARENT: "genericTank",
     HEALING_TANK: true, // Mainly for bots to recognize the tank
-    STAT_NAMES: statnames.heal,
+    STAT_NAMES: statnames.healer,
     TURRETS: [
         {
             POSITION: {
