@@ -4,10 +4,10 @@ module.exports = {
 	host: 'localhost:3000', // Game server domain. If the host is 'localhost:NUMBER', the NUMBER must be the port setting.
 	port: 3000, // Which port to run the web server on.
 
-	// Server
-	visible_list_interval: 250, // How often to update the list of the entities that players can see. Has effects of when entities are activated.
-	startup_logs: true, // Enable startup logs and log speed loop warnings in terminal
-	load_all_mockups: false, // Set to true if you want every mockup to be loaded when the server starts. May noticeably slow down server startup.
+    // Server
+    visible_list_interval: 250, // How often to update the list of the entities that players can see. Has effects of when entities are activated.
+    startup_logs: true, // Enable startup logs and log speed loop warnings in the terminal
+    load_all_mockups: false, // Set to true if you want every mockup to be loaded when the server starts. May noticeably slow down server startup.
 
 	servers: [
 		// Make sure to change the HOST, PORT and SERVER_ID between servers!
@@ -50,8 +50,8 @@ module.exports = {
 	popup_message_duration: 10_000, // How long (in milliseconds) a popup message lasts before fading out.
 	sanitize_chat_input: true, // If you don't want your players to color their messages. They get sanitized after addons interpret them, but before they're added to the chat message dictionary.
 
-	// Seasonal
-	spooky_theme: false, // Toggles the seasonal halloween theme (adds eyes to walls and replaces rocks to pumpkins)
+    // Seasonal
+    spooky_theme: false, // Toggles the seasonal Halloween theme (adds eyes to walls and replaces rocks to pumpkins)
 
 	// Gameplay
 	game_speed: 1, // General game speed.
