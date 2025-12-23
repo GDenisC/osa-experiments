@@ -1,6 +1,6 @@
 const {base} = require('../constants.js');
 const {basePolygonDamage, basePolygonHealth, statnames} = require("../constants");
-const {combineStats, makeTurret, makeDeco, weaponMirror, weaponArray, makeAuto} = require("../facilitators");
+const {combineStats, makeTurret, makeHat, weaponMirror, weaponArray, makeAuto} = require("../facilitators");
 
 // This addon is enabled by default. If you want to enable it, simply make the line below run.
 return console.log("[scenexe.js] is disabled.");
@@ -230,8 +230,8 @@ Class.hexagon = {
     DRAW_HEALTH: true,
 }
 
-Class.octagonDeco = makeDeco(8, "green")
-Class.hearthDeco = makeDeco(0, "red")
+Class.octagonDeco = makeHat(8, { color: "green" })
+Class.hearthDeco = makeHat(0, { color: "red"})
 
 makeHearth = (damageFactor = 1, sizeFactor = 1, opacity = 0.3, auraColor) => {
     let isHeal = damageFactor < 0;

@@ -260,21 +260,20 @@ exports.makeAuto = (type, name = -1, options = {}) => {
     output.DANGER = type.DANGER + 1;
     return output;
 }
-exports.makeBody = (shape = 6, color = "black", rotationSpeed = 0.16) => {
+exports.makeHat = (shape = 0, options = {}) => {
+    options.color ??= "mirror"
+    options.rotationSpeed ??= 0
+    if (!options.rotationSpeed == 0) {
+        spinProperties = ["spin", { speed: options.rotationSpeed }]
+    } else (
+        spinProperties = ["toTarget"]
+    )
     return {
         LABEL: "",
-        FACING_TYPE: ["spin", { speed: rotationSpeed }],
-        COLOR: color,
+        FACING_TYPE: spinProperties,
         SHAPE: shape,
-        SIZE: 12,
+        COLOR: options.color,
         INDEPENDENT: true
-    }
-}
-exports.makeDeco = (shape = 0, color = 16) => {
-    return {
-        PARENT: "genericTank",
-        SHAPE: shape,
-        COLOR: color
     }
 }
 function toPascalCase(input) {
@@ -308,12 +307,12 @@ exports.makeDrive = (type, name = -1, options = {}) => {
     options.x ??= turret.x
     options.y ??= turret.y
     options.angle ??= turret.angle
-    options.decoration ??= "squareHat"
+    options.hat ??= ["squareHat", { COLOR: turret.color }]
 
     let output = exports.dereference(type);
     let bodyDeco = [
         {
-            TYPE: options.decoration,
+            TYPE: options.hat,
             POSITION: {
                 SIZE: 9,
                 LAYER: 1

@@ -141,11 +141,11 @@ Class.genericHealer = {
     STAT_NAMES: statnames.healer,
     TURRETS: [
         {
+            TYPE: "healerHat",
             POSITION: {
                 SIZE: 13,
                 LAYER: 1
-            },
-            TYPE: "healerHat"
+            }
         }
     ]
 }

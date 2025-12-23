@@ -1,9 +1,9 @@
-const { combineStats, makeDeco, makeMenu } = require('../facilitators.js')
+const { combineStats, makeHat, makeMenu } = require('../facilitators.js')
 const { base } = require('../constants.js')
 const g = require('../gunvals.js')
 
 // Hats
-Class.youtuberHat = makeDeco(3, "pureWhite")
+Class.youtuberHat = makeHat(3, { color: "pureWhite"})
 
 // Developer tank that doesn't upgrade to anything
 Class.arrasMenu_developer = { PARENT: "developer", UPGRADES_TIER_0: [] }

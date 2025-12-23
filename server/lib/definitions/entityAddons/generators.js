@@ -1,6 +1,4 @@
-const { combineStats, skillSet, makeAura, makeDeco, makeAuto, makeOver, makeMulti } = require('../facilitators.js');
-const { base, gunCalcNames, basePolygonDamage, basePolygonHealth, dfltskl, smshskl, statnames } = require('../constants.js');
-const g = require('../gunvals.js');
+const { combineStats } = require("../facilitators.js")
 
 // Generators
 

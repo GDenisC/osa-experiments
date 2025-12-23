@@ -1,4 +1,4 @@
-const { combineStats, makeAura, makeAuto, makeDeco, makeTurret, LayeredBoss, setTurretProjectileRecoil, skillSet, weaponArray, weaponMirror } = require('../facilitators.js')
+const { combineStats, makeAura, makeAuto, makeHat, makeTurret, LayeredBoss, setTurretProjectileRecoil, skillSet, weaponArray, weaponMirror } = require('../facilitators.js')
 const { base, smshskl, statnames } = require('../constants.js')
 const g = require('../gunvals.js')
 require('./generics.js')
@@ -2281,8 +2281,6 @@ Class.taureonBoss = {
     }]
 };
 
-Class.tgsEggDeco = makeDeco(0, "mirror")
-Class.tgsSquareDeco = makeDeco(4, "mirror")
 Class.tgsSunchip = {
     PARENT: "drone",
     LABEL: "Omega Sunchip",
@@ -2297,13 +2295,13 @@ Class.tgsSunchip = {
     },
     TURRETS: [{
         POSITION: [20 * Math.SQRT1_2, 0, 0, 45, 0, 1],
-        TYPE: ["tgsSquareDeco", { MIRROR_MASTER_ANGLE: true }]
+        TYPE: ["squareHat", { MIRROR_MASTER_ANGLE: true }]
     },{
         POSITION: [20 * Math.SQRT1_2 ** 2, 0, 0, 0, 0, 1],
-        TYPE: ["tgsSquareDeco", { MIRROR_MASTER_ANGLE: true }]
+        TYPE: ["squareHat", { MIRROR_MASTER_ANGLE: true }]
     },{
         POSITION: [20 * Math.SQRT1_2 ** 3, 0, 0, 45, 0, 1],
-        TYPE: ["tgsSquareDeco", { MIRROR_MASTER_ANGLE: true }]
+        TYPE: ["squareHat", { MIRROR_MASTER_ANGLE: true }]
     }]
 }
 Class.tgsEggchip = {
@@ -2320,7 +2318,7 @@ Class.tgsEggchip = {
     },
     TURRETS: [{
         POSITION: [10, 0, 0, 45, 0, 1],
-        TYPE: "tgsEggDeco"
+        TYPE: "circleHat"
     }]
 }
 Class.tgsBoss = {
@@ -2382,13 +2380,13 @@ Class.tgsBoss = {
     ], 4),
     TURRETS: [{
         POSITION: [20 * Math.SQRT1_2, 0, 0, 45, 0, 1],
-        TYPE: "tgsSquareDeco"
+        TYPE: "squareHat"
     },{
         POSITION: [20 * Math.SQRT1_2 ** 2, 0, 0, 0, 0, 1],
-        TYPE: "tgsSquareDeco"
+        TYPE: "squareHat"
     },{
         POSITION: [20 * Math.SQRT1_2 ** 3, 0, 0, 45, 0, 1],
-        TYPE: "tgsSquareDeco"
+        TYPE: "squareHat"
     }]
 };
 
@@ -3830,8 +3828,8 @@ Class.helenaBossBase = {
         }
     ]
 }
-Class.helenaDpProp = makeDeco(3.5, "crasher")
-Class.helenaBossDpProp2 = makeDeco(3.5, "black")
+Class.helenaDpProp = makeHat(3.5, { color: "crasher" })
+Class.helenaBossDpProp2 = makeHat(3.5, { color: "black" })
 Class.helenaBossDpPropArmed = {
     PARENT: "genericTank",
     COLOR: "crasher",
@@ -3845,10 +3843,10 @@ Class.helenaBossDpPropArmed = {
         }, 3
     )
 }
-Class.helenaBossProp = makeDeco(3.5, "darkGrey")
-Class.helenaBossPropMiddle = makeDeco(3.5, "white")
-Class.helenaBossProp2 = makeDeco(3.5, "crasher")
-Class.helenaBossMinionProp = makeDeco(3.5, "black")
+Class.helenaBossProp = makeHat(3.5, { color: "darkGrey" })
+Class.helenaBossPropMiddle = makeHat(3.5, { color: "white" })
+Class.helenaBossProp2 = makeHat(3.5, { color: "crasher" })
+Class.helenaBossMinionProp = makeHat(3.5, { color: "black" })
 Class.helenaBossMinion = {
     PARENT: "minion",
     LABEL: "CMM-64-XX", // CrasherMachinery Minion 64-bit Xtra Xtra

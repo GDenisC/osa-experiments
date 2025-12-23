@@ -1,4 +1,4 @@
-const { combineStats, LayeredBoss, makeAura, makeAuto, makeDeco, makeDrive, makeMenu, makeRadialAuto, makeTurret, weaponArray, weaponMirror } = require('../facilitators.js')
+const { combineStats, LayeredBoss, makeAura, makeAuto, makeDrive, makeMenu, makeRadialAuto, makeTurret, weaponArray, weaponMirror } = require('../facilitators.js')
 const { base, basePolygonDamage, basePolygonHealth, dfltskl, statnames } = require('../constants.js')
 const g = require('../gunvals.js')
 require('./tanks.js')
@@ -332,8 +332,8 @@ Class.menu_mapEntities = makeMenu("Map Entities")
 Class.menu_mapEntities.UPGRADE_TOOLTIP = "Tanks that spawn as part of the map layout."
 Class.menu_mapEntities.PROPS = [
     {
-        POSITION: [22, 0, 0, 360, 0],
-        TYPE: "dominationBody"
+        TYPE: "dominationBody",
+        POSITION: { SIZE: 22 }
     }
 ]
 Class.menu_mapEntities.UPGRADES_TIER_0 = [
@@ -346,8 +346,8 @@ Class.menu_mapEntities.UPGRADES_TIER_0 = [
 Class.menu_dominators = makeMenu("Dominators")
 Class.menu_dominators.PROPS = [
     {
-        POSITION: [22, 0, 0, 360, 0],
-        TYPE: "dominationBody"
+        TYPE: "dominationBody",
+        POSITION: { SIZE: 22 }
     }
 ]
 Class.menu_dominators.UPGRADES_TIER_0 = [
@@ -359,8 +359,8 @@ Class.menu_dominators.UPGRADES_TIER_0 = [
 Class.menu_sanctuaries = makeMenu("Sanctuaries")
 Class.menu_sanctuaries.PROPS = [
     {
-        POSITION: [22, 0, 0, 360, 0],
-        TYPE: "dominationBody"
+        TYPE: "dominationBody",
+        POSITION: { SIZE: 22 }
     },
     {
         POSITION: [13, 0, 0, 360, 1],
