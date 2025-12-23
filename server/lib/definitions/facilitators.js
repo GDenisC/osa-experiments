@@ -203,45 +203,37 @@ exports.makeOver = (type, name = -1, options = {}) => {
 // turret functions
 exports.makeAuto = (type, name = -1, options = {}) => {
     type = ensureIsClass(type);
-    let turret = {
-        type: "autoTurret",
-        independent: true,
-        color: "grey",
-        size: 10,
-        x: 0,
-        y: 0,
-        angle: 180,
-        total: 1,
-    };
 
-    options.type ??= turret.type
-    options.independent ??= turret.independent
-    options.color ??= turret.color
-    options.total ??= turret.total
-    options.size ??= turret.size
-    options.x ??= turret.x
-    options.y ??= turret.y
-    options.angle ??= turret.angle
+    options.type ??= "autoTurret"
+    options.independent ??= true
+    options.color ??= "grey"
+    options.total ??= 1
+    options.size ??= 10
+    options.x ??= 0
+    options.y ??= 0
+    options.angle ??= 180
+    options.arc ??= 360
+    options.layer ??= 1
 
     let output = exports.dereference(type);
     let autogun = exports.weaponArray({
         POSITION: {
-            SIZE: turret.size, // 10 = 1, 6.5 = 3
-            ANGLE: turret.angle,
-            X: turret.x, // 0 = 1, 5.2 = 3
-            Y: turret.y,
-            ARC: 360,
-            LAYER: 1
+            SIZE: options.size, // 10 = 1, 6.5 = 3
+            ANGLE: options.angle,
+            X: options.x, // 0 = 1, 5.2 = 3
+            Y: options.y,
+            ARC: options.arc,
+            LAYER: options.layer
         },
         TYPE: [
-            turret.type,
+            options.type,
             {
                 CONTROLLERS: ["nearestDifferentMaster"],
-                INDEPENDENT: turret.independent,
-                COLOR: turret.color
+                INDEPENDENT: options.independent,
+                COLOR: options.color
             }
         ]
-    }, turret.total);
+    }, options.total);
     if (type.GUNS != null) {
         output.GUNS = type.GUNS;
     }
