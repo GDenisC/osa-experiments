@@ -1436,7 +1436,7 @@ Class.volute = {
 Class.whirlwind_old = {
     PARENT: "genericTank",
     LABEL: "Whirlwind",
-    UPGRADE_LABEL: "Whirlwind (old)",
+    UPGRADE_LABEL: "Old Whirlwind",
     ANGLE: 60,
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
@@ -2599,31 +2599,145 @@ Class.dreadnought_old = {
     },
     TURRETS: [
         {
-            POSITION: [20, -4, 0, 0, 0, 0],
-            TYPE: "genericEntity",
-        },
+            TYPE: ["circleHat", { COLOR: "grey" }],
+            POSITION: {
+                SIZE: 19.5,
+                X: -4.5,
+            }
+        }
     ],
     GUNS: [
         {
-            POSITION: [18, 8, 1, 0, 0, 0, 0.5],
+            POSITION: {
+                LENGTH: 15,
+                WIDTH: 7
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 15,
+                X: 15
+            },
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm]),
+                SHOOT_SETTINGS: combineStats([g.swarm, { size: 0.5 }]),
                 TYPE: "swarm",
                 STAT_CALCULATOR: "swarm"
             }
         },
         {
-            POSITION: [6, 16, 1, 16, 0, 0, 0],
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.swarm, g.fake]),
-                TYPE: "swarm",
-                STAT_CALCULATOR: "swarm"
+            POSITION: {
+                LENGTH: 7,
+                WIDTH: 2,
+                ASPECT: 4,
+                X: -1,
+                Y: 2.5,
+                ANGLE: 180
             }
         },
         {
-            POSITION: [1, 3, 1, 3, 0, 180, 0],
+            POSITION: {
+                LENGTH: 7,
+                WIDTH: 2,
+                ASPECT: 4,
+                X: -1,
+                Y: -2.5,
+                ANGLE: 180
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 7,
+                WIDTH: 2,
+                ASPECT: 4,
+                X: -1,
+                Y: 2.5,
+                ANGLE: 180
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 7,
+                WIDTH: 2,
+                ASPECT: 4,
+                X: -1,
+                Y: -2.5,
+                ANGLE: 180
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 7,
+                WIDTH: 2,
+                ASPECT: 4,
+                X: 0.5,
+                ANGLE: 180
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 7,
+                WIDTH: 2,
+                ASPECT: 4,
+                X: -1,
+                Y: 2.5,
+                ANGLE: 220
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 7,
+                WIDTH: 2,
+                ASPECT: 4,
+                X: -1,
+                Y: 2.5,
+                ANGLE: 220
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 7,
+                WIDTH: 2,
+                ASPECT: 4,
+                X: -1,
+                Y: 2.5,
+                ANGLE: 220
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 7,
+                WIDTH: 2,
+                ASPECT: 4,
+                X: -1,
+                Y: -2.5,
+                ANGLE: -220
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 7,
+                WIDTH: 2,
+                ASPECT: 4,
+                X: -1,
+                Y: -2.5,
+                ANGLE: -220
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 7,
+                WIDTH: 2,
+                ASPECT: 4,
+                X: -1,
+                Y: -2.5,
+                ANGLE: -200
+            }
+        },
+        {
+            POSITION: [1, 3, 1, 3, 0, 180, 0], // temporary propeller
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([ g.basic, g.twin, g.gunner, g.machineGun, g.thruster, [0.1, 3, 1, 1, 1, 1, 1, 1, 1, 0.075, 1, 2, 1] ]),
+                SHOOT_SETTINGS: combineStats([g.basic, g.twin, g.gunner, g.machineGun, g.thruster, [0.1, 3, 1, 1, 1, 1, 1, 1, 1, 0.075, 1, 2, 1]]),
                 TYPE: "bullet"
             }
         }
@@ -3587,7 +3701,13 @@ Class.mender = {
     TOOLTIP: "Right click to heal yourself (use sparingly, has a long cooldown once used!)",
     GUNS: [
         ...weaponMirror({
-            POSITION: [17, 3, 1, 0, -6, -7, 0.25],
+            POSITION: {
+                LENGTH: 14,
+                WIDTH: 6,
+                Y: -4,
+                ANGLE: -7,
+                DELAY: 0.25
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.gunner, g.artillery]),
                 TYPE: "bullet",
@@ -3595,7 +3715,10 @@ Class.mender = {
             }
         }, { delayIncrement: 0.5 }),
         {
-            POSITION: [19, 12, 1, 0, 0, 0, 0],
+            POSITION: {
+                LENGTH: 19,
+                WIDTH: 9.5
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery]),
                 TYPE: "bullet",
@@ -3603,17 +3726,27 @@ Class.mender = {
             }
         },
         {
-            POSITION: [17, 10, 1, 0, 0, 180, 0]
+            POSITION: {
+                LENGTH: 15,
+                WIDTH: 10,
+                ANGLE: 180
+            }
         },
         {
-            POSITION: [5, 18, 1, -19, 0, 0, 0], // todo: work out cooldown time
+            POSITION: {
+                LENGTH: 5,
+                WIDTH: 20,
+                X: 15,
+                ANGLE: 180 // todo: work out delay/cooldown + make healer bullet work
+            },
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([
                 g.basic,
                     g.pounder,
                     g.destroyer,
-                    g.healer,
                     //[2, 0, 1, 1, 1, -1, 1, 1, 1, 0.1, 1, 1, 1],
+                    { speed: -4, maxSpeed: -4 },
+                    g.healer
                 ]),
                 TYPE: "healerBullet",
                 ALT_FIRE: true
@@ -3622,8 +3755,8 @@ Class.mender = {
     ],
     TURRETS: [
         {
-            POSITION: [7, 0, 0, 0, 0, 1],
-            TYPE: "triangleHat"
+            TYPE: ["triangleHat", { COLOR: "grey" }],
+            POSITION: { SIZE: 7, LAYER: 1 }
         }
     ]
 }
@@ -4290,7 +4423,7 @@ Class.prodigy = {
                 ANGLE: 180
             },
             PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.drone, g.sunchip, {reload: 0.5, size: 1.3, damage: 0.95}]),
+                SHOOT_SETTINGS: combineStats([g.drone, g.sunchip, {reload: 0.5, size: 2, damage: 0.95}]),
                 TYPE: "sunchip",
                 AUTOFIRE: true,
                 SYNCS_SKILLS: true,
