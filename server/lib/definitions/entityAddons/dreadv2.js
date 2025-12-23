@@ -1,4 +1,4 @@
-const { combineStats, dereference, makeAura, makeAuto, makeBody, weaponArray, weaponMirror } = require('../facilitators.js')
+const { combineStats, dereference, makeAura, makeAuto, makeHat, weaponArray, weaponMirror } = require('../facilitators.js')
 const { base, smshskl } = require('../constants.js')
 const g = require('../gunvals.js')
 
@@ -415,7 +415,8 @@ Class.supermissile = {
 }
 
 // Bodies
-Class.colossusBody_dreadsV2 = makeBody([[0.8838834762573242,0.8838834762573242],[0,1.25],[-0.8838834762573242,0.8838834762573242],[-1.25,0],[-0.8838834762573242,-0.8838834762573242],[0,-1.25],[0.8838834762573242,-0.8838834762573242],[1.25,0]], "black", 0)
+Class.colossusBody_dreadsV2 = makeHat([[0.8838834762573242,0.8838834762573242],[0,1.25],[-0.8838834762573242,0.8838834762573242],[-1.25,0],[-0.8838834762573242,-0.8838834762573242],[0,-1.25],[0.8838834762573242,-0.8838834762573242],[1.25,0]], { color: "black" })
+Class.goliathBody_dreadsV2 = makeHat(3.5, { color: "black" })
 
 // Miscellaneous
 Class.hexagonLeviathanTop_dreadsV2 = {
@@ -687,14 +688,14 @@ Class.juggernaut_dreadsV2 = {
 	BODY: hpBuffBodyStats[0],
 	PROPS: [
 		{
-			TYPE: ["circleHat", { COLOR: "mirror" }],
+			TYPE: "circleHat",
 			POSITION: {
 				SIZE: 14.5,
 				LAYER: 1
 			}
 		},
 		{
-			TYPE: "circleBody",
+			TYPE: ["circleHat", { COLOR: "black" }],
 			POSITION: {
 				SIZE: 24
 			}
@@ -1199,8 +1200,6 @@ Class.thermosphere_dreadsV2 = {
 	]
 }
 
-// progressed up to here
-
 // T3 Weapons
 Class.aggressor_dreadsV2 = {
 	PARENT: "genericTrinought",
@@ -1537,39 +1536,65 @@ Class.binary_dreadsV2 = {
 	LABEL: "Binary",
 	TURRETS: [
 		...weaponArray({
-			POSITION: [3.5, 10.5, 0, 60, 180, 2],
+			POSITION: {
+				SIZE: 3.5,
+				X: 10.5,
+				ANGLE: 60,
+				ARC: 180,
+				LAYER: 2
+			},
 			TYPE: ["spamAutoTurret", {GUN_STAT_SCALE: g.triSecondaryAuto}],
 		}, 3),
 		{
-			POSITION: [10, 0, 0, 0, 360, 2],
+			POSITION: {
+				SIZE: 10,
+				ARC: 360,
+				LAYER: 2
+			},
 			TYPE: ["kilobyteTurret_dreadsV2", {GUN_STAT_SCALE: g.triKilobyte}],
-		},
+		}
 	],
 	PROPS: [
 		{
-			POSITION: [13, 0, 0, 180, 1],
-			TYPE: "triangle"
-		},
-	],
+			TYPE: ["triangleHat", { COLOR: "mirror" }],
+			POSITION: {
+				SIZE: 13.5,
+				ANGLE: 180,
+				LAYER: 1
+			}
+		}
+	]
 }
 Class.chromosphere_dreadsV2 = {
 	PARENT: "genericTrinought",
 	LABEL: "Chromosphere",
 	TURRETS: [
 		...weaponArray({
-			POSITION: [3.5, 10.5, 0, 60, 360, 2],
+			POSITION: {
+				SIZE: 3.5,
+				X: 10.5,
+				ANGLE: 60,
+				LAYER: 2
+			},
 			TYPE: "trinoughtSmallAura",
 		}, 3),
 		{
-			POSITION: [9.5, 0, 0, 0, 360, 2],
-			TYPE: "trinoughtBigAura",
-		},
+			POSITION: {
+				SIZE: 9,
+				LAYER: 2
+			},
+			TYPE: "trinoughtBigAura"
+		}
 	],
 	PROPS: [
 		{
-			POSITION: [13, 0, 0, 180, 1],
-			TYPE: "triangle"
-		},
+			TYPE: ["triangleHat", { COLOR: "mirror" }],
+			POSITION: {
+				SIZE: 13,
+				ANGLE: 180,
+				LAYER: 1
+			}
+		}
 	]
 }
 Class.exosphere_dreadsV2 = {
@@ -1588,9 +1613,13 @@ Class.exosphere_dreadsV2 = {
 	],
 	PROPS: [
 		{
-			POSITION: [13, 0, 0, 180, 1],
-			TYPE: "triangle"
-		},
+			TYPE: ["triangleHat", { COLOR: "mirror" }],
+			POSITION: {
+				SIZE: 13,
+				ANGLE: 180,
+				LAYER: 1
+			}
+		}
 	]
 }
 Class.fusion_dreadsV2 = {
@@ -1608,9 +1637,13 @@ Class.fusion_dreadsV2 = {
 	],
 	PROPS: [
 		{
-			POSITION: [13, 0, 0, 180, 1],
-			TYPE: "triangle"
-		},
+			TYPE: ["triangleHat", { COLOR: "mirror" }],
+			POSITION: {
+				SIZE: 13,
+				ANGLE: 180,
+				LAYER: 1
+			}
+		}
 	]
 }
 Class.goliath_dreadsV2 = {
@@ -1619,13 +1652,21 @@ Class.goliath_dreadsV2 = {
 	BODY: hpBuffBodyStats[2],
 	PROPS: [
 		{
-			POSITION: [14, 0, 0, 180, 1],
-			TYPE: ['triangle', {COLOR: 9}]
-		}, {
-			POSITION: [24, 0, 0, 180, 0],
-			TYPE: ['triangle', {COLOR: 9}]
+			TYPE: ["triangleHat", { color: "black" }],
+			POSITION: {
+				SIZE: 14.5,
+				ANGLE: 180,
+				LAYER: 1
+			}
 		},
-	],
+		{
+			TYPE: ["triangleHat", { color: "black" }],
+			POSITION: {
+				SIZE: 24,
+				ANGLE: 180
+			}
+		}
+	]
 }
 Class.hardware_dreadsV2 = {
 	PARENT: "genericTrinought",
@@ -2423,9 +2464,9 @@ Class.dreadnought_dreadsV2.UPGRADES_TIER_0 = [
 	["peacekeeper2_dreadsV2", "dreadBody_dreadsV2"],
 	["invader2_dreadsV2", "dreadBody_dreadsV2"],
 	["centaur2_dreadsV2", "dreadBody_dreadsV2"],
-];
+]
 
-Class.dreadWeapon_dreadsV2.UPGRADES_TIER_0 = ["sword_dreadsV2", "pacifier_dreadsV2", "peacekeeper_dreadsV2", "invader_dreadsV2", "centaur_dreadsV2"];
+Class.dreadWeapon_dreadsV2.UPGRADES_TIER_0 = ["sword_dreadsV2", "pacifier_dreadsV2", "peacekeeper_dreadsV2", "invader_dreadsV2", "centaur_dreadsV2"]
 */
 
 Class.menu_addons.UPGRADES_TIER_0.push("dreadnought_dreadsV2")
