@@ -273,7 +273,7 @@ global.runFace = (() => {
                     let reverse = my.master.master.reverseTargetWithTank ? 1 : my.master.master.reverseTank;
                     let angleValue = Math.atan2(t.y * reverse, t.x * reverse);
                     if (isNaN(angleValue)) givenangle = Math.atan2(0, 0);
-                    else givenangle = Math.atan2(t.y * reverse, t.x * reverse);
+                    else givenangle = angleValue;
                 } else {
                     givenangle = Math.atan2(t.y, t.x);
                 }
