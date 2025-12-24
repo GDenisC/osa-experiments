@@ -280,37 +280,43 @@ function toPascalCase(input) {
 }
 exports.makeDrive = (type, name = -1, options = {}) => {
     type = ensureIsClass(type);
+
+    options.type ??= "droneAutoTurret"
+    options.independent ??= true
+    options.color ??= "grey"
+    options.total ??= 1
+    options.size ??= 10
+    options.x ??= 0
+    options.y ??= 0
+    options.angle ??= 180
+
+    options.hatType ??= "squareHat"
+    options.hatColor ??= "grey"
+    options.hatSize ??= 9
+    options.hatAngle ??= 0
+
     let turret = {
-        type: "droneAutoTurret",
-        independent: true,
-        color: "grey",
-        size: 10,
-        x: 0,
-        y: 0,
-        angle: 180,
-        total: 1,
-    };
+        type: options.type,
+        independent: options.independent,
+        color: options.color,
+        total: options.total,
+        size: options.size,
+        x: options.x,
+        y: options.y,
+        angle: options.angle
+    }
 
-    options.type ??= turret.type
-    options.independent ??= turret.independent
-    options.color ??= turret.color
-    options.total ??= turret.total
-    options.size ??= turret.size
-    options.x ??= turret.x
-    options.y ??= turret.y
-    options.angle ??= turret.angle
-    options.hat ??= ["squareHat", { COLOR: turret.color }]
-
-    let output = exports.dereference(type);
-    let bodyDeco = [
+    let output = exports.dereference(type)
+    let hat = [
         {
-            TYPE: options.hat,
+            TYPE: [options.hatType, { COLOR: options.hatColor }],
             POSITION: {
-                SIZE: 9,
+                SIZE: options.hatSize,
+                ANGLE: options.hatAngle,
                 LAYER: 1
             }
         }
-    ];
+    ]
 
     let GUNS = output.GUNS;
     for (let gun of GUNS) {
@@ -327,9 +333,9 @@ exports.makeDrive = (type, name = -1, options = {}) => {
         output.GUNS = GUNS;
     }
     if (type.TURRETS == null) {
-        output.TURRETS = [...bodyDeco];
+        output.TURRETS = [...hat];
     } else {
-        output.TURRETS = [...type.TURRETS, ...bodyDeco];
+        output.TURRETS = [...type.TURRETS, ...hat];
     }
     if (name == -1) {
         output.LABEL = type.LABEL + "drive";
