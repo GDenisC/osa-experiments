@@ -370,7 +370,7 @@ class io_mapFireToAlt extends IO {
         this.onlyIfHasAltFireGun = opts.onlyIfHasAltFireGun;
     }
     think(input) {
-        if (input.fire) for (let i = 0; i < this.body.guns.length; i++) if (!this.onlyIfHasAltFireGun || this.body.guns[i].altFire) return { alt: true }
+        if (input.fire) for (let i = 0; i < this.body.gunsArrayed.length; i++) if (!this.onlyIfHasAltFireGun || this.body.gunsArrayed[i].altFire) return { alt: true }
     }
 }
 class io_onlyAcceptInArc extends IO {
