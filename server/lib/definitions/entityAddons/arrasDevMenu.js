@@ -183,7 +183,7 @@ Class.arrasMenu_scrapped.UPGRADES_TIER_0 = [
     "autoTrapper",
     "megaTrapper_AR",
     "railgun_AR",
-    "megaSpawner",
+    "megaSpawner_AR",
     "dreadnought_old",
 ]
 
@@ -196,7 +196,7 @@ Class.arrasMenu_scrapped2.UPGRADES_TIER_0 = [
     "prodigy",
     "spawnerdrive_AR",
     "rimfire_AR",
-    //"productionist_AR",
+    "productionist_AR",
     "vulture",
 ]
 

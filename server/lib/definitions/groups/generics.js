@@ -134,16 +134,16 @@ Class.genericFlail = {
     STAT_NAMES: statnames.flail,
     SYNC_WITH_TANK: true,
     SKILL_CAP: {
-        RELOAD: dfltskl,
-        PENETRATION: dfltskl,
-        BULLET_HEALTH: 0,
-        BULLET_DAMAGE: dfltskl,
-        BULLET_SPEED: 0,
-        SHIELD_CAPACITY: dfltskl,
         BODY_DAMAGE: dfltskl,
         MAX_HEALTH: dfltskl,
+        BULLET_SPEED: 0,
+        BULLET_HEALTH: 0,
+        PENETRATION: dfltskl,
+        BULLET_DAMAGE: dfltskl,
+        RELOAD: dfltskl,
+        MOVEMENT_SPEED: dfltskl,
         SHIELD_REGENERATION: dfltskl,
-        MOVEMENT_SPEED: dfltskl
+        SHIELD_CAPACITY: dfltskl
     },
 }
 Class.genericHealer = {

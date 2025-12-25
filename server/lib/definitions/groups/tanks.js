@@ -995,8 +995,7 @@ Class.overseer = {
         SPEED: 0.9 * base.SPEED,
         FOV: 1.1 * base.FOV,
     },
-    MAX_CHILDREN: 8,
-    GUNS: weaponArray({
+    GUNS: weaponMirror({
         POSITION: {
             LENGTH: 6,
             WIDTH: 12,
@@ -1010,9 +1009,10 @@ Class.overseer = {
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
             STAT_CALCULATOR: "drone",
-            WAIT_TO_CYCLE: true
+            WAIT_TO_CYCLE: true,
+            MAX_CHILDREN: 4
         }
-    }, 2)
+    })
 }
 Class.repeater = {
     PARENT: "genericTank",
@@ -3629,35 +3629,6 @@ Class.megaSmasher = {
             POSITION: { SIZE: 25 }
         }
     ]
-}
-Class.megaSpawner = {
-    PARENT: "genericTank",
-    LABEL: "Mega-Spawner",
-    DANGER: 7,
-    STAT_NAMES: statnames.drone,
-    BODY: {
-        SPEED: base.SPEED * 0.8,
-        FOV: base.FOV * 1.1,
-    },
-    GUNS: [
-        {
-            POSITION: [4.5, 12, 1, 10.5, 0, 0, 0],
-        },
-        {
-            POSITION: [4.5, 14, 1, 7, 0, 0, 0],
-        },
-        {
-            POSITION: [1, 14, 1, 15, 0, 0, 0],
-            PROPERTIES: {
-                MAX_CHILDREN: 4,
-                SHOOT_SETTINGS: combineStats([g.factory, g.babyfactory, {size: 0.833 }]),
-                TYPE: "megaMinion",
-                STAT_CALCULATOR: "drone",
-                AUTOFIRE: true,
-                SYNCS_SKILLS: true,
-            },
-        },
-    ],
 }
 Class.megaTornado = {
     PARENT: "genericTank",

@@ -435,6 +435,7 @@ exports.makeTurret = (type, options = {}) => {
     - hasAI: whether or not the auto turret can think and shoot on its own
     - extraStats: array of stats to append onto the shoot settings of all of the turret's guns
     - label: turret label
+    - shape: turret body shape
     - color: turret color
     - fov: turret FOV
     - independent: turret independence
@@ -470,6 +471,7 @@ exports.makeTurret = (type, options = {}) => {
     return {
         PARENT: 'genericTank',
         LABEL: options.label ?? "",
+        SHAPE: options.shape ?? 0,
         COLOR: options.color ?? "grey",
         BODY: { FOV: options.fov ?? 2 },
         INDEPENDENT: options.independent ?? false,

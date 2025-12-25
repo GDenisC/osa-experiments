@@ -1,9 +1,9 @@
-const { combineStats, makeAuto, makeDrive, makeOver, makeRadialAuto, makeTurret, weaponArray, weaponMirror, weaponStack } = require('../facilitators.js')
+const { combineStats, makeAuto, makeDrive, makeHat, makeOver, makeRadialAuto, makeTurret, weaponArray, weaponMirror, weaponStack } = require('../facilitators.js')
 const { base, statnames } = require('../constants.js')
 const g = require('../gunvals.js')
 
 // Settings
-const enable_addon = false
+const enable_addon = true
 const integrate_healers = false
 const use_original_tree = false // Set to true to enable the original arras.io Arms Race tree and level cap, with some minor bugfixes.
 
@@ -103,13 +103,12 @@ const trapGuard_rear = [
 // Credits
 // - u/SkyShredder89: Default Tier 3/4 Sprayer upgrades
 
-// Bodies
-Class.bangerBody_AR = {
-    PARENT: "smasherBody",
-    SHAPE: [[1,0],[0.9499300122261047,0.04666706919670105],[0.9144831299781799,0.09006872773170471],[0.8830859661102295,0.13099342584609985],[0.8547371625900269,0.1700177937746048],[0.8292582631111145,0.2077183872461319],[0.8066451549530029,0.24469313025474548],[0.786886990070343,0.28155267238616943],[0.7698996067047119,0.318902850151062],[0.7555009126663208,0.35732531547546387],[0.7434084415435791,0.39736008644104004],[0.7332532405853271,0.4394950866699219],[0.7246111631393433,0.48416969180107117],[0.7170624136924744,0.5318097472190857],[0.7103254199028015,0.5829489827156067],[0.7047005295753479,0.6387033462524414],[0.7071067690849304,0.7071067690849304],[0.6387033462524414,0.7047005295753479],[0.5829489827156067,0.7103254199028015],[0.5318097472190857,0.7170624136924744],[0.48416969180107117,0.7246111631393433],[0.4394950866699219,0.7332532405853271],[0.39736008644104004,0.7434084415435791],[0.35732531547546387,0.7555009126663208],[0.318902850151062,0.7698996067047119],[0.28155267238616943,0.786886990070343],[0.24469313025474548,0.8066451549530029],[0.2077183872461319,0.8292582631111145],[0.1700177937746048,0.8547371625900269],[0.13099342584609985,0.8830859661102295],[0.09006872773170471,0.9144831299781799],[0.04666706919670105,0.9499300122261047],[6.123234262925839e-17,1],[-0.04666706919670105,0.9499300122261047],[-0.09006872773170471,0.9144831299781799],[-0.13099342584609985,0.8830859661102295],[-0.1700177937746048,0.8547371625900269],[-0.2077183872461319,0.8292582631111145],[-0.24469313025474548,0.8066451549530029],[-0.28155267238616943,0.786886990070343],[-0.318902850151062,0.7698996067047119],[-0.35732531547546387,0.7555009126663208],[-0.39736008644104004,0.7434084415435791],[-0.4394950866699219,0.7332532405853271],[-0.48416969180107117,0.7246111631393433],[-0.5318097472190857,0.7170624136924744],[-0.5829489827156067,0.7103254199028015],[-0.6387033462524414,0.7047005295753479],[-0.7071067690849304,0.7071067690849304],[-0.7047005295753479,0.6387033462524414],[-0.7103254199028015,0.5829489827156067],[-0.7170624136924744,0.5318097472190857],[-0.7246111631393433,0.48416969180107117],[-0.7332532405853271,0.4394950866699219],[-0.7434084415435791,0.39736008644104004],[-0.7555009126663208,0.35732531547546387],[-0.7698996067047119,0.318902850151062],[-0.786886990070343,0.28155267238616943],[-0.8066451549530029,0.24469313025474548],[-0.8292582631111145,0.2077183872461319],[-0.8547371625900269,0.1700177937746048],[-0.8830859661102295,0.13099342584609985],[-0.9144831299781799,0.09006872773170471],[-0.9499300122261047,0.04666706919670105],[-1,1.2246468525851679e-16],[-0.9499300122261047,-0.04666706919670105],[-0.9144831299781799,-0.09006872773170471],[-0.8830859661102295,-0.13099342584609985],[-0.8547371625900269,-0.1700177937746048],[-0.8292582631111145,-0.2077183872461319],[-0.8066451549530029,-0.24469313025474548],[-0.786886990070343,-0.28155267238616943],[-0.7698996067047119,-0.318902850151062],[-0.7555009126663208,-0.35732531547546387],[-0.7434084415435791,-0.39736008644104004],[-0.7332532405853271,-0.4394950866699219],[-0.7246111631393433,-0.48416969180107117],[-0.7170624136924744,-0.5318097472190857],[-0.7103254199028015,-0.5829489827156067],[-0.7047005295753479,-0.6387033462524414],[-0.7071067690849304,-0.7071067690849304],[-0.6387033462524414,-0.7047005295753479],[-0.5829489827156067,-0.7103254199028015],[-0.5318097472190857,-0.7170624136924744],[-0.48416969180107117,-0.7246111631393433],[-0.4394950866699219,-0.7332532405853271],[-0.39736008644104004,-0.7434084415435791],[-0.35732531547546387,-0.7555009126663208],[-0.318902850151062,-0.7698996067047119],[-0.28155267238616943,-0.786886990070343],[-0.24469313025474548,-0.8066451549530029],[-0.2077183872461319,-0.8292582631111145],[-0.1700177937746048,-0.8547371625900269],[-0.13099342584609985,-0.8830859661102295],[-0.09006872773170471,-0.9144831299781799],[-0.04666706919670105,-0.9499300122261047],[-1.8369701465288538e-16,-1],[0.04666706919670105,-0.9499300122261047],[0.09006872773170471,-0.9144831299781799],[0.13099342584609985,-0.8830859661102295],[0.1700177937746048,-0.8547371625900269],[0.2077183872461319,-0.8292582631111145],[0.24469313025474548,-0.8066451549530029],[0.28155267238616943,-0.786886990070343],[0.318902850151062,-0.7698996067047119],[0.35732531547546387,-0.7555009126663208],[0.39736008644104004,-0.7434084415435791],[0.4394950866699219,-0.7332532405853271],[0.48416969180107117,-0.7246111631393433],[0.5318097472190857,-0.7170624136924744],[0.5829489827156067,-0.7103254199028015],[0.6387033462524414,-0.7047005295753479],[0.7071067690849304,-0.7071067690849304],[0.7047005295753479,-0.6387033462524414],[0.7103254199028015,-0.5829489827156067],[0.7170624136924744,-0.5318097472190857],[0.7246111631393433,-0.48416969180107117],[0.7332532405853271,-0.4394950866699219],[0.7434084415435791,-0.39736008644104004],[0.7555009126663208,-0.35732531547546387],[0.7698996067047119,-0.318902850151062],[0.786886990070343,-0.28155267238616943],[0.8066451549530029,-0.24469313025474548],[0.8292582631111145,-0.2077183872461319],[0.8547371625900269,-0.1700177937746048],[0.8830859661102295,-0.13099342584609985],[0.9144831299781799,-0.09006872773170471],[0.9499300122261047,-0.04666706919670105]],
-}
+// Hats
+Class.bangerBody_AR = makeHat([[1,0],[0.9499300122261047,0.04666706919670105],[0.9144831299781799,0.09006872773170471],[0.8830859661102295,0.13099342584609985],[0.8547371625900269,0.1700177937746048],[0.8292582631111145,0.2077183872461319],[0.8066451549530029,0.24469313025474548],[0.786886990070343,0.28155267238616943],[0.7698996067047119,0.318902850151062],[0.7555009126663208,0.35732531547546387],[0.7434084415435791,0.39736008644104004],[0.7332532405853271,0.4394950866699219],[0.7246111631393433,0.48416969180107117],[0.7170624136924744,0.5318097472190857],[0.7103254199028015,0.5829489827156067],[0.7047005295753479,0.6387033462524414],[0.7071067690849304,0.7071067690849304],[0.6387033462524414,0.7047005295753479],[0.5829489827156067,0.7103254199028015],[0.5318097472190857,0.7170624136924744],[0.48416969180107117,0.7246111631393433],[0.4394950866699219,0.7332532405853271],[0.39736008644104004,0.7434084415435791],[0.35732531547546387,0.7555009126663208],[0.318902850151062,0.7698996067047119],[0.28155267238616943,0.786886990070343],[0.24469313025474548,0.8066451549530029],[0.2077183872461319,0.8292582631111145],[0.1700177937746048,0.8547371625900269],[0.13099342584609985,0.8830859661102295],[0.09006872773170471,0.9144831299781799],[0.04666706919670105,0.9499300122261047],[6.123234262925839e-17,1],[-0.04666706919670105,0.9499300122261047],[-0.09006872773170471,0.9144831299781799],[-0.13099342584609985,0.8830859661102295],[-0.1700177937746048,0.8547371625900269],[-0.2077183872461319,0.8292582631111145],[-0.24469313025474548,0.8066451549530029],[-0.28155267238616943,0.786886990070343],[-0.318902850151062,0.7698996067047119],[-0.35732531547546387,0.7555009126663208],[-0.39736008644104004,0.7434084415435791],[-0.4394950866699219,0.7332532405853271],[-0.48416969180107117,0.7246111631393433],[-0.5318097472190857,0.7170624136924744],[-0.5829489827156067,0.7103254199028015],[-0.6387033462524414,0.7047005295753479],[-0.7071067690849304,0.7071067690849304],[-0.7047005295753479,0.6387033462524414],[-0.7103254199028015,0.5829489827156067],[-0.7170624136924744,0.5318097472190857],[-0.7246111631393433,0.48416969180107117],[-0.7332532405853271,0.4394950866699219],[-0.7434084415435791,0.39736008644104004],[-0.7555009126663208,0.35732531547546387],[-0.7698996067047119,0.318902850151062],[-0.786886990070343,0.28155267238616943],[-0.8066451549530029,0.24469313025474548],[-0.8292582631111145,0.2077183872461319],[-0.8547371625900269,0.1700177937746048],[-0.8830859661102295,0.13099342584609985],[-0.9144831299781799,0.09006872773170471],[-0.9499300122261047,0.04666706919670105],[-1,1.2246468525851679e-16],[-0.9499300122261047,-0.04666706919670105],[-0.9144831299781799,-0.09006872773170471],[-0.8830859661102295,-0.13099342584609985],[-0.8547371625900269,-0.1700177937746048],[-0.8292582631111145,-0.2077183872461319],[-0.8066451549530029,-0.24469313025474548],[-0.786886990070343,-0.28155267238616943],[-0.7698996067047119,-0.318902850151062],[-0.7555009126663208,-0.35732531547546387],[-0.7434084415435791,-0.39736008644104004],[-0.7332532405853271,-0.4394950866699219],[-0.7246111631393433,-0.48416969180107117],[-0.7170624136924744,-0.5318097472190857],[-0.7103254199028015,-0.5829489827156067],[-0.7047005295753479,-0.6387033462524414],[-0.7071067690849304,-0.7071067690849304],[-0.6387033462524414,-0.7047005295753479],[-0.5829489827156067,-0.7103254199028015],[-0.5318097472190857,-0.7170624136924744],[-0.48416969180107117,-0.7246111631393433],[-0.4394950866699219,-0.7332532405853271],[-0.39736008644104004,-0.7434084415435791],[-0.35732531547546387,-0.7555009126663208],[-0.318902850151062,-0.7698996067047119],[-0.28155267238616943,-0.786886990070343],[-0.24469313025474548,-0.8066451549530029],[-0.2077183872461319,-0.8292582631111145],[-0.1700177937746048,-0.8547371625900269],[-0.13099342584609985,-0.8830859661102295],[-0.09006872773170471,-0.9144831299781799],[-0.04666706919670105,-0.9499300122261047],[-1.8369701465288538e-16,-1],[0.04666706919670105,-0.9499300122261047],[0.09006872773170471,-0.9144831299781799],[0.13099342584609985,-0.8830859661102295],[0.1700177937746048,-0.8547371625900269],[0.2077183872461319,-0.8292582631111145],[0.24469313025474548,-0.8066451549530029],[0.28155267238616943,-0.786886990070343],[0.318902850151062,-0.7698996067047119],[0.35732531547546387,-0.7555009126663208],[0.39736008644104004,-0.7434084415435791],[0.4394950866699219,-0.7332532405853271],[0.48416969180107117,-0.7246111631393433],[0.5318097472190857,-0.7170624136924744],[0.5829489827156067,-0.7103254199028015],[0.6387033462524414,-0.7047005295753479],[0.7071067690849304,-0.7071067690849304],[0.7047005295753479,-0.6387033462524414],[0.7103254199028015,-0.5829489827156067],[0.7170624136924744,-0.5318097472190857],[0.7246111631393433,-0.48416969180107117],[0.7332532405853271,-0.4394950866699219],[0.7434084415435791,-0.39736008644104004],[0.7555009126663208,-0.35732531547546387],[0.7698996067047119,-0.318902850151062],[0.786886990070343,-0.28155267238616943],[0.8066451549530029,-0.24469313025474548],[0.8292582631111145,-0.2077183872461319],[0.8547371625900269,-0.1700177937746048],[0.8830859661102295,-0.13099342584609985],[0.9144831299781799,-0.09006872773170471],[0.9499300122261047,-0.04666706919670105]], { color: "black", rotationSpeed: 0.16 })
+Class.crusierdriveHat_AR = makeHat(3.5, { color: "grey" })
 
 // Turrets
+Class.driveAutoTurret = { PARENT: "autoTurret", SHAPE: 4 }
 Class.healerAutoTankGun = makeTurret({
     GUNS: [
         {
@@ -141,6 +140,22 @@ Class.healerAutoTankGun = makeTurret({
         }
     ],
 }, {canRepel: true, limitFov: true, fov: 3})
+Class.stormSquare = makeTurret({
+    GUNS: weaponMirror({
+        POSITION: {
+            LENGTH: 9,
+            WIDTH: 8.2,
+            ASPECT: 0.6,
+            X: 5,
+            ANGLE: 90
+        },
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.swarm]),
+            TYPE: "swarm",
+            STAT_CALCULATOR: "swarm"
+        }
+    })
+}, {label: "Storm Square", shape: 4, fov: 0.8, extraStats: []})
 
 // Tier 2
 Class.diesel_AR = {
@@ -336,12 +351,15 @@ Class.analyzer_AR = {
 }
 Class.autoArtillery_AR = makeAuto("artillery")
 Class.autoAuto3_AR = makeAuto("auto3")
+Class.autoDestroyer_AR = makeAuto("destroyer")
 Class.autoDiesel_AR = makeAuto("diesel_AR")
+Class.autoDirectordrive_AR = makeAuto("directordrive_AR", "Auto-Directordrive", { type: "driveAutoTurret", size: 9 })
 Class.autoDoper_AR = makeAuto("doper_AR")
 Class.autoHelix_AR = makeAuto("helix")
 Class.autoHexaTank_AR = makeAuto("hexaTank")
 Class.autoHoncho_AR = makeAuto("honcho_AR")
 Class.autoHunter_AR = makeAuto("hunter")
+Class.autoLauncher_AR = makeAuto("launcher")
 Class.autoMachineTrapper_AR = makeAuto("machineTrapper_AR")
 Class.autoMech_AR = makeAuto("mech_AR")
 Class.autoMinigun_AR = makeAuto("minigun")
@@ -355,6 +373,21 @@ Class.autoTripleShot_AR = makeAuto("tripleShot")
 Class.autoUnderseer_AR = makeAuto("underseer")
 Class.autoVolute_AR = makeAuto("volute")
 Class.autoWark_AR = makeAuto("wark_AR")
+Class.baltimore_AR = {
+    PARENT: "genericTank",
+    LABEL: "Baltimore",
+    DANGER: 7,
+    STAT_NAMES: statnames.swarm,
+    GUNS: weaponMirror({
+        POSITION: {
+            LENGTH: 12.,
+            WIDTH: 8.7,
+            ASPECT: 0.75,
+            X: 3,
+            Y: 4.6
+        }
+    }, { delayIncrement: 0.5 })
+}
 Class.banger_AR = {
     PARENT: "genericSmasher",
     LABEL: "Banger",
@@ -488,16 +521,7 @@ Class.blower_AR = {
     LABEL: "Blower",
     DANGER: 7,
     GUNS: [
-        {
-            POSITION: {
-                LENGTH: 20.5,
-                WIDTH: 14
-            },
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer]),
-                TYPE: "bullet"
-            }
-        },
+        ...Class.destroyer.GUNS,
         ...pelleter_rear
     ]
 }
@@ -513,32 +537,40 @@ Class.bonker_AR = {
         }
     ]
 }
-Class.buttbuttin_AR = {
+Class.brisker_AR = {
     PARENT: "genericTank",
-    LABEL: "Buttbuttin",
+    LABEL: "Brisker",
     DANGER: 7,
+    STAT_NAMES: statnames.drone,
     BODY: {
-        SPEED: 0.85 * base.SPEED,
-        FOV: 1.4 * base.FOV
+        FOV: base.FOV * 1.1
     },
     GUNS: [
         {
             POSITION: {
-                LENGTH: 27,
-                WIDTH: 8
-            },
-            PROPERTIES: {
-                SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.assassin]),
-                TYPE: "bullet"
+                LENGTH: 5,
+                WIDTH: 11,
+                ASPECT: 1.3,
+                X: 8
             }
         },
         {
             POSITION: {
-                LENGTH: 13,
-                WIDTH: 8,
-                ASPECT: -2.2
+                LENGTH: 7,
+                WIDTH: 0.5,
+                ASPECT: -5,
+                X: 8
             }
-        },
+        }
+    ]
+}
+Class.buttbuttin_AR = {
+    PARENT: "genericTank",
+    LABEL: "Buttbuttin",
+    DANGER: 7,
+    BODY: Class.assassin.BODY,
+    GUNS: [
+        ...Class.assassin.GUNS,
         ...pelleter_rear
     ]
 }
@@ -610,6 +642,30 @@ Class.charger_AR = {
                 WIDTH: 4,
                 ASPECT: 0.001,
                 X: 18
+            }
+        }
+    ]
+}
+Class.cluster_AR = {
+    PARENT: "genericTank",
+    LABEL: "Cluster",
+    DANGER: 7,
+    BODY: {
+        FOV: base.FOV * 1.1
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 19.5,
+                WIDTH: 16,
+                ASPECT: 0.5
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 17,
+                WIDTH: 14,
+                ASPECT: 1.2
             }
         }
     ]
@@ -789,6 +845,7 @@ Class.crowbar_AR = {
         }
     ]
 }
+Class.cruiserdrive_AR = makeDrive("cruiser", "Cruiserdrive", { hatType: "triangleHat", hatSize: 8, hatAngle: 180 })
 Class.deathStar_AR = {
     PARENT: "genericTank",
     LABEL: "Death Star",
@@ -875,6 +932,7 @@ Class.dieselTrapper_AR = {
         }
     ]
 }
+Class.directorstorm_AR = makeDrive("director", "Directorstorm", { hatType: "stormSquare" })
 Class.discharger_AR = {
     PARENT: "genericTank",
     LABEL: "Discharger",
@@ -905,6 +963,37 @@ Class.discharger_AR = {
             }
         }
     ]
+}
+Class.doperdrive_AR = makeDrive("doper_AR")
+Class.dopeseer_AR = {
+    PARENT: "genericTank",
+    LABEL: "Dopeseer",
+    DANGER: 7,
+    STAT_NAMES: statnames.drone,
+    BODY: {
+        SPEED: 0.9 * base.SPEED,
+        FOV: 1.1 * base.FOV,
+    },
+    GUNS: weaponMirror([
+        {
+            POSITION: {
+                LENGTH: 6,
+                WIDTH: 12,
+                ASPECT: 1.2,
+                X: 8.,
+                ANGLE: 90
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 6,
+                WIDTH: 1,
+                ASPECT: -5,
+                X: 9,
+                ANGLE: 90
+            }
+        }
+    ])
 }
 Class.doubleFlankTwin_AR = {
     PARENT: "genericTank",
@@ -1337,6 +1426,37 @@ Class.forger_AR = {
         }
     ]
 }
+Class.foundry_AR = {
+    PARENT: "genericTank",
+    LABEL: "Foundry",
+    DANGER: 7,
+    STAT_NAMES: statnames.drone,
+    BODY: {
+        SPEED: base.SPEED * 0.8,
+        FOV: base.FOV * 1.1
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 15,
+                WIDTH: 15
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 1,
+                WIDTH: 17,
+                X: 15
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 11.5,
+                WIDTH: 17
+            }
+        }
+    ]
+}
 Class.frother_AR = {
     PARENT: "genericTank",
     LABEL: "Frother",
@@ -1375,7 +1495,50 @@ Class.frother_AR = {
         }
     ]
 }
-Class.hitman_AR = makeOver("assassin", "Hitman", hybrid_options)
+Class.hangar_AR = {
+    PARENT: "genericTank",
+    LABEL: "Hangar",
+    DANGER: 7,
+    FACING_TYPE: "locksFacing",
+    STAT_NAMES: statnames.mixed,
+    BODY: {
+        SPEED: base.SPEED * 0.8,
+        FOV: base.FOV * 1.2
+    },
+    GUNS: [
+        ...weaponMirror({
+            POSITION: {
+                LENGTH: 8.5,
+                WIDTH: 8.2,
+                ASPECT: 0.6,
+                X: 3,
+                Y: 5.5
+            }
+        }, { delayIncrement: 0.5 }),
+        {
+            POSITION: {
+                LENGTH: 4.5,
+                WIDTH: 10,
+                X: 10.5
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 1,
+                WIDTH: 12,
+                X: 15
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 3.5,
+                WIDTH: 12,
+                X: 8
+            }
+        }
+    ]
+}
+Class.heaver_AR = makeOver("launcher", "Heaver", hybrid_options)
 Class.helicopter_AR = {
     PARENT: "genericTank",
     LABEL: "Helicopter",
@@ -1420,6 +1583,31 @@ Class.helicopter_AR = {
         }
         return output
     })()
+}
+Class.hitman_AR = makeOver("assassin", "Hitman", hybrid_options)
+Class.honchodrive_AR = makeDrive("honcho_AR")
+Class.hurler_AR = {
+    PARENT: "genericTank",
+    LABEL: "Hurler",
+    DANGER: 7,
+    BODY: {
+        FOV: base.FOV * 1.1
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 19.2,
+                WIDTH: 16,
+                ASPECT: 0.7
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 17,
+                WIDTH: 16
+            }
+        }
+    ]
 }
 Class.hutch_AR = {
     PARENT: "genericTank",
@@ -1482,8 +1670,79 @@ Class.incarcerator_AR = {
         }
     ]
 }
+Class.inception_AR = {
+    PARENT: "genericTank",
+    LABEL: "Inception",
+    DANGER: 7,
+    BODY: {
+        FOV: base.FOV * 1.1
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 19.2,
+                WIDTH: 13,
+                ASPECT: 0.7
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 17,
+                WIDTH: 13
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 4,
+                WIDTH: 8,
+                X: 13
+            }
+        }
+    ]
+}
 Class.integrator_AR = makeOver("triAngle", "Integrator", hybrid_options)
 Class.interner_AR = makeOver("pen_AR", "Interner", hybrid_options)
+Class.issuer_AR = {
+    PARENT: "genericTank",
+    LABEL: "Issuer",
+    DANGER: 7,
+    STAT_NAMES: statnames.drone,
+    BODY: {
+        SPEED: base.SPEED * 0.8,
+        FOV: base.FOV * 1.1
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 4.5,
+                WIDTH: 10,
+                X: 10.5
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 1,
+                WIDTH: 12,
+                X: 15
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 3.5,
+                WIDTH: 12,
+                X: 8
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 6,
+                WIDTH: 1,
+                ASPECT: -5,
+                X: 8
+            }
+        }
+    ]
+}
 Class.jalopy_AR = {
     PARENT: "genericTank",
     LABEL: "Jalopy",
@@ -1496,6 +1755,68 @@ Class.jalopy_AR = {
                 ASPECT: 1.8,
                 X: 6,
                 ANGLE: 0
+            }
+        }
+    ]
+}
+Class.junkie_AR = {
+    PARENT: "genericTank",
+    LABEL: "Junkie",
+    DANGER: 7,
+    STAT_NAMES: statnames.drone,
+    BODY: {
+        FOV: base.FOV * 1.1
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 11,
+                WIDTH: 14,
+                ASPECT: 1.3,
+                X: 2
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 6,
+                WIDTH: 1,
+                ASPECT: -5,
+                X: 8
+            }
+        }
+    ]
+}
+Class.laborer_AR = {
+    PARENT: "genericTank",
+    LABEL: "Laborer",
+    DANGER: 7,
+    STAT_NAMES: statnames.drone,
+    BODY: {
+        SPEED: base.SPEED * 0.8,
+        FOV: base.FOV * 1.1
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 4.5,
+                WIDTH: 10,
+                ASPECT: 1.2,
+                X: 10.5
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 1,
+                WIDTH: 12,
+                X: 15
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 5.5,
+                WIDTH: 11,
+                ASPECT: -1.3,
+                X: 6
             }
         }
     ]
@@ -1614,6 +1935,45 @@ Class.megaHunter_AR = {
         }
     ]
 }
+Class.megaSpawner_AR = {
+    PARENT: "genericTank",
+    LABEL: "Mega-Spawner",
+    DANGER: 7,
+    STAT_NAMES: statnames.drone,
+    BODY: {
+        SPEED: base.SPEED * 0.8,
+        FOV: base.FOV * 1.1
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 15,
+                WIDTH: 13
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 11.5,
+                WIDTH: 15
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 1,
+                WIDTH: 15,
+                X: 15
+            },
+            PROPERTIES: {
+                MAX_CHILDREN: 4,
+                SHOOT_SETTINGS: combineStats([g.factory, g.babyfactory, {size: 0.8 }]),
+                TYPE: "megaMinion",
+                STAT_CALCULATOR: "drone",
+                AUTOFIRE: true,
+                SYNCS_SKILLS: true
+            }
+        }
+    ]
+}
 Class.megaTrapper_AR = {
     PARENT: "genericTank",
     LABEL: "Mega Trapper",
@@ -1669,6 +2029,32 @@ Class.mingler_AR = {
             }
         }
     ], 6, 0.5)
+}
+Class.mosey_AR = {
+    PARENT: "genericTank",
+    LABEL: "Mosey",
+    DANGER: 7,
+    STAT_NAMES: statnames.swarm,
+    GUNS: weaponMirror([
+        {
+            POSITION: {
+                LENGTH: 9,
+                WIDTH: 8.2,
+                ASPECT: 0.6,
+                X: 5,
+                Y: 4
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 7,
+                WIDTH: 1,
+                ASPECT: -2.5,
+                X: 8,
+                Y: 4
+            }
+        }
+    ], { delayIncrement: 0.5 })
 }
 Class.nurse_AR = {
     PARENT: "genericHealer",
@@ -1778,6 +2164,43 @@ Class.pentaseer_AR = {
         }
     })
 }
+Class.pitcher_AR = {
+    PARENT: "genericTank",
+    LABEL: "Pitcher",
+    DANGER: 7,
+    BODY: {
+        FOV: base.FOV * 1.1
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 19.2,
+                WIDTH: 13,
+                ASPECT: 0.7
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 17,
+                WIDTH: 13
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 13,
+                WIDTH: 5,
+                Y: 4
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 13,
+                WIDTH: 5,
+                Y: -4
+            }
+        }
+    ]
+}
 Class.polluter_AR = makeOver("diesel_AR", "Polluter", hybrid_options)
 Class.prober_AR = {
     PARENT: "genericTank",
@@ -1804,47 +2227,84 @@ Class.prober_AR = {
         }
     ]
 }
-Class.productionist = {
-        PARENT: "genericTank",
-        LABEL: "Productionist",
-        DANGER: 7,
-        STAT_NAMES: statnames.drone,
-        BODY: {
-            SPEED: base.SPEED * 0.75,
-            FOV: 1.1,
+Class.productionist_AR = {
+    PARENT: "genericTank",
+    LABEL: "Productionist",
+    DANGER: 7,
+    STAT_NAMES: statnames.swarm,
+    BODY: {
+        SPEED: base.SPEED * 0.75,
+        FOV: 1.2,
+    },
+    GUNS: weaponMirror([
+        {
+            POSITION: {
+                LENGTH: 14.5,
+                WIDTH: 6,
+                Y: 5.2
+            }
         },
-        GUNS: [
-            {
-                POSITION: [4.5, 6, 1, 10, 4.75, 0, 0],
+        {
+            POSITION: {
+                LENGTH: 11,
+                WIDTH: 8,
+                ASPECT: -1.2,
+                Y: 5.2
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 1,
+                WIDTH: 8,
+                X: 14.5,
+                Y: 5.2
             },
-            {
-                POSITION: [1, 7.25, 1, 14.25, 4.75, 0, 0],
-                PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.productionist]),
-                    TYPE: "tinyMinion",
-                    STAT_CALCULATOR: "drone",
-                    SYNCS_SKILLS: true,
-                },
-            },
-            {
-                POSITION: [7.5, 7.25, -1.3, 3.5, 4.75, 0, 0],
-            },
-            {
-                POSITION: [4.5, 6, 1, 10, -4.75, 0, 0.5],
-            },
-            {
-                POSITION: [1, 7.25, 1, 14.25, -4.75, 0, 0.5],
-                PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.productionist]),
-                    TYPE: "tinyMinion",
-                    STAT_CALCULATOR: "drone",
-                    SYNCS_SKILLS: true,
-                },
-            },
-            {
-                POSITION: [7.5, 7.25, -1.3, 3.5, -4.75, 0, 0.5],
-            },
-        ],
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.productionist]),
+                TYPE: "tinyMinion",
+                STAT_CALCULATOR: "drone",
+                SYNCS_SKILLS: true
+            }
+        }
+    ], { delayIncrement: 0.5 })
+}
+Class.projector_AR = {
+    PARENT: "genericTank",
+    LABEL: "Projector",
+    DANGER: 7,
+    BODY: {
+        FOV: base.FOV * 1.1
+    },
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 17,
+                WIDTH: 14,
+                ASPECT: -0.5
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 14,
+                WIDTH: 14
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 10,
+                WIDTH: 10,
+                ASPECT: -0.5,
+                X: 9
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 8,
+                WIDTH: 10,
+                X: 9
+            }
+        }
+    ]
 }
 Class.psychiatrist_AR = {
     PARENT: "genericHealer",
@@ -2116,6 +2576,26 @@ Class.scientist_AR = {
     ]
 }
 Class.shower_AR = makeOver("sprayer", "Shower", hybrid_options)
+Class.slinker_AR = {
+    PARENT: "genericTank",
+    LABEL: "Slinker",
+    DANGER: 7,
+    INVISIBLE: [0.08, 0.03],
+    TOOLTIP: "Stay still to turn invisible.",
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 20.5,
+                WIDTH: 14,
+                ASPECT: -1.2
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.destroyer]),
+                TYPE: "bullet"
+            }
+        }
+    ]
+}
 Class.sniper3_AR = makeRadialAuto("sniper3gun", {isTurret: true, danger: 7, size: 13, label: "Sniper-3", body: {SPEED: 0.8 * base.SPEED, FOV: 1.25 * base.FOV}})
 Class.soother_AR = {
     PARENT: "genericHealer",
@@ -2408,7 +2888,7 @@ Class.triTrapGuard_AR = {
         ...trapGuard_rear
     ]
 }
-Class.underdrive_AR = makeDrive("underseer")
+Class.underdrive_AR = makeDrive("underseer", "Underdrive")
 Class.volley_AR = {
     PARENT: "genericTank",
     LABEL: "Volley",
@@ -3396,6 +3876,36 @@ Class.intern_AR = {
         }
     ]
 }
+Class.kraw_AR = {
+    PARENT: "genericHealer",
+    LABEL: "Kraw",
+    STAT_NAMES: statnames.trap,
+    GUNS: weaponMirror([
+        {
+            POSITION: {
+                LENGTH: 15,
+                WIDTH: 8,
+                Y: 5.5,
+                ANGLE: 5
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 3.25,
+                WIDTH: 8,
+                ASPECT: 1.7,
+                X: 14,
+                Y: 5.5,
+                ANGLE: 5
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.trap, g.twin]),
+                TYPE: "trap",
+                STAT_CALCULATOR: "trap"
+            }
+        }
+    ], { delayIncrement: 0.5 })
+}
 Class.medicare_AR = {
     PARENT: "genericHealer",
     LABEL: "Medicare",
@@ -3860,9 +4370,7 @@ Class.sootherdrive_AR = {
     PARENT: "genericHealer",
     LABEL: "Sootherdrive",
     STAT_NAMES: statnames.drone,
-    BODY: {
-        FOV: base.FOV * 1.1
-    },
+    BODY: Class.soother_AR.BODY,
     TURRETS: [
         {
             TYPE: "healerHat",
@@ -3872,7 +4380,7 @@ Class.sootherdrive_AR = {
             }
         },
         {
-            TYPE: "squareHat",
+            TYPE: ["squareHat", { COLOR: "grey" }],
             POSITION: {
                 SIZE: 9,
                 LAYER: 1
@@ -4122,23 +4630,23 @@ Config.level_cap_cheat = 60
 //Class.basic.UPGRADES_TIER_1
     //Class.basic.UPGRADES_TIER_2
         Class.smasher.UPGRADES_TIER_3.push("cocci", "bonker_AR", "banger_AR", "drifter_AR")
-            Class.megaSmasher.UPGRADES_TIER_4 = ["megaCocci"].map(x => x + "_AR")
+            //Class.megaSmasher.UPGRADES_TIER_4 = ["megaCocci"].map(x => x + "_AR")
             //Class.spike.UPGRADES_TIER_4 = [].map(x => x + "_AR")
             //Class.autoSmasher.UPGRADES_TIER_4 = [].map(x => x + "_AR")
             //Class.landmine.UPGRADES_TIER_4 = [].map(x => x + "_AR")
-            Class.cocci.UPGRADES_TIER_4 = ["megaCocci"].map(x => x + "_AR")
+            //Class.cocci.UPGRADES_TIER_4 = ["megaCocci"].map(x => x + "_AR")
             //Class.bonker_AR.UPGRADES_TIER_4 = ["decoy", "spear", "autoBonker", "megaBonker", "basher", "thwacker", "bundler"].map(x => x + "_AR")
             //Class.banger_AR.UPGRADES_TIER_4 = ["megaBanger", "prick", "autoBanger", "tripwire", "thwacker", "sharper"].map(x => x + "_AR")
             //Class.drifter_AR.UPGRADES_TIER_4 = ["buncher", "megaDrifter", "autoDrifter", "vessel", "cauldron", "sharper", "bundler"].map(x => x + "_AR")
         Class.healer.UPGRADES_TIER_3 = ["nurse_AR", "medic", "psychiatrist_AR", "triHealer_AR", "soother_AR", "analyzer_AR", "scientist_AR", "recalibrator_AR"]
             Class.healer.UPGRADES_TIER_4 = ["physician", "renovator"].map(x => x + "_AR")
-            Class.nurse_AR.UPGRADES_TIER_4 = ["clinician_AR", "paramedic", "therapist_AR", "hexaHealer_AR", "geneticist_AR"/*, [WARK HEALER]*/]
+            Class.nurse_AR.UPGRADES_TIER_4 = ["clinician_AR", "paramedic", "therapist_AR", "hexaHealer_AR", "geneticist_AR", "kraw_AR"]
             Class.medic.UPGRADES_TIER_4 = ["intern", "injection", "actuary", "ointment"].map(x => x + "_AR")
             Class.psychiatrist_AR.UPGRADES_TIER_4 = ["guru", "actuary", "therapist", "PLACEHOLDER_healerSprayer"/*, [DIESEL HEALER], [MACHTRAP HEALER]*/].map(x => x + "_AR")
             Class.triHealer_AR.UPGRADES_TIER_4 = ["hexaHealer_AR", "ambulance", "healer3_AR", "professor_AR", "chemist_AR"]
             Class.soother_AR.UPGRADES_TIER_4 = ["PLACEHOLDER_healerOverseer", "antidote", "PLACEHOLDER_healerUnderseer", "medicare", "sootherdrive", "doctor", "spiker"].map(x => x + "_AR")
             Class.analyzer_AR.UPGRADES_TIER_4 = ["accountant_AR", "surgeon", "guru_AR", "clerk_AR"]
-            Class.scientist_AR.UPGRADES_TIER_4 = ["surgeon", "chemist_AR", "professor_AR", "scribble_AR"/*, [MECH HEALER], [MACHTRAP HEALER], [WARK HEALER]*/]
+            Class.scientist_AR.UPGRADES_TIER_4 = ["surgeon", "chemist_AR", "professor_AR", "scribble_AR"/*, [MECH HEALER], [MACHTRAP HEALER]*/, "kraw_AR"]
             Class.recalibrator_AR.UPGRADES_TIER_4 = ["geneticist"].map(x => x + "_AR")
 
     Class.twin.UPGRADES_TIER_2.push("wark_AR")
@@ -4165,18 +4673,27 @@ Config.level_cap_cheat = 60
 
     Class.director.UPGRADES_TIER_2.push("directordrive_AR", "honcho_AR", "doper_AR")
         Class.director.UPGRADES_TIER_3.splice(1, 1) //remove bigCheese
-        Class.overseer.UPGRADES_TIER_3.push("captain_AR", "foreman_AR")
-        Class.cruiser.UPGRADES_TIER_3.push()
+        Class.overseer.UPGRADES_TIER_3.push("captain_AR", "foreman_AR", "dopeseer_AR")
+            //Class.dopeseer_AR.UPGRADES_TIER_4 = ["briskseer", "dopelord", "autoDopeseer", "dopeseerdrive", "adjurer", "mogul", "ganger"].map(x => x + "_AR")
+        Class.cruiser.UPGRADES_TIER_3.push("productionist_AR", "cruiserdrive_AR", "hangar_AR", "zipper_AR", "baltimore_AR", "mosey_AR")
         Class.underseer.UPGRADES_TIER_3.push("autoUnderseer_AR", "underdrive_AR", "pentaseer_AR")
-        Class.spawner.UPGRADES_TIER_3.push("spawnerdrive_AR", "captain_AR")
-        Class.directordrive_AR.UPGRADES_TIER_3 = ["overdrive", "underdrive_AR", "spawnerdrive_AR"]
-        Class.honcho_AR.UPGRADES_TIER_3 = ["foreman_AR", "bigCheese", "autoHoncho_AR"]
-        Class.doper_AR.UPGRADES_TIER_3 = ["autoDoper_AR"]
+        Class.spawner.UPGRADES_TIER_3.push("megaSpawner_AR", "productionist_AR", "spawnerdrive_AR", "captain_AR", "hangar_AR", "laborer_AR", "foundry_AR", "issuer_AR")
+            //Class.hangar_AR.UPGRADES_TIER_4 = ["courier", "warlord", "aerodome", "autoHangar", "megaHangar", "dirigible", "airfield", "helipad", "governer", "grinder", "barn", "reposit"].map(x => x + "_AR")
+            //Class.laborer_AR.UPGRADES_TIER_4 = ["worker", "autoLaborer", "megaLaborer", "labordrive", "toiler", "grinder", "servicer", "endeavor", "slogger"].map(x => x + "_AR")
+            //Class.foundry_AR.UPGRADES_TIER_4 = ["endeavor", "stocker", "foundrydrive", "megaFoundry", "fabrication", "shopper", "autoFoundry", "barn", "topBanana", "plant"].map(x => x + "_AR")
+            //Class.issuer_AR.UPGRADES_TIER_4 = ["circulator", "facility", "autoIssuer", "megaIssuer", "inducer", "issuerdrive", "mogul", "reposit", "slogger", "plant"].map(x => x + "_AR")
+        Class.directordrive_AR.UPGRADES_TIER_3 = ["directorstorm_AR", "overdrive", "cruiserdrive_AR", "underdrive_AR", "spawnerdrive_AR", "autoDirectordrive_AR", "honchodrive_AR", "doperdrive_AR"]
+        Class.honcho_AR.UPGRADES_TIER_3 = ["bigCheese", "foreman_AR", "baltimore_AR", "foundry_AR", "autoHoncho_AR", "honchodrive_AR", "junkie_AR"]
+            //Class.junkie_AR.UPGRADES_TIER_4 = ["addict", "ganger", "harbor", "plant", "stoner", "junkiedrive", "autoJunkie"].map(x => x + "_AR")
+        Class.doper_AR.UPGRADES_TIER_3 = ["brisker", "dopeseer", "mosey", "issuer", "junkie", "doperdrive", "autoDoper"].map(x => x + "_AR")
+            //Class.brisker_AR.UPGRADES_TIER_4 = ["adderall", "briskseer", "sailor", "circulator", "briskerdrive", "addict", "autoBrisker"].map(x => x + "_AR")
 
     //Class.pounder.UPGRADES_TIER_2.push("volute")
         Class.pounder.UPGRADES_TIER_3.push("subverter_AR")
+        Class.destroyer.UPGRADES_TIER_3.push("blower_AR", "megaTrapper_AR", "queller_AR", "autoDestroyer_AR", "hurler_AR", "slinker_AR")
         Class.artillery.UPGRADES_TIER_3.push("queller_AR", "forger_AR", "force_AR", "autoArtillery_AR", "foctillery_AR", "discharger_AR")
-        Class.launcher.UPGRADES_TIER_3.push("rocketeer_AR")
+        Class.launcher.UPGRADES_TIER_3.push("rocketeer_AR", "pitcher_AR", "cluster_AR", "projector_AR", "heaver_AR", "autoLauncher_AR", "hurler_AR", "inception_AR")
+            //UPGRADES_TIER_4 = ["shaver", "bazooka", "catapult", "myriad", "leviathan", "bulker", "bombard", "python", "claimant", "incline", "autoHurler", "mongrel", "bunger", "deliverer", "slingshot"].map(x => x + "_AR")
 
     Class.trapper.UPGRADES_TIER_2.push("pen_AR", "mech_AR", "machineTrapper_AR", "wark_AR")
         Class.trapper.UPGRADES_TIER_3.splice(0, 1) //remove barricade
@@ -4184,7 +4701,7 @@ Config.level_cap_cheat = 60
         Class.builder.UPGRADES_TIER_3.push("forger_AR", "stall_AR", "fashioner_AR", "charger_AR")
         Class.triTrapper.UPGRADES_TIER_3.push("triPen_AR", "triMech_AR", "triMachine_AR", "triTrapGuard_AR")
         Class.trapGuard.UPGRADES_TIER_3.push("peashooter_AR", "incarcerator_AR", "mechGuard_AR", "autoTrapGuard_AR", "machineGuard_AR", "triTrapGuard_AR")
-        Class.pen_AR.UPGRADES_TIER_3 = ["stall_AR", "triPen_AR", "incarcerator_AR", "operator_AR", "cockatiel_AR", "hutch_AR", "interner_AR", "autoPen_AR"]
+        Class.pen_AR.UPGRADES_TIER_3 = ["stall_AR", "triPen_AR", "encircler_AR", "incarcerator_AR", "operator_AR", "cockatiel_AR", "hutch_AR", "interner_AR", "autoPen_AR"]
         Class.mech_AR.UPGRADES_TIER_3 = ["engineer", "triMech_AR", "machineMech_AR", "mechGuard_AR", "operator_AR", "cog_AR", "cobbler_AR", "autoMech_AR"]
         Class.machineTrapper_AR.UPGRADES_TIER_3 = ["dieselTrapper_AR", "barricade", "equalizer_AR", "frother_AR", "machineGuard_AR", "encircler_AR", "machineMech_AR", "triMachine_AR", "expeller_AR", "autoMachineTrapper_AR", "deviation_AR"]
         Class.wark_AR.UPGRADES_TIER_3 = ["warkwark_AR", "waarrk_AR", "equalizer_AR", "hexaTrapper", "hutch_AR", "cog_AR", "expeller_AR", "bulwark", "coalesce_AR", "autoWark_AR"]
@@ -4268,7 +4785,7 @@ Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "di
         Class.gunner.UPGRADES_TIER_3 = ["autoGunner", "nailgun", "auto4", "machineGunner", "gunnerTrapper", "cyclone", "overgunner", "battery_AR", "buttbuttin_AR", "blower_AR", "rimfire_AR", "volley_AR", "doubleGunner_AR", "bentGunner_AR", "equalizer_AR"]
 
     Class.sniper.UPGRADES_TIER_2 = ["assassin", "hunter", "minigun", "rifle"]
-        Class.sniper.UPGRADES_TIER_3 = ["bushwhacker"]
+        Class.sniper.UPGRADES_TIER_3 = ["bushwhacker", "railgun_AR"]
         Class.assassin.UPGRADES_TIER_3 = ["ranger", "falcon", "stalker", "autoAssassin", "buttbuttin_AR", "hitman_AR", "sniper3_AR", "enforcer_AR", "courser_AR"]
         Class.hunter.UPGRADES_TIER_3 = ["predator", "poacher", "ordnance", "dual", "autoHunter_AR", "megaHunter_AR", "prober_AR", "courser_AR"]
         Class.rifle.UPGRADES_TIER_3 = ["musket", "crossbow", "armsman", "autoRifle_AR", "enforcer_AR", "prober_AR"]
@@ -4278,7 +4795,7 @@ Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "di
             Class.sprayer.UPGRADES_TIER_3 = ["duster_AR", "frother_AR", "scatterer_AR", "foamer_AR", "shower_AR", "autoSprayer_AR", "phoenix"]
         Class.minigun.UPGRADES_TIER_3 = ["streamliner", "nailgun", "cropDuster", "barricade", "subverter_AR", "vulture", "zipper_AR", "bentMinigun_AR", "autoMinigun_AR", "widget_AR"]
         Class.diesel_AR.UPGRADES_TIER_3 = ["jalopy_AR", "machineGunner", "dieselTrapper_AR", "polluter_AR", "autoDiesel_AR"]
-            Class.diesel_AR.UPGRADES_TIER_3.push("foamer_AR")
+            //Class.diesel_AR.UPGRADES_TIER_3.push("foamer_AR")
 
     Class.flankGuard.UPGRADES_TIER_2 = ["hexaTank", "triAngle", "auto3", "trapGuard", "triTrapper"]
         Class.flankGuard.UPGRADES_TIER_3 = ["tripleTwin"]
@@ -4288,29 +4805,29 @@ Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "di
 
     Class.director.UPGRADES_TIER_2 = ["overseer", "cruiser", "underseer", "spawner", "directordrive_AR", "honcho_AR", "doper_AR"]
         Class.director.UPGRADES_TIER_3 = ["manager"]
-        Class.overseer.UPGRADES_TIER_3 = ["overlord", "banshee", "autoOverseer", "overdrive", "commander", "captain_AR", "foreman_AR"]
-        Class.cruiser.UPGRADES_TIER_3 = ["carrier", "battleship", "fortress", "autoCruiser", "commander"]
+        Class.overseer.UPGRADES_TIER_3 = ["overlord", "banshee", "autoOverseer", "overdrive", "commander", "captain_AR", "foreman_AR", "dopeseer_AR"]
+        Class.cruiser.UPGRADES_TIER_3 = ["carrier", "battleship", "fortress", "autoCruiser", "commander", "productionist_AR", "cruiserdrive_AR", "hangar_AR", "zipper_AR", "baltimore_AR", "mosey_AR"]
         Class.underseer.UPGRADES_TIER_3 = ["necromancer", "maleficitor", "autoUnderseer_AR", "underdrive_AR", "infestor", "pentaseer_AR"]
-        Class.spawner.UPGRADES_TIER_3 = ["factory", "autoSpawner", "spawnerdrive_AR", "captain_AR"]
-        Class.directordrive_AR.UPGRADES_TIER_3 = ["overdrive", "underdrive_AR", "spawnerdrive_AR"]
-        Class.honcho_AR.UPGRADES_TIER_3 = ["foreman_AR", "bigCheese", "autoHoncho_AR"]
-        Class.doper_AR.UPGRADES_TIER_3 = ["autoDoper_AR"]
+        Class.spawner.UPGRADES_TIER_3 = ["factory", "autoSpawner", "megaSpawner_AR", "productionist_AR", "spawnerdrive_AR", "captain_AR", "hangar_AR", "laborer_AR", "foundry_AR", "issuer_AR"]
+        Class.directordrive_AR.UPGRADES_TIER_3 = ["directorstorm_AR", "overdrive", "cruiserdrive_AR", "underdrive_AR", "spawnerdrive_AR", "autoDirectordrive_AR", "honchodrive_AR", "doperdrive_AR"]
+        Class.honcho_AR.UPGRADES_TIER_3 = ["foreman_AR", "baltimore_AR", "foundry_AR", "bigCheese", "autoHoncho_AR", "honchodrive_AR", "junkie_AR"]
+        Class.doper_AR.UPGRADES_TIER_3 = ["brisker", "dopeseer", "mosey", "issuer", "junkie", "doperdrive", "autoDoper"].map(x => x + "_AR")
 
     Class.pounder.UPGRADES_TIER_2 = ["destroyer", "builder", "artillery", "launcher"]
         Class.pounder.UPGRADES_TIER_3 = ["shotgun", "eagle", "subverter_AR"]
-        Class.destroyer.UPGRADES_TIER_3 = ["conqueror", "annihilator", "hybrid", "construct"]
-        Class.artillery.UPGRADES_TIER_3 = ["mortar", "ordnance", "beekeeper", "fieldGun", "queller_AR", "forger_AR", "fieldGun", "force_AR", "autoArtillery_AR", "foctillery_AR", "discharger_AR"]
-        Class.launcher.UPGRADES_TIER_3 = ["skimmer", "twister", "swarmer", "sidewinder", "fieldGun", "rocketeer_AR", "fieldGun"]
+        Class.destroyer.UPGRADES_TIER_3 = ["conqueror", "annihilator", "hybrid", "construct", "blower_AR", "megaTrapper_AR", "queller_AR", "autoDestroyer_AR", "hurler_AR", "slinker_AR"]
+        Class.artillery.UPGRADES_TIER_3 = ["mortar", "ordnance", "beekeeper", "queller_AR", "forger_AR", "fieldGun", "force_AR", "autoArtillery_AR", "foctillery_AR", "discharger_AR"]
+        Class.launcher.UPGRADES_TIER_3 = ["skimmer", "twister", "swarmer", "sidewinder", "rocketeer_AR", "pitcher_AR", "fieldGun", "cluster_AR", "projector_AR", "heaver_AR", "autoLauncher_AR", "hurler_AR", "inception_AR"]
 
     Class.trapper.UPGRADES_TIER_2 = ["builder", "triTrapper", "trapGuard", "pen_AR", "mech_AR", "machineTrapper_AR", "wark_AR"]
         Class.trapper.UPGRADES_TIER_3 = ["barricade", "overtrapper", "megaTrapper_AR"]
-        Class.builder.UPGRADES_TIER_3 = ["construct", "autoBuilder", "engineer", "boomer", "architect", "conqueror"]
+        Class.builder.UPGRADES_TIER_3 = ["construct", "autoBuilder", "engineer", "boomer", "architect", "conqueror", "forger_AR", "stall_AR", "fashioner_AR", "charger_AR"]
         Class.triTrapper.UPGRADES_TIER_3 = ["fortress", "hexaTrapper", "septaTrapper", "architect", "triPen_AR", "triMech_AR", "triMachine_AR", "triTrapGuard_AR"]
-        Class.trapGuard.UPGRADES_TIER_3 = ["bushwhacker", "gunnerTrapper", "bomber", "conqueror", "bulwark", "autoTrapGuard_AR"]
+        Class.trapGuard.UPGRADES_TIER_3 = ["bushwhacker", "gunnerTrapper", "bomber", "conqueror", "bulwark", "peashooter_AR", "incarcerator_AR", "mechGuard_AR", "autoTrapGuard_AR", "machineGuard_AR", "triTrapGuard_AR"]
         Class.pen_AR.UPGRADES_TIER_3 = ["hutch_AR", "interner_AR", "autoPen_AR"]
         Class.mech_AR.UPGRADES_TIER_3 = ["engineer", "cog_AR", "cobbler_AR", "autoMech_AR"]
-        Class.machineTrapper_AR.UPGRADES_TIER_3 = ["dieselTrapper_AR", "barricade", "equalizer_AR", "expeller_AR", "autoMachineTrapper_AR", "deviation_AR"]
-            Class.machineTrapper_AR.UPGRADES_TIER_3.push("frother_AR")
+        Class.machineTrapper_AR.UPGRADES_TIER_3 = ["dieselTrapper_AR", "barricade", "equalizer_AR", "machineGuard_AR", "encircler_AR", "machineMech_AR", "triMachine_AR", "expeller_AR", "autoMachineTrapper_AR", "deviation_AR"]
+            //Class.machineTrapper_AR.UPGRADES_TIER_3.push("frother_AR")
         Class.wark_AR.UPGRADES_TIER_3 = ["warkwark_AR", "waarrk_AR", "equalizer_AR", "hexaTrapper", "hutch_AR", "cog_AR", "expeller_AR", "bulwark", "coalesce_AR", "autoWark_AR"]
 
 }
