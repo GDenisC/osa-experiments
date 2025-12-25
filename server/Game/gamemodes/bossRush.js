@@ -138,7 +138,7 @@ class bossRush {
     defineProperties() {
         this.length = Config.use_limited_waves ? this.waveCodes.length : Config.wave_cap;
         this.waves = this.generateWaves();
-        this.waveId = 0;
+        this.waveId = -1;
         this.gameActive = false;
         this.timer = 0;
         this.remainingEnemies = 0;
@@ -273,7 +273,7 @@ class bossRush {
     spawnWave(waveId) {
         //yell at everyone
         global.gameManager.socketManager.broadcast(`Wave ${waveId + 1} has started!`);
-        console.log(`Wave ${waveId + 1} has started!`)
+        util.log(`[${global.gameManager.name}] Wave ${waveId + 1} has started!`)
 
         //spawn bosses
         for (let boss of this.waves[waveId]) {
