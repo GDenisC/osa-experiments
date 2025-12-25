@@ -39,6 +39,13 @@ module.exports = {
 			BULLET_PEN: "Weapon Penetration",
 			BULLET_DAMAGE: "Weapon Damage"
 		},
+		drone: {
+			BULLET_SPEED: 'Drone Speed',
+			BULLET_HEALTH: 'Drone Health',
+			BULLET_PEN: 'Drone Penetration',
+			BULLET_DAMAGE: 'Drone Damage',
+			RELOAD: 'Respawn Rate',
+		},
 		necro: {
 			BULLET_SPEED: "Drone Speed",
 			BULLET_HEALTH: "Drone Health",
