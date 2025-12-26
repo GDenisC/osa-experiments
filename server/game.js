@@ -18,9 +18,9 @@ const getName = (name, gamemodeData) => {
         opentdm: `Open ${gamemodeData.teams}TDM`,
         clanwars: "Clan Wars",
         trainwars: "Train Wars",
-        old_dreadnoughts: `Old Dreadnoughts ${gamemodeData.teams}TDM`,
         nexus: "Nexus",
         blackout: "Blackout",
+        old_dreadnoughts: `Old Dreadnoughts`,
         outbreak: "Outbreak",
         space: "Space",
         classic: "Classic",
@@ -38,7 +38,7 @@ const getName = (name, gamemodeData) => {
         assault_yinyang: "Assault Yin Yang",
         assault_acropolis: "Assault Acropolis",
     };
-    return nameMap[name]; 
+    return nameMap[name];
 }
 
 // Here is our actual game server
@@ -220,7 +220,7 @@ class gameServer {
             // Update the server gamemode name
             this.name = this.gamemode.map(x => getName(x, Config) || (x[0].toUpperCase() + x.slice(1))).join(' ');
 
-            // Activate laby food if enabled
+            // Activate tiered food if enabled
             if (Config.tiered_food) global.activateTieredFood();
 
             // Get the definitions before we can initalize the rest.

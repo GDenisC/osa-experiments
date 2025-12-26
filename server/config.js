@@ -21,7 +21,7 @@ module.exports = {
             featured: false,
 
             region: "local", // The region the server is on.
-            gamemode: ["siege_og"], // The selected gamemode.
+            gamemode: ["old_dreadnoughts", "tdm"], // The selected gamemode.
             player_cap: 80, // Not including bots. Set to 0 to disable.
 
             properties: { // This overrides settings in the config.js file, assuming the selected gamemode doesn't also override it.
@@ -181,7 +181,7 @@ module.exports = {
     use_limited_waves: false,
     mothership: false,
     domination: false,
-    tiered_food: false,
+    tiered_food: true,
     arena_shape: "rect",
     blackout: false,
     space_physics: false,
