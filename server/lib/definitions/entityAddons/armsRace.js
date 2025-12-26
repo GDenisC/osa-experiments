@@ -105,6 +105,7 @@ const trapGuard_rear = [
 
 // Hats
 Class.crusierdriveHat_AR = makeHat(3.5, { color: "grey" })
+Class.healerHat_spin = makeHat([[0.3, -0.3],[1,-0.3],[1,0.3],[0.3,0.3],[0.3,1],[-0.3,1],[-0.3,0.3],[-1,0.3],[-1,-0.3],[-0.3,-0.3],[-0.3,-1],[0.3,-1]], { color: "red", rotationSpeed: 0.16 })
 
 // Turrets
 Class.driveAutoTurret = { PARENT: "autoTurret", SHAPE: 4 }
@@ -393,7 +394,7 @@ Class.banger_AR = {
     DANGER: 7,
     TURRETS: [
         {
-            TYPE: "digDigBody",
+            TYPE: "digDigHat",
             POSITION: { SIZE: 27 }
         }
     ]
@@ -531,7 +532,7 @@ Class.bonker_AR = {
     DANGER: 7,
     TURRETS: [
         {
-            TYPE: "smasherBody",
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }],
             POSITION: { SIZE: 21.5 }
         }
     ]
@@ -1108,7 +1109,7 @@ Class.drifter_AR = {
     DANGER: 7,
     TURRETS: [
         {
-            TYPE: "drifterBody",
+            TYPE: ["squareHat_spin", { COLOR: "black" }],
             POSITION: { SIZE: 21.5 }
         }
     ]
@@ -1548,18 +1549,18 @@ Class.helicopter_AR = {
     HEALING_TANK: true,
     TURRETS: [
         {
+            TYPE: "healerHat_spin",
             POSITION: {
-                SIZE: 13,
-                LAYER: 1
-            },
-            TYPE: "healerHat"
+                SIZE: 4.5,
+                LAYER: 2
+            }
         },
         {
             POSITION: {
                 SIZE: 8,
                 LAYER: 1
             },
-            TYPE: "whirlwindDeco"
+            TYPE: ["hexagonHat_spin", { COLOR: "grey" }]
         }
     ],
     AI: {
@@ -3945,7 +3946,7 @@ Class.megaCocciSegment_AR = {
     },
     TURRETS: [
         {
-            TYPE: "smasherBody",
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }],
             POSITION: { SIZE: 25 }
         }
     ]
@@ -3961,7 +3962,7 @@ Class.megaCocci_AR = {
     },
     TURRETS: [
         {
-            TYPE: "smasherBody",
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }],
             POSITION: { SIZE: 25 }
         }
     ],
@@ -4044,7 +4045,7 @@ Class.physician_AR = {
     }, 12),
     TURRETS: [
         ...weaponArray({
-            TYPE: "physicianBody",
+            TYPE: ["pentagonHat_spin", { COLOR: "black" }],
             POSITION: { SIZE: 20 }
         }, 4),
         {

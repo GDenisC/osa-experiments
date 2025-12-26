@@ -262,7 +262,7 @@ Class.genericDigDig = {
     SIZE: Class.genericTank.SIZE * 3,
     TURRETS: [
         {
-            TYPE: "digDigBody",
+            TYPE: "digDigHat",
             POSITION: { SIZE: 27 }
         }
     ]

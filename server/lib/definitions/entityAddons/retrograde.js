@@ -231,7 +231,7 @@ Class.bonker_RG = {
                 SIZE: 21.5,
                 ARC: 360
             },
-            TYPE: "smasherBody"
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }]
         }
     ]
 }

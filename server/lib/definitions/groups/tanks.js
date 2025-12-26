@@ -328,7 +328,7 @@ Class.whirlwind = {
                 SIZE: 8,
                 LAYER: 1
             },
-            TYPE: "whirlwindDeco"
+            TYPE: ["hexagonHat_spin", { COLOR: "grey" }]
         }
     ],
     AI: {
@@ -758,8 +758,8 @@ Class.hurricane = {
     STAT_NAMES: statnames.satellite,
     TURRETS: [
         {
+            TYPE: ["octagonHat_spin", { COLOR: "grey" }],
             POSITION: [8, 0, 0, 0, 360, 1],
-            TYPE: "hurricaneDeco",
         },
     ],
     AI: {
@@ -1073,7 +1073,7 @@ Class.smasher = {
                 SIZE: 21.5,
                 ARC: 360
             },
-            TYPE: "smasherBody"
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }]
         }
     ]
 }
@@ -1201,7 +1201,7 @@ Class.tornado = {
     TURRETS: [
         {
             POSITION: [10, 0, 0, 0, 360, 1],
-            TYPE: "tornadoDeco",
+            TYPE: ["squareHat_spin", { COLOR: "grey" }],
         },
     ],
     ANGLE: 90,
@@ -1616,7 +1616,7 @@ Class.autoSmasher = makeAuto({
     TURRETS: [
         {
             POSITION: [21.5, 0, 0, 0, 360, 0],
-            TYPE: "smasherBody"
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }]
         }
     ],
     SKILL_CAP: {
@@ -1869,12 +1869,12 @@ Class.blizzard = {
     DANGER: 7,
     TURRETS: [
         {
-            POSITION: [8, 0, 0, 0, 360, 1],
-            TYPE: "blizzardDeco1",
+            TYPE: ["pentagonHat_spin", { COLOR: "grey" }],
+            POSITION: [8, 0, 0, 0, 360, 1]
         },
         {
-            POSITION: [6, 0, 0, 180, 360, 1],
-            TYPE: "blizzardDeco2",
+            TYPE: ["pentagonHat_spinReverse", { COLOR: "grey" }],
+            POSITION: [6, 0, 0, 180, 360, 1]
         },
     ],
     ANGLE: 72,
@@ -2215,7 +2215,7 @@ Class.cocciSegment = {
     TURRETS: [
         {
             POSITION: [21.5, 0, 0, 0, 360, 0],
-            TYPE: "smasherBody"
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }]
         }
     ]
 }
@@ -2225,7 +2225,7 @@ Class.cocci = {
     TURRETS: [
         {
             POSITION: [21.5, 0, 0, 0, 360, 0],
-            TYPE: "smasherBody"
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }]
         }
     ],
     ON: [
@@ -3281,7 +3281,7 @@ Class.hexaWhirl = {
     TURRETS: [
         {
             POSITION: [8, 0, 0, 0, 360, 1],
-            TYPE: "tornadoDeco"
+            TYPE: ["squareHat_spin", { COLOR: "grey" }]
         }
     ],
     AI: {
@@ -3396,7 +3396,7 @@ Class.jumpSmasher = {
     TURRETS: [
         {
             POSITION: [21.5, 0, 0, 0, 360, 0],
-            TYPE: "smasherBody"
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }]
         }
     ],
     GUNS: [
@@ -3427,7 +3427,7 @@ Class.landmine = {
                 SIZE: 21.5,
                 ARC: 360
             },
-            TYPE: "smasherBody"
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }]
         },
         {
             POSITION: {
@@ -3435,7 +3435,7 @@ Class.landmine = {
                 ANGLE: 90,
                 ARC: 360
             },
-            TYPE: "landmineBody"
+            TYPE: ["hexagonHat_spinFaster", { COLOR: "black" }]
         }
     ]
 }
@@ -3625,7 +3625,7 @@ Class.megaSmasher = {
     },
     TURRETS: [
         {
-            TYPE: "smasherBody",
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }],
             POSITION: { SIZE: 25 }
         }
     ]
@@ -3636,8 +3636,8 @@ Class.megaTornado = {
     DANGER: 7,
     TURRETS: [
         {
+            TYPE: ["diamondHat_spin", { COLOR: "grey" }],
             POSITION: [16, 0, 0, 0, 360, 1],
-            TYPE: "megaTornadoDeco",
         },
     ],
     ANGLE: 180,
@@ -3747,7 +3747,7 @@ Class.monsoon = {
     TURRETS: [
         {
             POSITION: [26, 0, 0, 0, 360, 0],
-            TYPE: "smasherBody"
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }]
         },
         {
             POSITION: { SIZE: 24 },
@@ -3832,7 +3832,7 @@ Class.munition = {
     TURRETS: [
         {
             POSITION: [8, 0, 0, 0, 360, 1],
-            TYPE: "tornadoDeco"
+            TYPE: ["squareHat_spin", { COLOR: "grey" }]
         }
     ],
     AI: {
@@ -4442,7 +4442,7 @@ Class.prophet = {
     TURRETS: [
         {
             POSITION: [8, 0, 0, 0, 360, 1],
-            TYPE: "tornadoDeco"
+            TYPE: ["squareHat_spin", { COLOR: "grey" }]
         }
     ],
     AI: {
@@ -5049,11 +5049,11 @@ Class.spike = {
     },
     TURRETS: weaponArray([
         {
+            TYPE: ["triangleHat_spin", { COLOR: "black" }],
             POSITION: {
                 SIZE: 18,
                 ARC: 360
-            },
-            TYPE: "spikeBody"
+            }
         }
     ], 4)
 }
@@ -5072,12 +5072,12 @@ Class.spike_old = {
     STAT_NAMES: statnames.smasher,
     TURRETS: [
         {
-            POSITION: [20.5, 0, 0, 0, 360, 0],
-            TYPE: "weirdSpikeBody1"
+            TYPE: ["triangleHat_spinFast", { COLOR: "black" }],
+            POSITION: [20.5, 0, 0, 0, 360, 0]
         },
         {
             POSITION: [20.5, 0, 0, 180, 360, 0],
-            TYPE: "weirdSpikeBody2"
+            TYPE: "triangleHat_weirdSpike"
         }
     ]
 }
@@ -5439,13 +5439,13 @@ Class.tempest = {
     DANGER: 7,
     TURRETS: [
         {
-            POSITION: [8, 0, 0, 0, 360, 1],
-            TYPE: "tempestDeco1",
+            TYPE: ["triangleHat_spin", { COLOR: "grey" }],
+            POSITION: [8, 0, 0, 0, 360, 1]
         },
         {
-            POSITION: [4, 0, 0, 180, 360, 1],
-            TYPE: "tempestDeco2",
-        },
+            TYPE: ["triangleHat_spinReverse", { COLOR: "grey" }],
+            POSITION: [4, 0, 0, 180, 360, 1]
+        }
     ],
     ANGLE: 120,
     CONTROLLERS: ["whirlwind"],
@@ -5492,7 +5492,7 @@ Class.thunderbolt = {
     TURRETS: [
         {
             POSITION: [10, 0, 0, 0, 360, 1],
-            TYPE: "thunderboltDeco",
+            TYPE: ["squareHat_spinFast", { COLOR: "grey" }]
         },
     ],
     ANGLE: 90,
@@ -5728,8 +5728,8 @@ Class.typhoon = {
     STAT_NAMES: statnames.satellite,
     TURRETS: [
         {
+            TYPE: ["decagonHat_spin", { COLOR: "grey" }],
             POSITION: [8, 0, 0, 0, 360, 1],
-            TYPE: "typhoonDeco",
         },
     ],
     AI: {
@@ -5818,7 +5818,7 @@ Class.vortex = {
     STAT_NAMES: statnames.mixed,
     TURRETS: [
         {
-            TYPE: "tornadoDeco",
+            TYPE: ["squareHat_spin", { COLOR: "grey" }],
             POSITION: [8, 0, 0, 0, 360, 1]
         }
     ],
@@ -5871,7 +5871,7 @@ Class.vortex_old = {
     HAS_NO_RECOIL: true,
     STAT_NAMES: statnames.satellite,
     TURRETS: weaponArray({
-        TYPE: "oldVortexBody",
+        TYPE: ["pentagonHat_spin", { COLOR: "grey" }],
         POSITION: { SIZE: 21.5 }
     }, 2),
     AI: {
@@ -5955,7 +5955,7 @@ Class.whirlGuard = {
     TURRETS: [
         {
             POSITION: [8, 0, 0, 0, 360, 1],
-            TYPE: "tornadoDeco"
+            TYPE: ["squareHat_spin", { COLOR: "grey" }]
         }
     ],
     AI: {
@@ -6011,7 +6011,7 @@ Class.whirl3 = {
     TURRETS: [
         {
             POSITION: [8, 0, 0, 0, 360, 1],
-            TYPE: "tornadoDeco"
+            TYPE: ["squareHat_spin", { COLOR: "grey" }]
         },
         {
             POSITION: [11, 8, 0, 0, 190, 0],

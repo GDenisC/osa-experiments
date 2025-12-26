@@ -90,7 +90,7 @@ module.exports = {
     level_cap_cheat: 45, // Maximum level via the level-up key and auto-level-up.
 
     skill_cap: 9, // Default skill caps.
-    tier_cap: 15, // Amount of tank tiers.
+    tier_cap: 9, // Amount of tank tiers.
     tier_multiplier: 15, // Level difference between each tier.
 
     // Bots

@@ -1470,17 +1470,19 @@ Class.bob = {
     CONTROLLERS: ["nearestDifferentMaster", "mapTargetToGoal"],
     TURRETS: [
         {
-            POSITION: [21.5, 0, 0, 0, 360, 0],
-            TYPE: "smasherBody",
-        }, {
-            POSITION: [21.5, 0, 0, 30, 360, 0],
-            TYPE: "landmineBody",
-        }, {
-            POSITION: [23.75, 0, 0, 0, 360, 0],
-            TYPE: "spikeBody",
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }],
+            POSITION: [21.5, 0, 0, 0, 360, 0]
         },
-    ],
-};
+        {
+            TYPE: ["hexagonHat_spinFaster", { COLOR: "black" }],
+            POSITION: [21.5, 0, 0, 30, 360, 0]
+        },
+        {
+            TYPE: ["triangleHat_spin", { COLOR: "black" }],
+            POSITION: [23.75, 0, 0, 0, 360, 0]
+        }
+    ]
+}
 Class.nemesis = {
     PARENT: "bob",
     LABEL: "Nemesis",

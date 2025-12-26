@@ -499,7 +499,7 @@ Class.autoSmasherMissile = {
     TURRETS: [
         {
             POSITION: [21.5, 0, 0, 0, 360, 0],
-            TYPE: "smasherBody",
+            TYPE: ["hexagonHat_spin", { COLOR: "black" }],
         }, {
             POSITION: [12, 0, 0, 0, 360, 1],
             TYPE: "autoSmasherMissileTurret",

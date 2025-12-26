@@ -473,7 +473,7 @@ Class.menu_rammers = makeMenu("Rammers", "aqua")
 Class.menu_rammers.PROPS = [
     {
         POSITION: [21.5, 0, 0, 360, 0],
-        TYPE: "smasherBody",
+        TYPE: ["hexagonHat_spin", { COLOR: "black" }],
     }
 ]
 Class.menu_rammers.UPGRADES_TIER_0 = [
@@ -1177,11 +1177,11 @@ Class.armyOfOneBullet = {
     TURRETS: [
         {
             POSITION: [18.5, 0, 0, 0, 360, 0],
-            TYPE: ["spikeBody", { COLOR: null }]
+            TYPE: ["triangleHat_spin", { COLOR: "mirror" }]
         },
         {
             POSITION: [18.5, 0, 0, 180, 360, 0],
-            TYPE: ["spikeBody", { COLOR: null }]
+            TYPE: ["triangleHat_spin", { COLOR: "mirror" }]
         }
     ]
 }
