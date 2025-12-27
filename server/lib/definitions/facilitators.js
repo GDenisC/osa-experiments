@@ -543,29 +543,37 @@ exports.setTurretProjectileRecoil = (type, recoilFactor) => {
 }
 
 // misc functions
-exports.makeMenu = (name = -1, color = "mirror", shape = 0, overrideLabel = false, overrideGuns = false, overrideTurrets = false) => {
-    let defaultGun = {
-        POSITION: {
-            LENGTH: 18,
-            WIDTH: 10,
-            ASPECT: -1.4
-        },
-        PROPERTIES: {
-            SHOOT_SETTINGS: exports.combineStats([g.basic]),
-            TYPE: "bullet",
-        },
-    };
+exports.makeMenu = (name = -1, options = {}) => {
+    options.color ??= "mirror"
+
     return {
         PARENT: "genericTank",
         LABEL: name == -1 ? undefined : name,
-        GUNS: overrideGuns ? overrideGuns : [defaultGun],
-        TURRETS: overrideTurrets,
-        COLOR: color == "mirror" ? null : color,
-        UPGRADE_COLOR: color == "mirror" ? null : color,
-        SHAPE: shape,
+        COLOR: options.color == "mirror" ? null : options.color,
+        REROOT_UPGRADE_TREE: options.rerootTree,
+        UPGRADE_COLOR: options.boxColor,
+        UPGRADE_LABEL: options.boxLabel,
+        UPGRADE_TOOLTIP: options.tooltip,
+        SHAPE: options.shape ??= 0,
         IGNORED_BY_AI: true,
         SKILL_CAP: Array(10).fill(dfltskl),
         RESET_CHILDREN: true,
+        GUNS: options.guns ??= [
+            {
+                POSITION: {
+                    LENGTH: 18,
+                    WIDTH: 10,
+                    ASPECT: -1.4
+                },
+                PROPERTIES: {
+                    SHOOT_SETTINGS: exports.combineStats([g.basic]),
+                    TYPE: "bullet"
+                }
+            }
+        ],
+        PROPS: options.props ??= [],
+        TURRETS: options.turrets ??= [],
+        UPGRADES_TIER_0: options.upgrades ??= []
     };
 }
 exports.weaponArray = (weapons, count, delayIncrement = 0, delayOverflow = false) => {

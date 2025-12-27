@@ -107,6 +107,13 @@ const trapGuard_rear = [
 Class.crusierdriveHat_AR = makeHat(3.5, { color: "grey" })
 Class.healerHat_spin = makeHat([[0.3, -0.3],[1,-0.3],[1,0.3],[0.3,0.3],[0.3,1],[-0.3,1],[-0.3,0.3],[-1,0.3],[-1,-0.3],[-0.3,-0.3],[-0.3,-1],[0.3,-1]], { color: "red", rotationSpeed: 0.16 })
 
+// Projectiles
+Class.pentachip = {
+    PARENT: "sunchip",
+    NECRO: [5],
+    SHAPE: 5
+}
+
 // Turrets
 Class.driveAutoTurret = { PARENT: "autoTurret", SHAPE: 4 }
 Class.healerAutoTankGun = makeTurret({

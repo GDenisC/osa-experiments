@@ -48,24 +48,10 @@ Class.arrasMenu_diep2.UPGRADES_TIER_0.push(
     "doubleTrapGuard_RG",
 )
 
-Class.arrasMenu_retrograde = makeMenu("Retrograde") // feature-reduced menu for retrograde event
-Class.arrasMenu_retrograde.UPGRADES_TIER_0 = [
-    "arrasMenu_diep",
-    "arrasMenu_digdig",
-    "menu_celestials", // placeholder until we get the arras'd version of this menu (celestial bosses, all rigged to self-destruct in 10 seconds)
-    "menu_elites", // placeholder until we get the arras'd version of this menu (elite bosses)
-    "menu_mysticals", // placeholder until we get the arras'd version of this menu (strange bosses)
-    "arrasMenu_nostalgia",
-    "arrasMenu_scrapped",
-    "arrasMenu_miscRetrograde",
-]
-
-Class.arrasMenu_miscRetrograde = makeMenu("Misc Retrograde") // former menu, for retrograde event
-Class.arrasMenu_miscRetrograde.UPGRADES_TIER_0 = [
-    "tracker3",
-    "tetraGunner",
-    "worstTank",
-]
+// feature-reduced menu for retrograde event
+// linked boss menus are placeholders until we get the arras'd version of them (celestial/elite/strange bosses, the former rigged to self-destruct in 10 seconds)
+Class.arrasMenu_retrograde = makeMenu("Retrograde", {upgrades: ["arrasMenu_diep", "arrasMenu_digdig", "menu_celestials", "menu_elites", "menu_mysticals", "arrasMenu_nostalgia", "arrasMenu_scrapped", "arrasMenu_miscRetrograde"]})
+    Class.arrasMenu_miscRetrograde = makeMenu("Misc Retrograde", {upgrades: ["tracker3", "tetraGunner", "worstTank"]})
 
 // Tier 2
 Class.blaster_RG = {

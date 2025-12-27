@@ -4,6 +4,8 @@ const g = require('../gunvals.js')
 require('./tanks.js')
 require('./food.js')
 
+// Presets
+
 // Main Developer Tank
 Class.developer = {
     PARENT: "genericTank",
@@ -213,393 +215,36 @@ Class.banHammer = {
 }
 
 // Tank Menu(s)
-Class.menu_tanks = makeMenu("Tanks")
-//Class.menu_tanks.UPGRADE_TOOLTIP = "Every tank. Need I say more?"
-Class.menu_tanks.UPGRADES_TIER_0 = [
-    Config.spawn_class,
-    "menu_unused",
-    "menu_removed",
-    "menu_mapEntities",
-    "menu_motherships",
-    "menu_fun",
-    "healer",
-    //"undercoverCop",
-    "arenaCloser"
-]
-
-Class.menu_unused = makeMenu("Unused")
-Class.menu_unused.UPGRADE_TOOLTIP = "Tanks that were fully created and likely intended to be added, but never were."
-Class.menu_unused.UPGRADES_TIER_0 = [
-    "menu_unused_T1",
-    "menu_unused_T2",
-    "menu_unused_T3",
-]
-
-Class.menu_unused_T1 = makeMenu("Unused (Tier 1)")
-Class.menu_unused_T1.UPGRADE_LABEL = "Tier 1 (Lv.15)"
-Class.menu_unused_T1.UPGRADES_TIER_0 = [
-    "flail",
-    "whirlwind_bent",
-]
-
-Class.menu_unused_T2 = makeMenu("Unused (Tier 2)")
-Class.menu_unused_T2.UPGRADE_LABEL = "Tier 2 (Lv.30)"
-Class.menu_unused_T2.UPGRADES_TIER_0 = [
-    "autoTrapper",
-    "volute",
-    "whirlwind_old",
-]
-
-Class.menu_unused_T3 = makeMenu("Unused (Tier 3)")
-Class.menu_unused_T3.UPGRADE_LABEL = "Tier 3 (Lv.45)"
-Class.menu_unused_T3.UPGRADES_TIER_0 = [
-    "blunderbuss",
-    "cocci",
-    "dreadnought_old",
-    "mender",
-    "oroboros",
-    "prodigy",
-    "quadBuilder",
-    "rimfire_old",
-    "rocket",
-    "wrangler",
-]
-
-Class.menu_removed = makeMenu("Removed")
-Class.menu_removed.UPGRADE_TOOLTIP = "Tanks that were previously accessible in-game in some form before being removed."
-Class.menu_removed.UPGRADES_TIER_0 = [
-    "menu_dailyTanks",
-    "boomer_old",
-    "auto4_old",
-    "spike_old",
-    "spreadshot_old",
-]
-
-Class.menu_dailyTanks = makeMenu("Daily Tanks")
-Class.menu_dailyTanks.UPGRADE_COLOR = "rainbow"
-Class.menu_dailyTanks.UPGRADE_TOOLTIP = "Tanks that were part of arras.io's December 2023 Daily Tanks event, in the order they were first made available. \n" +
-                                        "The Daily Tank for a server can be added or changed in config."
-Class.menu_dailyTanks.UPGRADES_TIER_0 = [
-    "whirlwind", // dec 13/21
-    "master", // dec 14/22
-    "undertow", // dec 15/23
-    "literallyAMachineGun", // dec 16/24
-    "literallyATank", // dec 17
-    "rocketeer_AR", // dec 18
-    "jumpSmasher", // dec 19/20
-    "rapture" // dec 25
-]
-
-Class.menu_mapEntities = makeMenu("Map Entities")
-Class.menu_mapEntities.UPGRADE_TOOLTIP = "Tanks that spawn as part of the map layout."
-Class.menu_mapEntities.PROPS = [
-    {
-        TYPE: "dominationBody",
-        POSITION: { SIZE: 22 }
-    }
-]
-Class.menu_mapEntities.UPGRADES_TIER_0 = [
-    "menu_dominators",
-    "baseProtector",
-    "antiTankMachineGun",
-    "menu_sanctuaries",
-]
-
-Class.menu_dominators = makeMenu("Dominators")
-Class.menu_dominators.PROPS = [
-    {
-        TYPE: "dominationBody",
-        POSITION: { SIZE: 22 }
-    }
-]
-Class.menu_dominators.UPGRADES_TIER_0 = [
-    "destroyerDominator",
-    "gunnerDominator",
-    "trapperDominator",
-]
-
-Class.menu_sanctuaries = makeMenu("Sanctuaries")
-Class.menu_sanctuaries.PROPS = [
-    {
-        TYPE: "dominationBody",
-        POSITION: { SIZE: 22 }
-    },
-    {
-        POSITION: [13, 0, 0, 360, 1],
-        TYPE: "healerHat"
-    }
-]
-Class.menu_sanctuaries.UPGRADES_TIER_0 = [
-    "sanctuaryTier1",
-    "sanctuaryTier2",
-    "sanctuaryTier3",
-    "sanctuaryTier4",
-    "sanctuaryTier5",
-    "sanctuaryTier6",
-]
-
-Class.menu_motherships = makeMenu("Motherships", "mirror", 16)
-Class.menu_motherships.UPGRADE_TOOLTIP = "Giant Enemy Tanks that you attack the weak points of for massive damage."
-Class.menu_motherships.UPGRADES_TIER_0 = [
-    "mothership",
-    "flagship",
-    "turkey",
-]
-
-Class.menu_fun = makeMenu("Fun")
-Class.menu_fun.UPGRADE_TOOLTIP = "Tanks that, let's be honest, aren't used for a good reason.\n" +
-                                 //"\n" +
-                                 "DISCLAIMER: Some of the content in here may be in poor taste. Blame the arras.io devs, not us."
-Class.menu_fun.UPGRADES_TIER_0 = [
-    //"alas",
-    //"average4tdmScore",
-    //"averageL39Hunt",
-    //"beeman",
-    "bigBalls",
-    "cxATMG",
-    "damoclone",
-    "fat456",
-    "heptaAutoBasic",
-    "machineShot",
-    "meDoingYourMom",
-    "meOnMyWayToDoYourMom",
-    //"quadCyclone",
-    "rapture",
-    "riptide",
-    //"schoolShooter",
-    //"smasher3",
-    "tetraGunner",
-    //"theAmalgamation",
-    //"theConglomerate",
-    "tracker3",
-    "undercoverCop",
-    "wifeBeater",
-    "worstTank",
-]
-
-// Boss Menu(s)
-Class.menu_bosses = makeMenu("Bosses")
-Class.menu_bosses.REROOT_UPGRADE_TREE = "menu_bosses"
-Class.menu_bosses.UPGRADES_TIER_0 = [
-    "menu_sentries",
-    "menu_elites",
-    "menu_mysticals",
-    "menu_nesters",
-    "menu_rogues",
-    "menu_rammers",
-    "menu_terrestrials",
-    "menu_celestials",
-    "menu_eternals",
-    "menu_devBosses",
-]
-
-Class.menu_sentries = makeMenu("Sentries", "pink", 3.5)
-Class.menu_sentries.PROPS = [
-    {
-        POSITION: [12, 0, 0, 0, 360, 1],
-        TYPE: "genericEntity"
-    }
-]
-Class.menu_sentries.UPGRADES_TIER_0 = [
-    "sentrySwarm",
-    "sentryGun",
-    "sentryTrap",
-    "sentinelSwarm",
-    "sentinelGun",
-    "sentinelTrap",
-    "shinySentrySwarm",
-    "shinySentryGun",
-    "shinySentryTrap",
-    "sentinelMinigun",
-    "sentinelLauncher",
-    "sentinelCrossbow",
-]
-
-Class.menu_elites = makeMenu("Elites", "pink", 3.5)
-Class.menu_elites.UPGRADES_TIER_0 = [
-    "eliteDestroyer",
-    "eliteGunner",
-    "eliteSprayer",
-    "eliteBattleship",
-    "eliteSpawner",
-    "eliteTrapGuard",
-    "eliteSpinner",
-    "eliteSkimmer",
-    "legionaryCrasher",
-    "sprayerLegion",
-    "menu_deltas",
-]
-
-Class.menu_deltas = makeMenu("Deltas", "pink", 3)
-Class.menu_deltas.UPGRADES_TIER_0 = [
-    "deltaDestroyer",
-    "deltaGunner",
-    "deltaSprayer",
-    "deltaBattleship",
-]
-
-Class.menu_mysticals = makeMenu("Mysticals", "gold", 4)
-Class.menu_mysticals.UPGRADES_TIER_0 = [
-    "sorcerer",
-    "summoner",
-    //"thaumaturge",
-    "enchantress",
-    "exorcistor",
-    "shaman",
-    "witch",
-]
-
-Class.menu_nesters = makeMenu("Nesters", "purple", 5.5)
-Class.menu_nesters.UPGRADES_TIER_0 = [
-    "nestKeeper",
-    "nestWarden",
-    "nestGuardian",
-    "nestCurator",
-    "nestDeacon",
-    "nestChampion",
-]
-
-Class.menu_rogues = makeMenu("Rogues", "darkGrey", 6)
-Class.menu_rogues.UPGRADES_TIER_0 = [
-    "roguePalisade",
-    "rogueAlcazar",
-    "rogueArmada",
-    "julius",
-    "genghis",
-    "napoleon",
-]
-
-Class.menu_rammers = makeMenu("Rammers", "aqua")
-Class.menu_rammers.PROPS = [
-    {
-        POSITION: [21.5, 0, 0, 360, 0],
-        TYPE: ["hexagonHat_spin", { COLOR: "black" }],
-    }
-]
-Class.menu_rammers.UPGRADES_TIER_0 = [
-    "bob",
-    "nemesis",
-]
-
-Class.menu_terrestrials = makeMenu("Terrestrials", "orange", 7)
-Class.menu_terrestrials.UPGRADES_TIER_0 = [
-    "ares",
-    "gersemi",
-    "ezekiel",
-    "eris",
-    "selene",
-]
-
-Class.menu_celestials = makeMenu("Celestials", "lightGreen", 9)
-Class.menu_celestials.UPGRADE_TOOLTIP = "WARNING: There are a lot of tanks in here and having this menu open may cause noticeable frame drops!"
-Class.menu_celestials.UPGRADES_TIER_0 = [
-    "paladin",
-    "freyja",
-    "zaphkiel",
-    "nyx",
-    "theia",
-    "atlas",
-    "hera",
-    "horus",
-    "anubis",
-    "isis",
-    "tethys",
-    "ullr",
-    "dellingr",
-    "osiris",
-    "alcis",
-    "khonsu",
-    "baldr",
-    "nephthys",
-    "tyr",
-    "vor",
-    "aether",
-    "iapetus",
-    "apollo",
-    "eros",
-    "hjordis",
-    "sif",
-    "freyr",
-    "styx",
-    "hyperion",
-    "ptah",
-    "rhea",
-    "julius",
-    "genghis",
-    "napoleon"
-]
-
-Class.menu_eternals = makeMenu("Eternals", "veryLightGrey", 11)
-Class.menu_eternals.UPGRADES_TIER_0 = [
-    "ragnarok",
-    "kronos",
-    "amun",
-]
-
-Class.menu_devBosses = makeMenu("Developers", "lightGreen", 4)
-Class.menu_devBosses.UPGRADE_COLOR = "rainbow"
-Class.menu_devBosses.UPGRADES_TIER_0 = [
-    "AEMKShipBoss",
-    "dogeiscutBoss",
-    "helenaBoss",
-    "toothlessBoss",
-    "tgsBoss",
-    "menu_retiredDevBosses",
-]
-
-Class.menu_retiredDevBosses = makeMenu("Retired Developers", "pureBlack", 4)
-Class.menu_retiredDevBosses.UPGRADES_TIER_0 = [
-    "frostBoss",
-    "taureonBoss",
-    "trplnrBoss",
-]
-
-// Addons Menu
-Class.menu_addons = makeMenu("Addons")
-Class.menu_addons.UPGRADE_TOOLTIP = "Content that is (usually) not part of Open Source Arras but was added by someone else."
-Class.menu_addons.UPGRADES_TIER_0 = [] // Empty by default, gets filled up with all the addons you add
-
-// Testing Menu
-Class.menu_testing = makeMenu("Testing")
-Class.menu_testing.UPGRADE_TOOLTIP = "A large selection of tanks that use many of the features of Open Source Arras. \n" +
-                                     "WARNING: There are a lot of tanks in here and having this menu open may cause noticeable frame drops!"
-Class.menu_testing.UPGRADES_TIER_0 = [
-    "diamondShape",
-    "miscTest",
-    "mmaTest",
-    "vulnturrettest",
-    "onTest",
-    "alphaGunTest",
-    "strokeWidthTest",
-    "testLayeredBoss",
-    "tooltipTank",
-    "turretLayerTesting",
-    "bulletSpawnTest",
-    "propTest",
-    "weaponArrayTest",
-    "radialAutoTest",
-    "imageShapeTest",
-    "screenShakeTest",
-    "turretStatScaleTest",
-    "auraBasic",
-    "auraHealer",
-    "ghoster",
-    "gunBenchmark",
-    "switcheroo",
-    "armyOfOne",
-    "vanquisher",
-    "mummifier",
-    "syncWithTankTest",
-    "airblast",
-    "angleseer",
-    "backwardsexports",
-    "basicdrive",
-]
-
-// testing shit
-Class.basicdrive = makeDrive("basic")
+Class.menu_tanks = makeMenu("Tanks", {upgrades: [Config.spawn_class, "menu_unused", "menu_removed", "menu_mapEntities", "menu_motherships", "menu_fun", "healer"/*, "undercoverCop"*/, "arenaCloser"]})
+    Class.menu_unused = makeMenu("Unused", {upgrades: ["1", "2", "3"].map(x => "menu_unused_T" + x), tooltip: "Tanks that were fully created and likely intended to be added, but never were."})
+        Class.menu_unused_T1 = makeMenu("Unused (Tier 1)", {upgrades: ["flail", "whirlwind_bent"], boxLabel: "Tier 1 (Lv.15)"})
+        Class.menu_unused_T2 = makeMenu("Unused (Tier 2)", {upgrades: ["autoTrapper", "volute", "whirlwind_old"], boxLabel: "Tier 2 (Lv.30)"})
+        Class.menu_unused_T3 = makeMenu("Unused (Tier 3)", {upgrades: ["blunderbuss", "cocci", "dreadnought_old", "mender", "oroboros", "prodigy", "quadBuilder", "rimfire_old", "rocket", "wrangler"], boxLabel: "Tier 3 (Lv.45)"})
+    Class.menu_removed = makeMenu("Removed", {upgrades: ["menu_dailyTanks", "boomer_old", "auto4_old", "spike_old", "spreadshot_old"], tooltip: "Tanks that were previously accessible in-game in some form before being removed."})
+        Class.menu_dailyTanks = makeMenu("Daily Tanks", {upgrades: ["whirlwind", "master", "undertow", "literallyAMachineGun", "literallyATank", "rocketeer_AR", "jumpSmasher", "rapture"], boxColor: "rainbow", tooltip: "Tanks that were part of arras.io's December 2023 Daily Tanks event, in the order they were first made available.\n" + "The Daily Tank for a server can be added or changed in config."})
+    Class.menu_mapEntities = makeMenu("Map Entities", {upgrades: ["menu_dominators", "baseProtector", "antiTankMachineGun", "menu_sanctuaries"], props: [{TYPE: "dominationBody", POSITION: { SIZE: 22 }}], tooltip: "Tanks that spawn as part of the map layout."})
+        Class.menu_dominators = makeMenu("Dominators", {upgrades: ["destroyer", "gunner", "trapper"].map(x => x + "Dominator"), props: [{TYPE: "dominationBody", POSITION: { SIZE: 22 }}]})
+        Class.menu_sanctuaries = makeMenu("Sanctuaries", {upgrades: ["1", "2", "3", "4", "5", "6"].map(x => "sanctuaryTier" + x), props: [{TYPE: "dominationBody", POSITION: { SIZE: 22 }}, {TYPE: "healerHat", POSITION:  { SIZE: 13, LAYER: 1 }}]})
+    Class.menu_motherships = makeMenu("Motherships", {upgrades: ["mothership", "flagship", "turkey"], shape: 16, tooltip: "Giant Enemy Tanks that you attack the weak points of for massive damage."})
+    Class.menu_fun = makeMenu("Fun", {upgrades: [/*"alas", "average4tdmScore", "averageL39Hunt", "beeman", */"bigBalls", "cxATMG", "damoclone", "fat456", "heptaAutoBasic", "machineShot", "meDoingYourMom", "meOnMyWayToDoYourMom"/*, "quadCyclone"*/, "rapture", "riptide"/*, "schoolShooter", "smasher3"*/, "tetraGunner"/*, "theAmalgamation", "theConglomerate"*/, "tracker3", "undercoverCop", "wifeBeater", "worstTank"], tooltip: "Tanks that, let's be honest, aren't used for a good reason.\n" + "DISCLAIMER: Some of the content in here may be in poor taste. Blame the arras.io devs, not us."})
+Class.menu_bosses = makeMenu("Bosses", {upgrades: ["sentries", "elites", "mysticals", "nesters", "rogues", "rammers", "terrestrials", "celestials", "eternals", "devBosses"].map(x => "menu_" + x), rerootTree: "menu_bosses"})
+    Class.menu_sentries = makeMenu("Sentries", {upgrades: ["sentrySwarm", "sentryGun", "sentryTrap", "sentinelSwarm", "sentinelGun", "sentinelTrap", "shinySentrySwarm", "shinySentryGun", "shinySentryTrap", "sentinelMinigun", "sentinelLauncher", "sentinelCrossbow"], color: "pink", boxColor: "pink", shape: 3.5, props: [{POSITION: [12, 0, 0, 0, 360, 1], TYPE: ["circleHat", {COLOR: "grey"}]}]})
+    Class.menu_elites = makeMenu("Elites", {upgrades: ["eliteDestroyer", "eliteGunner", "eliteSprayer", "eliteBattleship", "eliteSpawner", "eliteTrapGuard", "eliteSpinner", "eliteSkimmer", "legionaryCrasher", "sprayerLegion", "menu_deltas"], color: "pink", boxColor: "pink", shape: 3.5})
+        Class.menu_deltas = makeMenu("Deltas", {upgrades: ["Destroyer", "Gunner", "Sprayer", "Battleship"].map(x => "delta" + x), color: "pink", boxColor: "pink", shape: 3})
+    Class.menu_mysticals = makeMenu("Mysticals", {upgrades: ["sorcerer", "summoner"/*, "thaumaturge"*/, "enchantress", "exorcistor", "shaman", "witch"], color: "gold", boxColor: "gold", shape: 4})
+    Class.menu_nesters = makeMenu("Nesters", {upgrades: ["nestKeeper", "nestWarden", "nestGuardian", "nestCurator", "nestDeacon", "nestChampion"], color: "purple", boxColor: "purple", shape: 5.5})
+    Class.menu_rogues = makeMenu("Rogues", {upgrades: ["roguePalisade", "rogueAlcazar", "rogueArmada", "julius", "genghis", "napoleon"], color: "darkGrey", boxColor: "darkGrey", shape: 6})
+    Class.menu_rammers = makeMenu("Rammers", {upgrades: ["bob", "nemesis"], color: "aqua", boxColor: "aqua", props: [{TYPE: "dominationBody", POSITION: { SIZE: 21.5, ARC: 360 }}]})
+    Class.menu_terrestrials = makeMenu("Terrestrials", {upgrades: ["ares", "gersemi", "ezekiel", "eris", "selene"], color: "orange", boxColor: "orange", shape: 7.5})
+    Class.menu_celestials = makeMenu("Celestials", {upgrades: ["paladin", "freyja", "zaphkiel", "nyx", "theia", "atlas", "hera", "horus", "anubis", "isis", "tethys", "ullr", "dellingr", "osiris", "alcis", "khonsu", "baldr", "nephthys", "tyr", "vor", "aether", "iapetus", "apollo", "eros", "hjordis", "sif", "freyr", "styx", "hyperion", "ptah", "rhea", "julius", "genghis", "napoleon"], color: "lightGreen", boxColor: "lightGreen", shape: 9.5, tooltip: "WARNING: There are a lot of tanks in here and having this menu open may cause noticeable frame drops!"})
+    Class.menu_eternals = makeMenu("Eternals", {upgrades: ["ragnarok", "kronos", "amun"], color: "veryLightGrey", boxColor: "veryLightGrey", shape: 11.5})
+    Class.menu_devBosses = makeMenu("Developers", {upgrades: ["AEMKShipBoss", "dogeiscutBoss", "helenaBoss", "toothlessBoss", "tgsBoss", "menu_retiredDevBosses"], color: "lightGreen", boxColor: "rainbow", shape: 4})
+        Class.menu_retiredDevBosses = makeMenu("Developers (Retired)", {upgrades: ["frostBoss", "taureonBoss", "trplnrBoss"], color: "pureBlack", boxColor: "pureBlack", shape: 4, boxLabel: "Retired"})
+Class.menu_addons = makeMenu("Addons", {tooltip: "Content that is (usually) not part of Open Source Arras but was added by someone else."})
+Class.menu_testing = makeMenu("Testing", {upgrades: ["diamondShape", "miscTest", "mmaTest", "vulnturrettest", "onTest", "alphaGunTest", "strokeWidthTest", "testLayeredBoss", "tooltipTank", "turretLayerTesting", "bulletSpawnTest", "propTest", "weaponArrayTest", "radialAutoTest", "imageShapeTest", "screenShakeTest", "turretStatScaleTest", "auraBasic", "auraHealer", "ghoster", "gunBenchmark", "switcheroo", "armyOfOne", "vanquisher", "mummifier", "syncWithTankTest", "airblast", "angleseer", "backwardsexports"], tooltip: "A large selection of tanks that use many of the features of Open Source Arras.\n" + "WARNING: There are a lot of tanks in here and having this menu open may cause noticeable frame drops!"})
 
 // airblast testing
+Class.airblastBullet = { PARENT: "bullet", ALPHA: 0.5, BODY: { KNOCKBACK: 30 } }
 Class.airblast = {
     PARENT: "genericTank",
     LABEL: "Airblast",
@@ -1325,5 +970,35 @@ testLayeredBoss.addLayer({turret: {
     POSITION: [10, 7.5, 0, null, 160, 0],
     TYPE: "crowbarTurret",
 }}, true);
+
+// DigDig (WIP)
+Class.genericDigDig = {
+    PARENT: "genericSmasher",
+    LABEL: "Digger",
+    COLOR: "grey",
+    SIZE: Class.genericTank.SIZE * 3,
+    TURRETS: [
+        {
+            TYPE: "digDigHat",
+            POSITION: { SIZE: 27 }
+        }
+    ]
+}
+Class.digDigSmile = {
+    PARENT: "genericDigDig",
+    PROPS: []
+}
+Class.digDigSmile_kirk = {
+    PARENT: "genericDigDig",
+    PROPS: []
+}
+Class.digDigFrown = {
+    PARENT: "genericDigDig",
+    PROPS: []
+}
+Class.digDigFrown_kirk = {
+    PARENT: "genericDigDig",
+    PROPS: []
+}
 
 global.convertExportsToClass(exports);

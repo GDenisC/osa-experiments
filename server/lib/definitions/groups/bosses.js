@@ -857,7 +857,7 @@ Class.sorcerer = {
         POSITION: [3.5, 8.65, 1.2, 8, 0, 0, 0],
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.machineGun, g.machineGunner, { damage: 1.8, size: 0.4, spray: 150, speed: 2, shudder: 1.75 }]),
-            TYPE: "minichip",
+            TYPE: "sorcererDrone",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
             STAT_CALCULATOR: "drone",
@@ -917,7 +917,7 @@ Class.enchantress = {
         POSITION: [3.5, 8.65, 1.2, 8, 0, 0, 0],
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.drone, g.summoner, { size: 0.9, damage: 1.1 }]),
-            TYPE: "dorito",
+            TYPE: "enchantressDrone",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
             STAT_CALCULATOR: "drone",
@@ -947,7 +947,7 @@ Class.exorcistor = {
         POSITION: [3.5, 8.65, 1.2, 8, 0, 0, 0],
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, { maxSpeed: 1.2, reload: 5, size: 1.15, damage: 4 }]),
-            TYPE: "demonchip",
+            TYPE: "exorcistorDrone",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
             STAT_CALCULATOR: "drone",
@@ -977,7 +977,7 @@ Class.shaman = {
         POSITION: [3.5, 8.65, 1.2, 8, 0, 0, 0],
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, { size: 1.25, maxSpeed: 1.2, damage: 1.1, reload: 3, damage: 4 }]),
-            TYPE: "realchip",
+            TYPE: "shamanDrone",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
             STAT_CALCULATOR: "drone",
@@ -1007,7 +1007,7 @@ Class.witch = {
         POSITION: [3.5, 8.65, 1.2, 8, 0, 0, 0],
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.drone, g.summoner, { size: 0.4, damage: 1.1 }]),
-            TYPE: "dorito",
+            TYPE: "enchantressDrone",
             AUTOFIRE: true,
             SYNCS_SKILLS: true,
             STAT_CALCULATOR: "drone",
@@ -1048,7 +1048,7 @@ Class.thaumaturge = {
             POSITION: [3, 5, 1.2, 8, -4, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.machineGun, g.machineGunner, { damage: 1.8, size: 0.55, spray: 150, speed: 2, shudder: 1.75 }]),
-                TYPE: "minichip",
+                TYPE: "sorcererDrone",
                 AUTOFIRE: true,
                 SYNCS_SKILLS: true,
                 STAT_CALCULATOR: "drone",
@@ -1060,7 +1060,7 @@ Class.thaumaturge = {
             POSITION: [3, 5, 1.2, 8, 4, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.machineGun, g.machineGunner, { damage: 1.8, size: 0.55, spray: 150, speed: 2, shudder: 1.75 }]),
-                TYPE: "minichip",
+                TYPE: "sorcererDrone",
                 AUTOFIRE: true,
                 SYNCS_SKILLS: true,
                 STAT_CALCULATOR: "drone",
@@ -1561,7 +1561,7 @@ ares.addLayer({gun: {
     POSITION: [3.75, 7, 1.2, 8, 0, null, 0],
     PROPERTIES: {
         SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, {health: 1.2, damage: 1.1, resist: 1.1, density: 1.5, maxSpeed: 1.25}]),
-        TYPE: ["demonchip", { INDEPENDENT: true }],
+        TYPE: ["exorcistorDrone", { INDEPENDENT: true }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
         STAT_CALCULATOR: "drone",
@@ -1588,7 +1588,7 @@ ezekiel.addLayer({gun: {
     POSITION: [3.75, 7, 1.2, 8, 0, null, 0],
     PROPERTIES: {
         SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, {health: 1.2, damage: 1.1, resist: 1.1, density: 1.5, maxSpeed: 1.25}]),
-        TYPE: ["dorito", { COLOR: "orange", INDEPENDENT: true }],
+        TYPE: ["enchantressDrone", { COLOR: "orange", INDEPENDENT: true }],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
         STAT_CALCULATOR: "drone",
@@ -1640,7 +1640,7 @@ paladin.addLayer({gun: {
     POSITION: [3.8, 6, 1.4, 8, 0, null, 0],
     PROPERTIES: {
         SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, {health: 1.4, damage: 1.4, resist: 1.2, density: 1.8, maxSpeed: 1.325}]),
-        TYPE: ["demonchip", {INDEPENDENT: true}],
+        TYPE: ["exorcistorDrone", {INDEPENDENT: true}],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
         STAT_CALCULATOR: "drone",
@@ -1669,7 +1669,7 @@ zaphkiel.addLayer({gun: {
     POSITION: [3.8, 6, 1.4, 8, 0, null, 0],
     PROPERTIES: {
         SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, {health: 1.4, damage: 1.4, resist: 1.2, density: 1.8, maxSpeed: 1.325}]),
-        TYPE: ["dorito", {INDEPENDENT: true}],
+        TYPE: ["enchantressDrone", {INDEPENDENT: true}],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
     },
@@ -1840,7 +1840,7 @@ freyr.addLayer({gun: {
     POSITION: [3.8, 6, 1.4, 8, 0, null, 0],
     PROPERTIES: {
         SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, {health: 1.4, damage: 1.4, resist: 1.2, density: 1.8, maxSpeed: 1.325}]),
-        TYPE: ["dorito", {INDEPENDENT: true}], // up to devs discussion or just waiting until we see it officially to determine what this'll be
+        TYPE: ["enchantressDrone", {INDEPENDENT: true}], // up to devs discussion or just waiting until we see it officially to determine what this'll be
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
     },
@@ -1944,7 +1944,7 @@ nephthys.addLayer({gun: {
     POSITION: [4.6, 6, 1.4, 8, 0, null, 0],
     PROPERTIES: {
         SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.destroyer, {health: 1.4, damage: 1.4, resist: 1.2, density: 1.8, maxSpeed: 1.325}]),
-        TYPE: ["demonchip", {INDEPENDENT: true}], // up to devs discussion or just waiting until we see it officially to determine what this'll be
+        TYPE: ["exorcistorDrone", {INDEPENDENT: true}], // up to devs discussion or just waiting until we see it officially to determine what this'll be
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
     },
@@ -2062,7 +2062,7 @@ ragnarok.addLayer({gun: {
     POSITION: [2.25, 3.25, -1.6, 9, 0, null, 0],
     PROPERTIES: {
         SHOOT_SETTINGS: combineStats([g.drone, g.summoner, g.pounder, g.destroyer, {speed: 1.25, maxSpeed: 1.25}]),
-        TYPE: ["realchip", {INDEPENDENT: true, DRAW_HEALTH: true, COLOR: 'hexagon'}],
+        TYPE: ["shamanDrone", {INDEPENDENT: true, DRAW_HEALTH: true, COLOR: 'hexagon'}],
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
     },
@@ -2109,7 +2109,7 @@ Class.taureonCore = {
         POSITION: [21, 15, -1.1, 0, 0, 0, 0],
         PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.destroyer, g.sniper]),
-            TYPE: "snakeOld",
+            TYPE: "snake",
             STAT_CALCULATOR: "sustained"
         }
     }],

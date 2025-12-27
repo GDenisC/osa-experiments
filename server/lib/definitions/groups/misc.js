@@ -875,6 +875,7 @@ Class.antiTankMachineGun = {
 }
 
 // CX-ATMG
+Class.cxATMGBullet = { PARENT: "bullet", SHAPE: Class.cube.SHAPE }
 Class.cxATMG = {
     PARENT: "dominator",
     LABEL: "CX-ATMG",

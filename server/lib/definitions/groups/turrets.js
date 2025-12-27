@@ -1,4 +1,4 @@
-const { combineStats, makeTurret, weaponArray, weaponMirror } = require('../facilitators.js')
+const { combineStats, makeAuto, makeTurret, weaponArray, weaponMirror } = require('../facilitators.js')
 const { base } = require('../constants.js')
 const g = require('../gunvals.js')
 
@@ -177,6 +177,7 @@ Class.baseTrapTurret = makeTurret({
         },
     ],
 }, {independent: true, hasAI: false, extraStats: []})
+Class.baseMechTurretTrap = makeAuto("trap")
 Class.baseMechTurret = makeTurret({
     GUNS: [
         {
@@ -187,7 +188,7 @@ Class.baseMechTurret = makeTurret({
             POSITION: [4, 14, 1.8, 19, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.trap, g.pounder, g.hexaTrapper, {reload: 1.3, size: 1.2, health: 1.35, damage: 1.4, speed: 0.9, shudder: 0.1}]),
-                TYPE: "autotrap",
+                TYPE: "baseMechTurretTrap",
                 STAT_CALCULATOR: "trap",
                 NO_LIMITATIONS: true,
                 AUTOFIRE: true,
@@ -638,7 +639,7 @@ Class.juliusLowerTurret = makeTurret({
             POSITION: [8.5, 11, 0.6, 6, 0, 0, 0.5],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.drone, g.sunchip, {size: 0.8, health: 1.5, damage: 1.5, density: 1.2, maxSpeed: 0.8}]),
-                TYPE: "minichip",
+                TYPE: "sorcererDrone",
                 STAT_CALCULATOR: "drone",
             },
         },
@@ -679,6 +680,7 @@ Class.kronosTripletTurret = makeTurret({
         },
     ],
 }, {canRepel: true, limitFov: true, extraStats: []})
+Class.napoleonUpperTurretBullet = makeAuto('bullet', "Auto-Bullet", {type: "bulletAutoTurret", size: 14, color: "veryLightGrey", angle: 0});
 Class.napoleonUpperTurret = makeTurret({
     GUNS: [
         {
@@ -687,7 +689,7 @@ Class.napoleonUpperTurret = makeTurret({
             POSITION: [16, 12, 1, 0, 0, 0, 0],
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, g.pounder, { reload: 1.2, health: 1.2, damage: 1.2, speed: 0.93, maxSpeed: 0.93, range: 1.5 }]),
-                TYPE: ["turretedBullet", {COLOR: "veryLightGrey"}],
+                TYPE: ["napoleonUpperTurretBullet", {COLOR: "veryLightGrey"}],
             },
         },
     ],

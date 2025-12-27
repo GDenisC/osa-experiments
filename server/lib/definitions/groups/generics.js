@@ -1,6 +1,7 @@
 const { skillSet } = require('../facilitators.js')
 const { base, dfltskl, smshskl, statnames } = require('../constants.js')
 
+// Entities
 Class.genericEntity = {
     NAME: "",
     LABEL: "",//"Unknown Entity",
@@ -88,6 +89,8 @@ Class.genericEntity = {
         LEVEL: -1
     }
 }
+
+// Tanks
 Class.genericTank = {
     LABEL: "Unknown Class",
     TYPE: "tank",
@@ -129,6 +132,8 @@ Class.genericTank = {
     RESET_EVENTS: true,
     HITS_OWN_TYPE: "hardOnlyTanks"
 }
+
+// Tanks (specific)
 Class.genericFlail = {
     PARENT: "genericTank",
     STAT_NAMES: statnames.flail,
@@ -182,30 +187,8 @@ Class.genericSmasher = {
         DENSITY: 2 * base.DENSITY
     }
 }
-Class.genericBoss = {
-    PARENT: "genericTank",
-    TYPE: "miniboss",
-    DANGER: 6,
-    SKILL: skillSet({
-        rld: 0.7,
-        dam: 0.5,
-        pen: 0.8,
-        str: 0.8,
-        spd: 0.2,
-        atk: 0.3,
-        hlt: 1,
-        shi: 0.7,
-        rgn: 0.7,
-        mob: 0,
-    }),
-    LEVEL: 45,
-    CONTROLLERS: [["nearestDifferentMaster", { lockThroughWalls: true }], "canRepel"],
-    FACING_TYPE: ['spin', {speed: 0.02}],
-    HITS_OWN_TYPE: "hardOnlyBosses",
-    BROADCAST_MESSAGE: "A visitor has left!",
-    BODY: { PUSHABILITY: 0.05 }
-}
 
+// Food
 Class.food = {
     TYPE: "food",
     DAMAGE_CLASS: 1,
@@ -223,8 +206,9 @@ Class.food = {
     DAMAGE_EFFECTS: false,
     RATEFFECTS: false,
     HEALTH_WITH_LEVEL: false,
-};
+}
 
+// Projectiles
 Class.bullet = {
     LABEL: "Bullet",
     TYPE: "bullet",
@@ -242,8 +226,7 @@ Class.bullet = {
     CAN_GO_OUTSIDE_ROOM: true,
     HITS_OWN_TYPE: "never",
     DIE_AT_RANGE: true,
-};
-
+}
 Class.drone = {
     LABEL: "Drone",
     TYPE: "drone",
@@ -278,70 +261,7 @@ Class.drone = {
     DRAW_HEALTH: false,
     CLEAR_ON_MASTER_UPGRADE: true,
     BUFF_VS_FOOD: true,
-};
-
-Class.swarm = {
-    LABEL: "Swarm Drone",
-    TYPE: "swarm",
-    ACCEPTS_SCORE: false,
-    SHAPE: 3,
-    MOTION_TYPE: "swarm",
-    FACING_TYPE: "smoothWithMotion",
-    CONTROLLERS: ["nearestDifferentMaster", "mapTargetToGoal"],
-    CRAVES_ATTENTION: true,
-    BODY: {
-        ACCELERATION: 3,
-        PENETRATION: 1.5,
-        HEALTH: 0.175,
-        DAMAGE: 2.25,
-        SPEED: 4.5,
-        RESIST: 1.6,
-        RANGE: 225,
-        DENSITY: 12,
-        PUSHABILITY: 0.6,
-        FOV: 1.5,
-    },
-    DIE_AT_RANGE: true,
-    BUFF_VS_FOOD: true,
-};
-Class.baseSwarmTurret_swarm = {
-    PARENT: "swarm",
-    MOTION_TYPE: ["swarm", { turnVelocity: 10 }],
-    AI: { IGNORE_SHAPES: true },
-    BODY: {
-        ACCELERATION: Class.swarm.BODY.ACCELERATION,
-        PENETRATION: Class.swarm.BODY.PENETRATION,
-        HEALTH: Class.swarm.BODY.HEALTH,
-        DAMAGE: Class.swarm.BODY.DAMAGE,
-        SPEED: Class.swarm.BODY.SPEED,
-        RESIST: Class.swarm.BODY.RESIST,
-        RANGE: 345,
-        DENSITY: Class.swarm.BODY.DENSITY,
-        PUSHABILITY: Class.swarm.BODY.PUSHABILITY,
-        FOV: 1.7,
-        KNOCKBACK: 15,
-    },
 }
-Class.airblastBullet = { PARENT: "bullet", ALPHA: 0.5, BODY: { KNOCKBACK: 30 } }
-Class.trap = {
-    LABEL: "Thrown Trap",
-    TYPE: "trap",
-    ACCEPTS_SCORE: false,
-    SHAPE: -3,
-    MOTION_TYPE: "glide",
-    FACING_TYPE: "turnWithSpeed",
-    HITS_OWN_TYPE: "push",
-    DIE_AT_RANGE: true,
-    BODY: {
-        HEALTH: 0.5,
-        DAMAGE: 3,
-        RANGE: 450,
-        DENSITY: 2.5,
-        RESIST: 2.5,
-        SPEED: 0,
-    },
-};
-
 Class.satellite = { 
     LABEL: "Satellite",
     TYPE: "satellite",
@@ -368,20 +288,75 @@ Class.satellite = {
     BUFF_VS_FOOD: true,
     MOTION_TYPE: 'motor'
 }
-Class.satellite_old = {
-    PARENT: "satellite",
-    TURRETS: [
-        {
-            POSITION: [28, 0, 0, 0, 360, 0],
-            TYPE: "genericEntity"
-        }
-    ],
+Class.swarm = {
+    LABEL: "Swarm Drone",
+    TYPE: "swarm",
+    ACCEPTS_SCORE: false,
+    SHAPE: 3,
+    MOTION_TYPE: "swarm",
+    FACING_TYPE: "smoothWithMotion",
+    CONTROLLERS: ["nearestDifferentMaster", "mapTargetToGoal"],
+    CRAVES_ATTENTION: true,
+    BODY: {
+        ACCELERATION: 3,
+        PENETRATION: 1.5,
+        HEALTH: 0.175,
+        DAMAGE: 2.25,
+        SPEED: 4.5,
+        RESIST: 1.6,
+        RANGE: 225,
+        DENSITY: 12,
+        PUSHABILITY: 0.6,
+        FOV: 1.5,
+    },
+    DIE_AT_RANGE: true,
+    BUFF_VS_FOOD: true,
 }
-Class.squareSatellite = {
-    PARENT: "satellite",
-    SHAPE: 4
+Class.trap = {
+    LABEL: "Thrown Trap",
+    TYPE: "trap",
+    ACCEPTS_SCORE: false,
+    SHAPE: -3,
+    MOTION_TYPE: "glide",
+    FACING_TYPE: "turnWithSpeed",
+    HITS_OWN_TYPE: "push",
+    DIE_AT_RANGE: true,
+    BODY: {
+        HEALTH: 0.5,
+        DAMAGE: 3,
+        RANGE: 450,
+        DENSITY: 2.5,
+        RESIST: 2.5,
+        SPEED: 0,
+    },
 }
 
+// Bosses
+Class.genericBoss = {
+    PARENT: "genericTank",
+    TYPE: "miniboss",
+    DANGER: 6,
+    SKILL: skillSet({
+        rld: 0.7,
+        dam: 0.5,
+        pen: 0.8,
+        str: 0.8,
+        spd: 0.2,
+        atk: 0.3,
+        hlt: 1,
+        shi: 0.7,
+        rgn: 0.7,
+        mob: 0,
+    }),
+    LEVEL: 45,
+    CONTROLLERS: [["nearestDifferentMaster", { lockThroughWalls: true }], "canRepel"],
+    FACING_TYPE: ['spin', {speed: 0.02}],
+    HITS_OWN_TYPE: "hardOnlyBosses",
+    BROADCAST_MESSAGE: "A visitor has left!",
+    BODY: { PUSHABILITY: 0.05 }
+}
+
+// Aura Components
 Class.auraBase = {
     TYPE: "aura",
     ACCEPTS_SCORE: false,
@@ -402,7 +377,7 @@ Class.auraBase = {
         SPEED: 0,
         PUSHABILITY: 0,
     }
-};
+}
 Class.aura = {
     PARENT: "auraBase",
     LABEL: "Aura",
@@ -410,7 +385,7 @@ Class.aura = {
     BODY: {
         DAMAGE: 0.4,
     },
-};
+}
 Class.healAura = {
     PARENT: "auraBase",
     LABEL: "Heal Aura",
@@ -419,11 +394,11 @@ Class.healAura = {
     BODY: {
         DAMAGE: 0.4 / 3,
     },
-};
+}
 Class.auraSymbol = {
     PARENT: "genericTank",
     CONTROLLERS: [["spin", {speed: -0.04}]],
     INDEPENDENT: true,
     COLOR: "teal",
     SHAPE: [[-0.598,-0.7796],[-0.3817,-0.9053],[0.9688,-0.1275],[0.97,0.125],[-0.3732,0.9116],[-0.593,0.785]]
-};
+}
