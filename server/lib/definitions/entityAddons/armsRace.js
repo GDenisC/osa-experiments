@@ -128,6 +128,34 @@ Class.stormSquare_AR = {
         }
     }, {delayIncrement: 0.5})
 }
+Class.downpourerSquare_AR = {
+    PARENT: "stormSquare_AR",
+    GUNS: weaponMirror([
+        {
+            POSITION: {
+                LENGTH: 15.5,
+                WIDTH: 7,
+                ANGLE: 90
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 12,
+                WIDTH: 9,
+                ASPECT: -1.2,
+                ANGLE: 90
+            }
+        },
+        {
+            POSITION: {
+                LENGTH: 1,
+                WIDTH: 9,
+                X: 15.5,
+                ANGLE: 90
+            }
+        }
+    ])
+}
 Class.vortexSquare_AR = {
     PARENT: "stormSquare_AR",
     GUNS: weaponArray({
@@ -3445,6 +3473,7 @@ Class.doctor_AR = {
         }
     ]
 }
+Class.doperstorm_AR = makeDrive("doper_AR", storm_options)
 Class.doubleCoil_AR = {
     PARENT: "genericTank",
     LABEL: "Double Coil",
@@ -3574,6 +3603,7 @@ Class.doubleTriplex_AR = {
         }], { delayIncrement: 0.5 }),
     ], 2)
 }
+Class.downpourer_AR = makeDrive("director", {label: "Downpourer", type: "genericEntity", size: 12, hatType: "downpourerSquare_AR"}) // fix later
 Class.duster_AR = {
     PARENT: "genericTank",
     LABEL: "Duster",
@@ -3887,6 +3917,7 @@ Class.hextuplex_AR = {
         }), 3)
     ]
 }
+Class.honchostorm_AR = makeDrive("honcho_AR", storm_options)
 Class.injection_AR = {
     PARENT: "genericHealer",
     LABEL: "Injection",
@@ -4442,7 +4473,7 @@ Class.sootherdrive_AR = {
             TYPE: "healerHat",
             POSITION: {
                 SIZE: 13,
-                LAYER: 1
+                LAYER: 2
             }
         },
         {
@@ -4751,7 +4782,7 @@ Config.level_cap_cheat = 60
             //Class.foundry_AR.UPGRADES_TIER_4 = ["endeavor", "stocker", "foundrydrive", "megaFoundry", "fabrication", "shopper", "autoFoundry", "barn", "topBanana", "plant"].map(x => x + "_AR")
             //Class.issuer_AR.UPGRADES_TIER_4 = ["circulator", "facility", "autoIssuer", "megaIssuer", "inducer", "issuerdrive", "mogul", "reposit", "slogger", "plant"].map(x => x + "_AR")
         Class.directordrive_AR.UPGRADES_TIER_3 = ["directorstorm_AR", "overdrive", "cruiserdrive_AR", "underdrive_AR", "spawnerdrive_AR", "autoDirectordrive_AR", "honchodrive_AR", "doperdrive_AR"]
-            Class.directorstorm_AR.UPGRADES_TIER_4 = ["vortex", "overstorm", "spawnerstorm", "autoDirectorstorm"].map(x => x + "_AR")
+            Class.directorstorm_AR.UPGRADES_TIER_4 = ["vortex", "overstorm", "spawnerstorm", "autoDirectorstorm", "honchostorm", "downpourer", "doperstorm"].map(x => x + "_AR")
         Class.honcho_AR.UPGRADES_TIER_3 = ["bigCheese", "foreman_AR", "baltimore_AR", "foundry_AR", "autoHoncho_AR", "honchodrive_AR", "junkie_AR"]
             //Class.junkie_AR.UPGRADES_TIER_4 = ["addict", "ganger", "harbor", "plant", "stoner", "junkiedrive", "autoJunkie"].map(x => x + "_AR")
         Class.doper_AR.UPGRADES_TIER_3 = ["brisker", "dopeseer", "mosey", "issuer", "junkie", "doperdrive", "autoDoper"].map(x => x + "_AR")
@@ -4879,6 +4910,7 @@ Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "di
         Class.underseer.UPGRADES_TIER_3 = ["necromancer", "maleficitor", "autoUnderseer_AR", "underdrive_AR", "infestor", "pentaseer_AR"]
         Class.spawner.UPGRADES_TIER_3 = ["factory", "autoSpawner", "megaSpawner_AR", "productionist_AR", "spawnerdrive_AR", "captain_AR", "hangar_AR", "laborer_AR", "foundry_AR", "issuer_AR"]
         Class.directordrive_AR.UPGRADES_TIER_3 = ["directorstorm_AR", "overdrive", "cruiserdrive_AR", "underdrive_AR", "spawnerdrive_AR", "autoDirectordrive_AR", "honchodrive_AR", "doperdrive_AR"]
+            Class.directorstorm_AR.UPGRADES_TIER_4 = ["vortex", "overstorm", "spawnerstorm", "autoDirectorstorm", "honchostorm", "downpourer", "doperstorm"].map(x => x + "_AR")
         Class.honcho_AR.UPGRADES_TIER_3 = ["foreman_AR", "baltimore_AR", "foundry_AR", "bigCheese", "autoHoncho_AR", "honchodrive_AR", "junkie_AR"]
         Class.doper_AR.UPGRADES_TIER_3 = ["brisker", "dopeseer", "mosey", "issuer", "junkie", "doperdrive", "autoDoper"].map(x => x + "_AR")
 
