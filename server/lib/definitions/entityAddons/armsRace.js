@@ -13,7 +13,8 @@ const stormAuto_options = {type: "stormAutoTurret_AR", size: 9, clearTurrets: tr
 
 // Function Presets (makeDrive)
 const cruiserdrive_options = {hatType: "triangleHat", hatSize: 8, hatAngle: 180}
-const storm_options = {suffix: "storm", type: "swarmAutoTurret_AR", size: 12, hatType: "stormSquare_AR"}
+const cruiserstorm_options = {suffix: "storm", type: "swarmAutoTurret_AR", hatType: "stormTriangle_AR", hatSize: 8, hatAngle: 180}
+const storm_options = {suffix: "storm", type: "swarmAutoTurret_AR", hatType: "stormSquare_AR", size: 12}
 
 // Function Presets (makeOver)
 const hybrid_options = {count: 1, independent: true, cycle: false}
@@ -126,7 +127,20 @@ Class.stormSquare_AR = {
             X: 5,
             ANGLE: 90
         }
-    }, {delayIncrement: 0.5})
+    })
+}
+Class.stormTriangle_AR = {
+    PARENT: "stormSquare_AR",
+    SHAPE: 3,
+    GUNS: weaponMirror({
+        POSITION: {
+            LENGTH: 9,
+            WIDTH: 8.2,
+            ASPECT: 0.6,
+            X: 5,
+            ANGLE: 60
+        }
+    })
 }
 Class.downpourerSquare_AR = {
     PARENT: "stormSquare_AR",
@@ -3353,9 +3367,12 @@ Class.autoDirectorstorm_AR = makeAuto("directorstorm_AR", "Auto-Directorstorm", 
 Class.autoDoubleHelix_AR = makeAuto("doubleHelix_AR")
 Class.autoDuplicator_AR = makeAuto("duplicator")
 Class.autoIterator_AR = makeAuto("iterator")
+Class.autoOverdrive_AR = makeAuto("overdrive", "Auto-Overdrive", driveAuto_options)
 Class.autoQuadruplex_AR = makeAuto("quadruplex")
 Class.autoSuperSpiral_AR = makeAuto("superSpiral")
 Class.autoTriplex_AR = makeAuto("triplex")
+Class.autoUnderdrive_AR = makeAuto("underdrive_AR", "Auto-Underdrive", driveAuto_options)
+Class.bansheedrive_AR = makeDrive("banshee")
 Class.butcher_AR = {
     LABEL: "Butcher",
     DANGER: 8,
@@ -3390,6 +3407,7 @@ Class.butcher_AR = {
         ...trapGuard_rear
     ]
 }
+Class.captaindrive_AR = makeDrive("captain_AR")
 Class.chemist_AR = {
     PARENT: "genericHealer",
     LABEL: "Chemist",
@@ -3458,6 +3476,7 @@ Class.clinician_AR = {
         }
     ], { delayIncrement: 0.5 }), 2)
 }
+Class.cruiserstorm_AR = makeDrive("cruiser", cruiserstorm_options)
 Class.doctor_AR = {
     PARENT: "genericHealer",
     LABEL: "Doctor",
@@ -3473,6 +3492,7 @@ Class.doctor_AR = {
         }
     ]
 }
+Class.dopedrive_AR = makeDrive("dopeseer_AR", {label: "Dopedrive"})
 Class.doperstorm_AR = makeDrive("doper_AR", storm_options)
 Class.doubleCoil_AR = {
     PARENT: "genericTank",
@@ -3660,6 +3680,7 @@ Class.executor_AR = {
         ...trapGuard_rear
     ]
 }
+Class.foredrive_AR = makeDrive("foreman_AR", {label: "Foredrive"})
 Class.geneticist_AR = {
     PARENT: "genericHealer",
     LABEL: "Geneticist",
@@ -3818,6 +3839,7 @@ Class.hexaHealer_AR = {
         }
     ], 6, 0.5)
 }
+Class.hexer_AR = makeDrive("maleficitor", {label: "Hexer"})
 Class.hextuplex_AR = {
     PARENT: "genericTank",
     LABEL: "Hextuplex",
@@ -3918,6 +3940,7 @@ Class.hextuplex_AR = {
     ]
 }
 Class.honchostorm_AR = makeDrive("honcho_AR", storm_options)
+Class.infestordrive_AR = makeDrive("infestor")
 Class.injection_AR = {
     PARENT: "genericHealer",
     LABEL: "Injection",
@@ -3952,6 +3975,7 @@ Class.injection_AR = {
         }
     ]
 }
+Class.instructor_AR = makeDrive("commander", {label: "Instructor"})
 Class.intern_AR = {
     PARENT: "genericHealer",
     LABEL: "Intern",
@@ -4102,6 +4126,7 @@ Class.megaCocci_AR = {
         }
     ]
 }
+Class.necrodrive_AR = makeDrive("necromancer", {label: "Necrodrive"})
 Class.ointment_AR = {
     PARENT: "genericHealer",
     LABEL: "Ointment",
@@ -4128,7 +4153,10 @@ Class.ointment_AR = {
         }
     ]
 }
+Class.overgunnerdrive_AR = makeDrive("overgunner")
 Class.overstorm_AR = makeDrive("overseer", {...storm_options, label: "Overstorm"})
+Class.overtrapperdrive_AR = makeDrive("overtrapper")
+Class.pentadrive_AR = makeDrive("pentaseer_AR", {label: "Pentadrive"})
 Class.physician_AR = {
     PARENT: "genericSmasher",
     LABEL: "Physician",
@@ -4639,6 +4667,8 @@ Class.tripleHelix_AR = {
         }, { delayIncrement: 0.5 })
     ], 3)
 }
+Class.tyrant_AR = makeDrive("overlord", {label: "Tyrant"})
+Class.understorm_AR = makeDrive("underseer", {...storm_options, label: "Understorm"})
 Class.vortex_AR = makeDrive("director", {label: "Vortex", type: "vortexAutoTurret_AR", size: 12, hatType: "vortexSquare_AR"})
 Class.vulcan_AR = {
     PARENT: "genericTank",
@@ -4782,7 +4812,9 @@ Config.level_cap_cheat = 60
             //Class.foundry_AR.UPGRADES_TIER_4 = ["endeavor", "stocker", "foundrydrive", "megaFoundry", "fabrication", "shopper", "autoFoundry", "barn", "topBanana", "plant"].map(x => x + "_AR")
             //Class.issuer_AR.UPGRADES_TIER_4 = ["circulator", "facility", "autoIssuer", "megaIssuer", "inducer", "issuerdrive", "mogul", "reposit", "slogger", "plant"].map(x => x + "_AR")
         Class.directordrive_AR.UPGRADES_TIER_3 = ["directorstorm_AR", "overdrive", "cruiserdrive_AR", "underdrive_AR", "spawnerdrive_AR", "autoDirectordrive_AR", "honchodrive_AR", "doperdrive_AR"]
-            Class.directorstorm_AR.UPGRADES_TIER_4 = ["vortex", "overstorm", "spawnerstorm", "autoDirectorstorm", "honchostorm", "downpourer", "doperstorm"].map(x => x + "_AR")
+            Class.directorstorm_AR.UPGRADES_TIER_4 = ["vortex", "overstorm", "cruiserstorm", "understorm", "spawnerstorm", "autoDirectorstorm", "honchostorm", "downpourer", "doperstorm"].map(x => x + "_AR")
+            Class.overdrive.UPGRADES_TIER_4 = ["overstorm", "tyrant", "overtrapperdrive", "overgunnerdrive", "bansheedrive", "autoOverdrive", "instructor", "captaindrive", "foredrive", "dopedrive"].map(x => x + "_AR")
+            Class.underdrive_AR.UPGRADES_TIER_4 = ["understorm", "necrodrive", "hexer", "infestordrive", "autoUnderdrive", "pentadrive"].map(x => x + "_AR")
         Class.honcho_AR.UPGRADES_TIER_3 = ["bigCheese", "foreman_AR", "baltimore_AR", "foundry_AR", "autoHoncho_AR", "honchodrive_AR", "junkie_AR"]
             //Class.junkie_AR.UPGRADES_TIER_4 = ["addict", "ganger", "harbor", "plant", "stoner", "junkiedrive", "autoJunkie"].map(x => x + "_AR")
         Class.doper_AR.UPGRADES_TIER_3 = ["brisker", "dopeseer", "mosey", "issuer", "junkie", "doperdrive", "autoDoper"].map(x => x + "_AR")
@@ -4859,7 +4891,9 @@ if (integrate_healers) {
 }
 
 } else {
+Class.dopedrive_AR.LABEL = "Dopeseerdrive"
 Class.infestor.SHAPE = 4
+Class.infestordrive_AR.SHAPE = 4
 Class.renovator_AR.LABEL = "Renovater"
 Class.vulture.LABEL = "Taser"
 
@@ -4910,7 +4944,9 @@ Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "di
         Class.underseer.UPGRADES_TIER_3 = ["necromancer", "maleficitor", "autoUnderseer_AR", "underdrive_AR", "infestor", "pentaseer_AR"]
         Class.spawner.UPGRADES_TIER_3 = ["factory", "autoSpawner", "megaSpawner_AR", "productionist_AR", "spawnerdrive_AR", "captain_AR", "hangar_AR", "laborer_AR", "foundry_AR", "issuer_AR"]
         Class.directordrive_AR.UPGRADES_TIER_3 = ["directorstorm_AR", "overdrive", "cruiserdrive_AR", "underdrive_AR", "spawnerdrive_AR", "autoDirectordrive_AR", "honchodrive_AR", "doperdrive_AR"]
-            Class.directorstorm_AR.UPGRADES_TIER_4 = ["vortex", "overstorm", "spawnerstorm", "autoDirectorstorm", "honchostorm", "downpourer", "doperstorm"].map(x => x + "_AR")
+            Class.directorstorm_AR.UPGRADES_TIER_3 = ["vortex", "overstorm", "spawnerstorm", "autoDirectorstorm", "honchostorm", "downpourer", "doperstorm"].map(x => x + "_AR")
+            Class.overdrive.UPGRADES_TIER_3 = ["tyrant", "overtrapperdrive", "overgunnerdrive", "bansheedrive", "autoOverdrive", "instructor", "overstorm", "foredrive", "dopedrive"].map(x => x + "_AR")
+            Class.underdrive_AR.UPGRADES_TIER_3 = ["necrodrive", "hexer", "autoUnderdrive", "infestordrive", "pentadrive"].map(x => x + "_AR")
         Class.honcho_AR.UPGRADES_TIER_3 = ["foreman_AR", "baltimore_AR", "foundry_AR", "bigCheese", "autoHoncho_AR", "honchodrive_AR", "junkie_AR"]
         Class.doper_AR.UPGRADES_TIER_3 = ["brisker", "dopeseer", "mosey", "issuer", "junkie", "doperdrive", "autoDoper"].map(x => x + "_AR")
 
