@@ -881,7 +881,7 @@ Class.executor_dreadsV2 = {
 				ASPECT: 0.7
 			},
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer, {reload: 1.1, health: 1.35, speed: 0.7, maxSpeed: 0.65, range: 0.33}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer, {reload: 1.1, health: 1.35, speed: 0.7, maxSpeed: 0.65, range: 1/3}]),
 				TYPE: ["missile", {GUN_STAT_SCALE: {recoil: 0.6}}],
 				STAT_CALCULATOR: "sustained"
 			}
@@ -1013,7 +1013,7 @@ Class.sabre_dreadsV2 = {
 				WIDTH: 7
 			},
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.assassin, {reload: 1.23, health: 1.33, speed: 1.1, maxSpeed: 1.1, density: 1.2, range: 0.65}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.sniper, g.assassin, {reload: 1.23, health: 4/3, speed: 1.1, maxSpeed: 1.1, density: 1.2, range: 0.65}]),
 				TYPE: "bullet"
 			}
 		},
@@ -1492,7 +1492,7 @@ Class.inhibitor_dreadsV2 = {
 				WIDTH: 15
 			},
 			PROPERTIES: {
-				SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer, {reload: 1.15, health: 1.33, speed: 0.7, maxSpeed: 0.7, range: 0.4}]),
+				SHOOT_SETTINGS: combineStats([g.basic, g.pounder, g.artillery, g.artillery, g.skimmer, {reload: 1.15, health: 4/3, speed: 0.7, maxSpeed: 0.7, range: 0.4}]),
 				TYPE: "supermissile",
 				STAT_CALCULATOR: "sustained"
 			}
@@ -1857,13 +1857,13 @@ Class.arbitrator_dreadsV2 = {
 	LABEL: "Arbitrator",
 	GUNS: weaponArray([
 		{
-			POSITION: [7.5, 10.75, 1.33, 5.5, 0, 0, 0],
+			POSITION: [7.5, 10.75, 4/3, 5.5, 0, 0, 0],
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.triplet, g.spam, g.spam, {size: 0.7,  health: 1.05, range: 0.8, reload: 1}]),
 				TYPE: "bullet",
 			},
 		}, {
-			POSITION: [7.5, 9.5, 1.33, 7.5, 0, 0, 0],
+			POSITION: [7.5, 9.5, 4/3, 7.5, 0, 0, 0],
 			PROPERTIES: {
 				SHOOT_SETTINGS: combineStats([g.basic, g.machineGun, g.twin, g.triplet, g.spam, g.spam, {size: 0.65, health: 1.05, range: 0.8, reload: 1.05}]),
 				TYPE: "bullet",
@@ -2318,27 +2318,29 @@ Class.photosphere_dreadsV2 = {
 	],
 }
 if (useOldPhotosphere) {
-	Class.photosphere_dreadsV2.TURRETS = [
-		...weaponArray({
+Class.photosphere_dreadsV2.TURRETS = [
+	...weaponArray([
+		{
 			POSITION: [3.5, 8.75, 0, 36, 360, 2],
 			TYPE: "photosphereSmallAura_dreadsV2",
-		}, 5),
-		...weaponArray({
+		},
+		{
 			POSITION: [3, 4, 0, 0, 360, 2],
 			TYPE: "photosphereBigAura_dreadsV2",
-		}, 5)
-	]
+		}
+	], 5)
+]
 } else {
-	Class.photosphere_dreadsV2.TURRETS = [
-		...weaponArray({
-			POSITION: [4, 8.5, 0, 36, 360, 2],
-			TYPE: "pentanoughtSmallAura",
-		}, 5),
-		{
-			POSITION: [9, 0, 0, 0, 360, 2],
-			TYPE: "pentanoughtBigAura",
-		},
-	]
+Class.photosphere_dreadsV2.TURRETS = [
+	...weaponArray({
+		POSITION: [4, 8.5, 0, 36, 360, 2],
+		TYPE: "pentanoughtSmallAura",
+	}, 5),
+	{
+		POSITION: [9, 0, 0, 0, 360, 2],
+		TYPE: "pentanoughtBigAura",
+	},
+]
 }
 Class.skynet_dreadsV2 = {
 	PARENT: "genericPentanought",
