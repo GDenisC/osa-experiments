@@ -3373,6 +3373,7 @@ Class.autoSuperSpiral_AR = makeAuto("superSpiral")
 Class.autoTriplex_AR = makeAuto("triplex")
 Class.autoUnderdrive_AR = makeAuto("underdrive_AR", "Auto-Underdrive", driveAuto_options)
 Class.bansheedrive_AR = makeDrive("banshee")
+Class.battledrive_AR = makeDrive("battleship", {...cruiserdrive_options, label: "Battledrive"})
 Class.butcher_AR = {
     LABEL: "Butcher",
     DANGER: 8,
@@ -3407,6 +3408,7 @@ Class.butcher_AR = {
         ...trapGuard_rear
     ]
 }
+Class.carrierdrive_AR = makeDrive("carrier", cruiserdrive_options)
 Class.captaindrive_AR = makeDrive("captain_AR")
 Class.chemist_AR = {
     PARENT: "genericHealer",
@@ -3681,6 +3683,7 @@ Class.executor_AR = {
     ]
 }
 Class.foredrive_AR = makeDrive("foreman_AR", {label: "Foredrive"})
+Class.fortdrive_AR = makeDrive("fortress", {...cruiserdrive_options, label: "Fortdrive"})
 Class.geneticist_AR = {
     PARENT: "genericHealer",
     LABEL: "Geneticist",
@@ -3975,7 +3978,7 @@ Class.injection_AR = {
         }
     ]
 }
-Class.instructor_AR = makeDrive("commander", {label: "Instructor"})
+Class.instructor_AR = makeDrive("commander", {label: "Instructor"}) // also Prescriber (same tank but with cruiserdrive properties)
 Class.intern_AR = {
     PARENT: "genericHealer",
     LABEL: "Intern",
@@ -4812,7 +4815,7 @@ Config.level_cap_cheat = 60
             //Class.foundry_AR.UPGRADES_TIER_4 = ["endeavor", "stocker", "foundrydrive", "megaFoundry", "fabrication", "shopper", "autoFoundry", "barn", "topBanana", "plant"].map(x => x + "_AR")
             //Class.issuer_AR.UPGRADES_TIER_4 = ["circulator", "facility", "autoIssuer", "megaIssuer", "inducer", "issuerdrive", "mogul", "reposit", "slogger", "plant"].map(x => x + "_AR")
         Class.directordrive_AR.UPGRADES_TIER_3 = ["directorstorm_AR", "overdrive", "cruiserdrive_AR", "underdrive_AR", "spawnerdrive_AR", "autoDirectordrive_AR", "honchodrive_AR", "doperdrive_AR"]
-            Class.directorstorm_AR.UPGRADES_TIER_4 = ["vortex", "overstorm", "cruiserstorm", "understorm", "spawnerstorm", "autoDirectorstorm", "honchostorm", "downpourer", "doperstorm"].map(x => x + "_AR")
+            Class.directorstorm_AR.UPGRADES_TIER_4 = ["vortex", "downpourer", "overstorm", "cruiserstorm", "understorm", "spawnerstorm", "autoDirectorstorm", "honchostorm", "doperstorm"].map(x => x + "_AR")
             Class.overdrive.UPGRADES_TIER_4 = ["overstorm", "tyrant", "overtrapperdrive", "overgunnerdrive", "bansheedrive", "autoOverdrive", "instructor", "captaindrive", "foredrive", "dopedrive"].map(x => x + "_AR")
             Class.underdrive_AR.UPGRADES_TIER_4 = ["understorm", "necrodrive", "hexer", "infestordrive", "autoUnderdrive", "pentadrive"].map(x => x + "_AR")
         Class.honcho_AR.UPGRADES_TIER_3 = ["bigCheese", "foreman_AR", "baltimore_AR", "foundry_AR", "autoHoncho_AR", "honchodrive_AR", "junkie_AR"]

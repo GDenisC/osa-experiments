@@ -21,10 +21,11 @@ module.exports = {
             featured: false,
 
             region: "local", // The region the server is on.
-            gamemode: ["old_dreadnoughts", "tdm"], // The selected gamemode.
+            gamemode: ["tdm"], // The selected gamemode.
             player_cap: 80, // Not including bots. Set to 0 to disable.
 
             properties: { // This overrides settings in the config.js file, assuming the selected gamemode doesn't also override it.
+                teams: 4,
                 bot_cap: 16,
                 daily_tank: {
                     tank: "whirlwind",
