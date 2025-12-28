@@ -289,8 +289,10 @@ function toPascalCase(input) {
     }
     return output
 }
-exports.makeDrive = (type, name = -1, options = {}) => {
+exports.makeDrive = (type, options = {}) => {
     type = ensureIsClass(type);
+
+    options.label ??= -1
 
     options.type ??= "droneAutoTurret"
     options.independent ??= true
@@ -348,12 +350,12 @@ exports.makeDrive = (type, name = -1, options = {}) => {
     } else {
         output.TURRETS = [...type.TURRETS, ...hat];
     }
-    if (name == -1) {
+    if (options.label == -1) {
         output.LABEL = type.LABEL + "drive";
         output.UPGRADE_LABEL = type.LABEL + "drive";
     } else {
-        output.LABEL = name;
-        output.UPGRADE_LABEL = name;
+        output.LABEL = options.label;
+        output.UPGRADE_LABEL = options.label;
     }
     output.DANGER = type.DANGER + 1;
     return output;

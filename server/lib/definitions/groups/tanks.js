@@ -4118,7 +4118,7 @@ Class.oroboros = {
     STAT_NAMES: statnames.desmos,
     UPGRADE_TOOLTIP: "[DEV NOTE] This tank is a placeholder!"
 }
-Class.overdrive = makeDrive("overseer", "Overdrive")
+Class.overdrive = makeDrive("overseer", {label: "Overdrive"})
 Class.overgunner = makeOver({
     PARENT: "genericTank",
     LABEL: "Gunner",
