@@ -73,33 +73,33 @@ global.getTeamColor = (team, fixMode = false) => {
 	if (fixMode) color = color + ' 0 1 0 false';
 	return color;
 };
-global.isPlayerTeam = team => /*team < 0 && */ team > -11;
+global.isPlayerTeam = team => team < 0 || team > -11;
 global.getWeakestTeam = () => {
-	let teamcounts = {};
+	let teamCounts = {};
 	for (let i = -Config.teams; i < 0; i++) {
 		if (global.defeatedTeams.includes(i)) continue;
-		teamcounts[i] = 0;
+		teamCounts[i] = 0;
 	}
-	for (let o of global.entities) {
+	for (let o of global.entities.values()) {
 		if (
 			(o.isBot || o.isPlayer) &&
-			o.team in teamcounts &&
+			o.team in teamCounts &&
 			o.team < 0 &&
 			isPlayerTeam(o.team)
 		) {
-			if (!(o.team in teamcounts)) {
-				teamcounts[o.team] = 0;
+			if (!(o.team in teamCounts)) {
+				teamCounts[o.team] = 0;
 			}
-			teamcounts[o.team]++;
+			teamCounts[o.team]++;
 		}
 	}
-	teamcounts = Object.entries(teamcounts).map(([teamId, amount]) => {
+	teamCounts = Object.entries(teamCounts).map(([teamId, amount]) => {
 		let weight =
 			teamId in Config.team_weights ? Config.team_weights[teamId] : 1;
 		return [teamId, amount / weight];
 	});
-	let lowestTeamCount = Math.min(...teamcounts.map(x => x[1])),
-		entries = teamcounts.filter(a => a[1] == lowestTeamCount);
+	let lowestTeamCount = Math.min(...teamCounts.map(x => x[1])),
+		entries = teamCounts.filter(a => a[1] == lowestTeamCount);
 	return parseInt(
 		!entries.length
 			? -Math.ceil(Math.random() * Config.teams)

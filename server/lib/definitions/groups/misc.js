@@ -727,7 +727,7 @@ Class.mothership = {
         DAMAGE: 1.5,
     },
     HITS_OWN_TYPE: "pushOnlyTeam",
-    GUNS: 
+    GUNS:
     weaponArray([
         {
             POSITION: [4.3, 3.1, 1.2, 8, 0, 22.5, 0],
@@ -1033,13 +1033,13 @@ Class.serverPortal = {
                             instance.velocity.x += util.clamp(body.x - instance.x, -90, 90) * instance.damp * forceMulti;//0.05
                             instance.velocity.y += util.clamp(body.y - instance.y, -90, 90) * instance.damp * forceMulti;//0.05
                         } else if (
-                            !instance.isDominator && 
-                            !instance.isArenaCloser && 
-                            !instance.godmode && 
-                            !instance.invuln && 
-                            instance.id != body.id && 
+                            !instance.isDominator &&
+                            !instance.isArenaCloser &&
+                            !instance.godmode &&
+                            !instance.invuln &&
+                            instance.id != body.id &&
                             instance.type !== "wall" &&
-                            instance.team != body.team && 
+                            instance.team != body.team &&
                             instance.type === "bullet" ||
                             instance.type === "drone" ||
                             instance.type === "trap" ||

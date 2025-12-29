@@ -1149,3 +1149,20 @@ exports.makePresent = (outcolor, wrapcolor) => {
 		]
 	};
 };
+
+/**
+ * @param {[number, number, number][]} vertexes
+ * @param {number[][]} faces the inner array is indices (vertexes' indexes)
+ * @param {number} multiplier
+ * @returns {`3d=${string}`}
+ */
+exports.encode3D = function (vertexes, faces, multiplier) {
+	return (
+		'3d=' +
+		vertexes.flat().join(',') +
+		'/' +
+		faces.map(i => i.join(',')).join(';') +
+		'/' +
+		multiplier
+	);
+};

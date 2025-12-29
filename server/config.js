@@ -22,13 +22,13 @@ module.exports = {
 			featured: false,
 
 			region: 'local', // The region the server is on.
-			gamemode: ['growth', 'tdm'], // The selected gamemode.
-			player_cap: 80, // The maximum number of players that can join the server. Not including bots.
+			gamemode: ['sandbox'], // The selected gamemode.
+			player_cap: 1, // The maximum number of players that can join the server. Not including bots.
 
 			properties: {
 				// This overrides settings in the config.js file, providing the selected gamemode doesn't also override it.
 				teams: 2,
-				bot_cap: 32
+				bot_cap: 0
 			}
 		}
 	],

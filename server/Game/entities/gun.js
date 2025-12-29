@@ -114,7 +114,7 @@ class Gun extends EventEmitter {
             this.recoilDir = 0;
         }
     }
-    
+
     recoil() {
         if (this.motion || this.position) {
             // Simulate recoil
@@ -167,7 +167,7 @@ class Gun extends EventEmitter {
         }
     }
 
-    getSkillRaw() { 
+    getSkillRaw() {
         if (this.bulletStats === 'master') {
             return [
                 this.body.skill.raw[0],
@@ -175,9 +175,9 @@ class Gun extends EventEmitter {
                 this.body.skill.raw[2],
                 this.body.skill.raw[3],
                 this.body.skill.raw[4],
-                0, 0, 0, 0, 0, 
+                0, 0, 0, 0, 0,
             ];
-        } 
+        }
         return this.bulletStats.raw;
     }
 
@@ -201,7 +201,7 @@ class Gun extends EventEmitter {
             offsetFinalX = offset_base_x + offset_end_x,
             offsetFinalY = offset_base_y + offset_end_y,
             skill = this.bulletStats === "master" ? this.body.skill : this.bulletStats;
-        
+
         this.fire(offsetFinalX, offsetFinalY, skill);
     }
     live() {
@@ -282,7 +282,7 @@ class Gun extends EventEmitter {
             let self = this;
             [...this.children, ...this.bulletchildren].forEach(function(o) {
                 o.define({
-                    BODY: self.interpret(), 
+                    BODY: self.interpret(),
                     SKILL: self.getSkillRaw(),
                 });
                 o.refreshBodyAttributes();
@@ -325,7 +325,7 @@ class Gun extends EventEmitter {
             s.y += (this.body.velocity.length * extraBoost * s.y) / len;
           }
         }
-    
+
         //create an independent entity
         let spawnOffset = {
             x: this.body.x + this.body.size * gx - s.x,
@@ -371,7 +371,7 @@ class Gun extends EventEmitter {
             });
             return;
         }
-    
+
         // Create the bullet
         var o;
         switch (this.noentitylimit) {
@@ -439,7 +439,7 @@ class Gun extends EventEmitter {
             this.body.children.push(o);
             this.children.push(o);
         } else {
-            o.bulletparent = this.body;
+            o.bulletparent = this;
             this.body.bulletchildren.push(o);
             this.bulletchildren.push(o);
         };
@@ -582,23 +582,23 @@ class Gun extends EventEmitter {
     }
     getTracking() {
         return {
-            speed: global.gameManager.runSpeed * ((this.bulletStats == 'master') ? this.body.skill.spd : this.bulletStats.spd) * 
-                this.settings.maxSpeed * 
+            speed: global.gameManager.runSpeed * ((this.bulletStats == 'master') ? this.body.skill.spd : this.bulletStats.spd) *
+                this.settings.maxSpeed *
                 this.bulletBodyStats.SPEED,
-            range:  Math.sqrt((this.bulletStats == 'master') ? this.body.skill.spd : this.bulletStats.spd) * 
-                this.settings.range * 
+            range:  Math.sqrt((this.bulletStats == 'master') ? this.body.skill.spd : this.bulletStats.spd) *
+                this.settings.range *
                 this.bulletBodyStats.RANGE,
         };
     }
 
     getPhotoInfo() {
         return {
-            ...this.lastShot, 
+            ...this.lastShot,
             color: this.color.compiled,
             alpha: this.alpha,
             strokeWidth: this.strokeWidth,
-            borderless: this.borderless, 
-            drawFill: this.drawFill, 
+            borderless: this.borderless,
+            drawFill: this.drawFill,
             drawAbove: this.drawAbove,
             length: this.length,
             width: this.width,

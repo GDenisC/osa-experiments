@@ -47,7 +47,7 @@ class Mothership {
             let o = new Entity(locs[i]),
                 team = -i - 1;
             o.define(ran.choose(this.choices));
-            o.define({ ACCEPTS_SCORE: false, VALUE: 643890 });
+            o.define({ VALUE: Config.level_cap_cheat ? 643890 : 26263 });
             o.color.base = getTeamColor(team);
             o.team = team;
             o.name = "Mothership";

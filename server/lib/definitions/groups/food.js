@@ -1,6 +1,6 @@
 const { basePolygonDamage, basePolygonHealth } = require('../constants.js');
 const { makeRelic, makeCrasher, makeLaby } = require('../facilitators.js');
-const { makeRarities, makePresent } = require('../facilitators');
+const { makeRarities, makePresent, encode3D } = require('../facilitators');
 
 // EGGS
 Class.egg = {
@@ -274,6 +274,45 @@ Class.cube = {
 	INTANGIBLE: false,
 	GIVE_KILL_MESSAGE: true
 };
+Class.cube3d = {
+	PARENT: 'food',
+	LABEL: 'Cube',
+	VALUE: 2e7,
+	SIZE: 30,
+	COLOR: 'egg',
+	SHAPE: encode3D(
+		[
+			[0.25, 0.25, 0.25],
+			[-0.25, 0.25, 0.25],
+			[-0.25, -0.25, 0.25],
+			[0.25, -0.25, 0.25],
+			[0.25, 0.25, -0.25],
+			[-0.25, 0.25, -0.25],
+			[-0.25, -0.25, -0.25],
+			[0.25, -0.25, -0.25]
+		].map(x => [x[0]/2.5, x[1]/2.5, x[2]/2.5]),
+		[
+			[0, 1, 2, 3],
+			[4, 5, 6, 7],
+			[0, 1, 5, 4],
+			[2, 6, 7, 3],
+			[1, 5, 6, 2],
+			[3, 7, 4, 0]
+		],
+		7.5
+	),
+	BODY: {
+		DAMAGE: 4.8,
+		DENSITY: 20,
+		HEALTH: 40,
+		RESIST: 1.25,
+		PENETRATION: 17.5,
+		ACCELERATION: 0.002
+	},
+	DRAW_HEALTH: true,
+	INTANGIBLE: false,
+	GIVE_KILL_MESSAGE: true
+};
 Class.tetrahedron = {
 	PARENT: 'food',
 	LABEL: 'The Tetrahedron',
@@ -441,7 +480,7 @@ Class.tesseract = {
 // LABY
 let polyNames = ['egg', 'square', 'triangle', 'pentagon', 'hexagon'],
 	shinyNames = ['', 'shiny', 'legendary', 'shadow', 'rainbow', 'trans'].concat(
-		Array.from({ length: 0 }, (_, i) => `rarity${i+6}`)
+		Array.from({ length: 0 }, (_, i) => `rarity${i + 6}`)
 	);
 for (let tier = 0; tier < 6; tier++) {
 	for (let poly in polyNames) {
