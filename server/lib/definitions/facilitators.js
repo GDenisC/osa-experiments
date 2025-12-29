@@ -1166,3 +1166,36 @@ exports.encode3D = function (vertexes, faces, multiplier) {
 		multiplier
 	);
 };
+
+exports.scaleVertexes3D = function (vertexes, scale) {
+	return vertexes.map(x => [x[0] * scale, x[1] * scale, x[2] * scale]);
+};
+
+const isPositionEquals = function (a, b) {
+	return a[0] == b[0] && a[1] == b[1] && a[2] == b[2];
+}
+
+exports.encodeOptimized3D = function (data, multiplier, vertexesScale = 1) {
+	let vertexes = [];
+	const faces = [];
+
+	for (const face of data) {
+		const current = [];
+
+		for (const vertex of face) {
+			let index = vertexes.findIndex(x => isPositionEquals(x, vertex));
+			if (index == -1) {
+				index = vertexes.push(vertex) - 1;
+			}
+			current.push(index);
+		}
+
+		faces.push(current);
+	}
+
+	if (vertexesScale != 1) {
+		vertexes = exports.scaleVertexes3D(vertexes, vertexesScale);
+	}
+
+	return exports.encode3D(vertexes, faces, multiplier);
+}

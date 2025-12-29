@@ -1595,6 +1595,9 @@ import * as socketStuff from './socketinit.js';
 				return dx * dx + dy * dy + dz * dz;
 			},
 			sort3dSides = (arr, a, b) => {
+				let AavgZ = a.reduce((a, b) => a + arr[b].z, 0);
+				let BavgZ = b.reduce((a, b) => a + arr[b].z, 0);
+				if (BavgZ > AavgZ) return BavgZ - AavgZ;
 				let aDist = 0,
 					bDist = 0;
 				for (let i = 0; i < a.length; ++i) {
