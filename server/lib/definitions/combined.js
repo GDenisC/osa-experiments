@@ -20,7 +20,7 @@ class definitionCombiner {
         if (Config.startup_logs && log) console.log("Loaded definitions in " + util.rounder(definitionGroupsLoadEnd - definitionGroupsLoadStart, 3) + " milliseconds. \n");
 
         // Now we can load the tank addons
-        if (Config.startup_logs && log) console.log(`Loading addons...`);
+        if (Config.startup_logs && log) console.log(`Loading group addons...`);
         this.loadAddons(this.tankAddonLoc, log);
 
         // Calculate the length.
@@ -28,9 +28,10 @@ class definitionCombiner {
         convertedExportsCount = Object.keys(Class).filter(o => Class[o].Converted == true).length;
 
         let addonsLoadEnd = performance.now();
-        if (Config.startup_logs && log) console.log("Loaded addons in " + util.rounder(addonsLoadEnd - definitionGroupsLoadEnd, 3) + " milliseconds. \n");
+        if (Config.startup_logs && log) console.log("Loaded group addons in " + util.rounder(addonsLoadEnd - definitionGroupsLoadEnd, 3) + " milliseconds. \n");
 
         // Also include the other addons if needed!
+        if (Config.startup_logs && log) console.log(`Loading game addons...`);
         if (includeGameAddons) this.loadAddons(path.join(__dirname, '../../Game/addons'), log, "game addon");
 
         let gameaddonsLoadEnd = performance.now();
@@ -62,7 +63,7 @@ class definitionCombiner {
             }
             // Now we don't want any html files in!
             if (!filename.endsWith('.js')) continue;
-            if (Config.startup_logs && logs) console.log(`Loading ${overrideLoadTextLog ? overrideLoadTextLog : "addon"}: ${filename}`);
+            if (Config.startup_logs && logs) console.log(`Loading ${overrideLoadTextLog ? overrideLoadTextLog : "group addon"}: ${filename}`);
             // Compile the addons
             let result = require(filepath);
             if ('function' === typeof result) {

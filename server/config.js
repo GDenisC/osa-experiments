@@ -9,11 +9,11 @@ module.exports = {
     startup_logs: true, // Enable startup logs and log speed loop warnings in terminal
     load_all_mockups: true, // Set to true if you want every mockup to be loaded when the server starts. May noticeably slow down server startup.
 
-    servers: [ // Make sure to change the HOST, PORT and SERVER_ID between servers!
+    servers: [ // Make sure to change the host, port and id between servers!
         {
             load_on_mainserver: false, // Only one server at a time can have this enabled.
             // The above is required if your VM (the machine that hosts the website stuff) doesn't support multi-ports and forces everything through the main server.
-            // This also overrides the below HOST and PORT settings to be identical to the main server's HOST/PORT (by default, 3000).
+            // This also overrides the below host and port settings to be identical to the main server's host/port (by default, 3000).
 
             host: "localhost:3001", // Server host location.
             port: 3001, // The port on the server.
@@ -26,6 +26,41 @@ module.exports = {
 
             properties: { // This overrides settings in the config.js file, assuming the selected gamemode doesn't also override it.
                 teams: 4,
+                bot_cap: 16,
+                daily_tank: {
+                    tank: "whirlwind",
+                    tier: 3,
+                    ads: false,
+                    ad_sources: [
+                        {
+                            file: "testadvideo.mp4",
+                            use_regular_ad_size: true,
+                        },
+                        {
+                            file: "testadimage.png",
+                            image_wait_time: 3,
+                            use_regular_ad_size: true,
+                        }
+                    ]
+                },
+            }
+        },
+        {
+            load_on_mainserver: false, // Only one server at a time can have this enabled.
+            // The above is required if your VM (the machine that hosts the website stuff) doesn't support multi-ports and forces everything through the main server.
+            // This also overrides the below host and port settings to be identical to the main server's host/port (by default, 3000).
+
+            host: "localhost:3002", // Server host location.
+            port: 3002, // The port on the server.
+            id: "lod", // (<host>/#<id>)
+            featured: false,
+
+            region: "local", // The region the server is on.
+            gamemode: ["tdm"], // The selected gamemode.
+            player_cap: 80, // Not including bots. Set to 0 to disable.
+
+            properties: { // This overrides settings in the config.js file, assuming the selected gamemode doesn't also override it.
+                teams: 2,
                 bot_cap: 16,
                 daily_tank: {
                     tank: "whirlwind",

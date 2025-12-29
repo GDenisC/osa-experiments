@@ -261,7 +261,7 @@ global.onServerLoaded = () => {
         }
         let serverStartEndTime = performance.now();
         console.log("Server loaded in " + util.rounder(serverStartEndTime, 4) + " milliseconds.");
-        console.log("[WEB SERVER] Server listening on port", Config.port);
+        console.log("[WEB SERVER]: Server listening on port", Config.port);
     }
 };
 

@@ -164,10 +164,10 @@ class socketManager {
                 }
             }
             // Disconnect everything
-            util.log("[INFO] " + (player.body ? `User ${player.body.name == "" ? "A unnamed player" : player.body.name}` : "A user without an entity") + " disconnected!");
+            util.log("[INFO]: " + (player.body ? `User ${player.body.name == "" ? "A unnamed player" : player.body.name}` : "A user without an entity") + " disconnected!");
             util.remove(this.players, index);
         } else {
-            util.log("[INFO] A player disconnected before entering the game.");
+            util.log("[INFO]: A player disconnected before entering the game.");
         }
         // Free the view
         util.remove(global.gameManager.views, global.gameManager.views.indexOf(socket.view));
@@ -181,7 +181,7 @@ class socketManager {
         } else {
             global.gameManager.parentPort.postMessage([true, this.clients.length]);
         }
-        util.log("[INFO] The connection has closed. Views: " + global.gameManager.views.length + ". Clients: " + this.clients.length + ".");
+        util.log("[INFO]: The connection has closed. Views: " + global.gameManager.views.length + ". Clients: " + this.clients.length + ".");
     }
     incoming(message, socket) {
         // Decode it
@@ -206,14 +206,18 @@ class socketManager {
                     let key = m[0].toString().trim();
                     socket.permissions = this.permissionsDict[key];
                     if (socket.permissions) {
-                        util.log(`[INFO] A socket was verified with the token: ${key}`);
+                        util.log(`[INFO]: A socket was verified with the token: ${key}`);
                     } else {
-                        util.log(`[WARNING] A socket failed to verify with the token: ${key}`);
+                        util.log(`[WARNING]: A socket failed to verify with the token: ${key}`);
                     }
                     socket.key = key;
                 }
                 socket.status.verified = true;
-                util.log('Clients: ' + this.clients.length);
+                if (this.clients.length == 1) {
+                    util.log('[INFO]: ' + this.clients.length + ' client connected');
+                } else {
+                    util.log('[INFO]: ' + this.clients.length + ' clients connected');
+                }
             } break;
             case 's': { // spawn request
                 if (!socket.status.deceased) { socket.kick('Trying to spawn while already alive.'); return 1; }
@@ -1075,7 +1079,7 @@ class socketManager {
             }
         }
         // Log it 
-        util.log(`[INFO] [${global.gameManager.name}] ${name == "" ? "An unnamed player" : name} has spawned into the game on team ${socket.player.body.team}! Players: ${this.players.length}`);
+        util.log(`[INFO]: [${global.gameManager.port}]: ${name == "" ? "An unnamed player" : name} has spawned into the game on team ${socket.player.body.team}! Players: ${this.players.length}`);
         // Stop the timeout
         socket.timeout.stop();
     }
@@ -2002,7 +2006,7 @@ class socketManager {
     };
 
     connect(socket, req) {
-        util.log(`[INFO]: [${this.gamemode}] A client wants to connect...`);
+        util.log(`[INFO]: [${global.gameManager.port}]: A client wants to connect...`);
         socket.player = { camera: {} };
         socket.nearby = [];
         socket.spectateEntity = null;
@@ -2158,7 +2162,7 @@ class socketManager {
             console.error("Error checking permabans:", e);
         }
         // Log it
-        util.log("[INFO] New socket opened with ip " + socket.ip);
+        util.log("[INFO]: New socket opened with ip " + socket.ip);
 
         this.clients.push(socket);
 
@@ -2170,7 +2174,7 @@ class socketManager {
         } else {
             global.gameManager.parentPort.postMessage([true, this.clients.length]);
         }
-        util.log(`[INFO]: [${this.gamemode}] Client has been welcomed!`);
+        util.log(`[INFO]: [${global.gameManager.port}]: Client has been welcomed!`);
 
         if (Config.load_all_mockups) {
             for (let i = 0; i < mockupData.length; i++) {
@@ -2194,7 +2198,7 @@ class socketManager {
         let check = this.clients.find(o => o.id === socket.id);
         if (check) {
             check.loops.terminate();
-            util.log(`[INFO]: [${this.gamemode}] ${check.player.body ? check.player.body.name : "A Client"} has disconnected!`);
+            util.log(`[INFO]: [${global.gameManager.port}]: ${check.player.body ? check.player.body.name : "A Client"} has disconnected!`);
             // Free the view
             util.remove(global.gameManager.views, global.gameManager.views.indexOf(socket.view));
             // Remove the client from the server.

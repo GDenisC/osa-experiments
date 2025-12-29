@@ -110,6 +110,8 @@ exports.makeOver = (type, name = -1, options = {}) => {
     type = ensureIsClass(type);
     let output = exports.dereference(type);
 
+    options.inFront ??= true
+
     let angle = 180 - (options.angle ?? 125);
     let count = options.count ?? 2;
     let independent = options.independent ?? false;
@@ -194,10 +196,13 @@ exports.makeOver = (type, name = -1, options = {}) => {
             })
         }
     }
-    
-    output.GUNS = type.GUNS == null ? spawners : type.GUNS.concat(spawners);
-    output.LABEL = name == -1 ? "Over" + type.LABEL.toLowerCase() : name;
-    return output;
+    if (options.inFront == false) {
+        output.GUNS = type.GUNS == null ? spawners : spawners.concat(type.GUNS)
+    } else {
+        output.GUNS = type.GUNS == null ? spawners : type.GUNS.concat(spawners)
+    }
+    output.LABEL = name == -1 ? "Over" + type.LABEL.toLowerCase() : name
+    return output
 }
 
 // turret functions

@@ -18,6 +18,8 @@ const storm_options = {suffix: "storm", type: "swarmAutoTurret_AR", hatType: "st
 
 // Function Presets (makeOver)
 const hybrid_options = {count: 1, independent: true, cycle: false}
+const hybridBehind_options = {...hybrid_options, inFront: false}
+const sideOver_options = {angle: 90}
 
 // Gun Presets
 const bird_rear = [
@@ -1806,7 +1808,7 @@ Class.inception_AR = {
         }
     ]
 }
-Class.integrator_AR = makeOver("triAngle", "Integrator", hybrid_options)
+Class.integrator_AR = makeOver("triAngle", "Integrator", hybridBehind_options)
 Class.interner_AR = makeOver("pen_AR", "Interner", hybrid_options)
 Class.issuer_AR = {
     PARENT: "genericTank",
@@ -3978,7 +3980,98 @@ Class.injection_AR = {
         }
     ]
 }
-Class.instructor_AR = makeDrive("commander", {label: "Instructor"}) // also Prescriber (same tank but with cruiserdrive properties)
+Class.inspector_AR = {
+    PARENT: "genericTank",
+    LABEL: "Inspector",
+    DANGER: 7,
+    STAT_NAMES: statnames.drone,
+    BODY: {
+        SPEED: 0.9 * base.SPEED,
+        FOV: 1.1 * base.FOV
+    },
+    GUNS: weaponMirror({
+        POSITION: {
+            LENGTH: 5,
+            WIDTH: 11,
+            ASPECT: 1.3,
+            X: 8,
+            ANGLE: 90
+        }
+    })
+}
+Class.instructor_AR = makeDrive({
+    PARENT: "genericTank",
+    STAT_NAMES: statnames.drone,
+    DANGER: 7,
+    BODY: {FOV: base.FOV * 1.15},
+    GUNS: weaponArray({
+        POSITION: {
+            LENGTH: 6,
+            WIDTH: 12,
+            ASPECT: 1.2,
+            X: 8
+        },
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.drone]),
+            TYPE: "drone",
+            AUTOFIRE: true,
+            SYNCS_SKILLS: true,
+            MAX_CHILDREN: 2,
+            STAT_CALCULATOR: "drone"
+        }
+    }, 3)
+}, {label: "Instructor"})
+Class.instructor_AR.GUNS.push(...weaponArray({
+    POSITION: {
+        LENGTH: 9,
+        WIDTH: 8.2,
+        ASPECT: 0.6,
+        X: 5,
+        ANGLE: 180
+    },
+    PROPERTIES: {
+        SHOOT_SETTINGS: combineStats([g.swarm, g.commander]),
+        TYPE: "swarm",
+        STAT_CALCULATOR: "swarm"
+    }
+}, 3, 1/3))
+Class.prescriber_AR = makeDrive({
+    PARENT: "genericTank",
+    STAT_NAMES: statnames.drone,
+    DANGER: 7,
+    BODY: {FOV: base.FOV * 1.15},
+    GUNS: weaponArray({
+        POSITION: {
+            LENGTH: 9,
+            WIDTH: 8.2,
+            ASPECT: 0.6,
+            X: 5,
+            ANGLE: 180
+        },
+        PROPERTIES: {
+            SHOOT_SETTINGS: combineStats([g.swarm, g.commander]),
+            TYPE: "swarm",
+            STAT_CALCULATOR: "swarm"
+        }
+    }, 3, 1/3)
+}, {...cruiserdrive_options, label: "Prescriber"})
+Class.prescriber_AR.GUNS.push(...weaponArray({
+    POSITION: {
+        LENGTH: 6,
+        WIDTH: 12,
+        ASPECT: 1.2,
+        X: 8
+    },
+    PROPERTIES: {
+        SHOOT_SETTINGS: combineStats([g.drone]),
+        TYPE: "drone",
+        AUTOFIRE: true,
+        SYNCS_SKILLS: true,
+        MAX_CHILDREN: 2,
+        STAT_CALCULATOR: "drone"
+    }
+}, 3))
+//Class.instructor_AR = makeDrive("commander", {label: "Instructor", discrimination: true, discriminateFor: "drone"})
 Class.intern_AR = {
     PARENT: "genericHealer",
     LABEL: "Intern",
@@ -4156,9 +4249,27 @@ Class.ointment_AR = {
         }
     ]
 }
+Class.overangle_AR = makeOver("triAngle", "Overangle", sideOver_options)
+Class.overartillery_AR = makeOver("artillery")
+Class.overassassin_AR = makeOver("assassin")
+Class.overbuilder_AR = makeOver("builder")
+Class.overdestroyer_AR = makeOver("destroyer")
+Class.overdiesel_AR = makeOver("diesel_AR")
+Class.overdoubleTwin_AR = makeOver("doubleTwin", "Overdouble Twin", sideOver_options)
+Class.overhunter_AR = makeOver("hunter")
+Class.overlauncher_AR = makeOver("launcher")
+Class.overmarksman_AR = makeOver("marksman")
+Class.overmach_AR = makeOver("machineTrapper_AR", "Overmach")
+Class.overmech_AR = makeOver("mech_AR")
+Class.overminigun_AR = makeOver("minigun")
 Class.overgunnerdrive_AR = makeDrive("overgunner")
+Class.overpen_AR = makeOver("pen_AR")
+Class.overrifle_AR = makeOver("rifle")
+Class.overshot_AR = makeOver("tripleShot", "Overshot")
 Class.overstorm_AR = makeDrive("overseer", {...storm_options, label: "Overstorm"})
 Class.overtrapperdrive_AR = makeDrive("overtrapper")
+Class.overtrapGuard_AR = makeOver("trapGuard", "Overtrap Guard", sideOver_options)
+Class.overwark_AR = makeOver("wark_AR", "Overwark")
 Class.pentadrive_AR = makeDrive("pentaseer_AR", {label: "Pentadrive"})
 Class.physician_AR = {
     PARENT: "genericSmasher",
@@ -4188,6 +4299,7 @@ Class.physician_AR = {
         }
     ]
 }
+Class.productiondrive_AR = makeDrive("productionist_AR", {...cruiserdrive_options, label: "Productiondrive"})
 Class.professor_AR = {
     PARENT: "genericHealer",
     LABEL: "Professor",
@@ -4805,7 +4917,10 @@ Config.level_cap_cheat = 60
 
     Class.director.UPGRADES_TIER_2.push("directordrive_AR", "honcho_AR", "doper_AR")
         Class.director.UPGRADES_TIER_3.splice(1, 1) //remove bigCheese
+            Class.manager.UPGRADES_TIER_4 = ["inspector"].map(x => x + "_AR")
         Class.overseer.UPGRADES_TIER_3.push("captain_AR", "foreman_AR", "dopeseer_AR")
+            Class.overseer.UPGRADES_TIER_4 = ["inspector", "overdoubleTwin", "overshot", "overassassin", "overhunter", "overminigun", "overrifle", "overmarksman", "overartillery", "overdiesel", "overangle", "overdestroyer", "overlauncher"].map(x => x + "_AR")
+            Class.overtrapper.UPGRADES_TIER_4 = [/*"kingpin", */"overmach"/*, "autoOvertrapper"*/, "overtrapperdrive"/*, "battletrapper", "captrapper", "foretrapper"*/, "overbuilder", "overtrapGuard", "overpen", "overmech", "overwark"].map(x => x + "_AR")
             //Class.dopeseer_AR.UPGRADES_TIER_4 = ["briskseer", "dopelord", "autoDopeseer", "dopeseerdrive", "adjurer", "mogul", "ganger"].map(x => x + "_AR")
         Class.cruiser.UPGRADES_TIER_3.push("productionist_AR", "cruiserdrive_AR", "hangar_AR", "zipper_AR", "baltimore_AR", "mosey_AR")
         Class.underseer.UPGRADES_TIER_3.push("autoUnderseer_AR", "underdrive_AR", "pentaseer_AR")
@@ -4817,7 +4932,9 @@ Config.level_cap_cheat = 60
         Class.directordrive_AR.UPGRADES_TIER_3 = ["directorstorm_AR", "overdrive", "cruiserdrive_AR", "underdrive_AR", "spawnerdrive_AR", "autoDirectordrive_AR", "honchodrive_AR", "doperdrive_AR"]
             Class.directorstorm_AR.UPGRADES_TIER_4 = ["vortex", "downpourer", "overstorm", "cruiserstorm", "understorm", "spawnerstorm", "autoDirectorstorm", "honchostorm", "doperstorm"].map(x => x + "_AR")
             Class.overdrive.UPGRADES_TIER_4 = ["overstorm", "tyrant", "overtrapperdrive", "overgunnerdrive", "bansheedrive", "autoOverdrive", "instructor", "captaindrive", "foredrive", "dopedrive"].map(x => x + "_AR")
+            Class.cruiserdrive_AR.UPGRADES_TIER_4 = ["cruiserstorm", "carrierdrive", "battledrive", "fortdrive"/*, "autoCruiserdrive"*/, "prescriber", "productiondrive"/*, "helipad", "baltimoredrive", "moseydrive"*/].map(x => x + "_AR")
             Class.underdrive_AR.UPGRADES_TIER_4 = ["understorm", "necrodrive", "hexer", "infestordrive", "autoUnderdrive", "pentadrive"].map(x => x + "_AR")
+            Class.spawnerdrive_AR.UPGRADES_TIER_4 = ["spawnerstorm"].map(x => x + "_AR")
         Class.honcho_AR.UPGRADES_TIER_3 = ["bigCheese", "foreman_AR", "baltimore_AR", "foundry_AR", "autoHoncho_AR", "honchodrive_AR", "junkie_AR"]
             //Class.junkie_AR.UPGRADES_TIER_4 = ["addict", "ganger", "harbor", "plant", "stoner", "junkiedrive", "autoJunkie"].map(x => x + "_AR")
         Class.doper_AR.UPGRADES_TIER_3 = ["brisker", "dopeseer", "mosey", "issuer", "junkie", "doperdrive", "autoDoper"].map(x => x + "_AR")
@@ -4942,7 +5059,9 @@ Class.basic.UPGRADES_TIER_1 = ["twin", "sniper", "machineGun", "flankGuard", "di
 
     Class.director.UPGRADES_TIER_2 = ["overseer", "cruiser", "underseer", "spawner", "directordrive_AR", "honcho_AR", "doper_AR"]
         Class.director.UPGRADES_TIER_3 = ["manager"]
+            Class.manager.UPGRADES_TIER_3 = ["inspector"].map(x => x + "_AR")
         Class.overseer.UPGRADES_TIER_3 = ["overlord", "banshee", "autoOverseer", "overdrive", "commander", "captain_AR", "foreman_AR", "dopeseer_AR"]
+            Class.overseer.UPGRADES_TIER_3.push("inspector_AR")
         Class.cruiser.UPGRADES_TIER_3 = ["carrier", "battleship", "fortress", "autoCruiser", "commander", "productionist_AR", "cruiserdrive_AR", "hangar_AR", "zipper_AR", "baltimore_AR", "mosey_AR"]
         Class.underseer.UPGRADES_TIER_3 = ["necromancer", "maleficitor", "autoUnderseer_AR", "underdrive_AR", "infestor", "pentaseer_AR"]
         Class.spawner.UPGRADES_TIER_3 = ["factory", "autoSpawner", "megaSpawner_AR", "productionist_AR", "spawnerdrive_AR", "captain_AR", "hangar_AR", "laborer_AR", "foundry_AR", "issuer_AR"]

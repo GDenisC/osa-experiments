@@ -18,7 +18,7 @@ class ClanWars {
                             team: this.teamID++,
                             index: this.index++,
                         })
-                        util.log("[INFO] Created an new clan party " + this.clans[this.index].fullClanName);
+                        util.log("[INFO]: Created an new clan party " + this.clans[this.index].fullClanName);
                     }
                     if (addToPartyList) {
                         let clan = this.clans.find(o => o.clanName === clanCheck[1]);
