@@ -1151,51 +1151,114 @@ exports.makePresent = (outcolor, wrapcolor) => {
 };
 
 /**
- * @param {[number, number, number][]} vertexes
- * @param {number[][]} faces the inner array is indices (vertexes' indexes)
- * @param {number} multiplier
+ * @param {{
+ *   VERTEXES?: [number, number, number][],
+ *   FACES: number[] | [number, number, number][][],
+ *   SCALE?: number,
+ *   VERTEXES_SCALE?: number
+ * }} info
  * @returns {`3d=${string}`}
  */
-exports.encode3D = function (vertexes, faces, multiplier) {
+exports.encode3d = function (info) {
+	let vertexes, faces;
+
+	if (info.VERTEXES) vertexes = info.VERTEXES;
+
+	if (!info.FACES) {
+		throw new Error('FACES are not set');
+	} else if (!vertexes) {
+		vertexes = [];
+		faces = [];
+		for (const face of info.FACES) {
+			const current = [];
+			for (const vertex of face) {
+				let index = vertexes.findIndex(
+					x => x[0] == vertex[0] && x[1] == vertex[1] && x[2] == vertex[2]
+				);
+				if (index == -1) {
+					index = vertexes.push(vertex) - 1;
+				}
+				current.push(index);
+			}
+			faces.push(current);
+		}
+	} else {
+		faces = info.FACES;
+	}
+
+	const vertScale = info.VERTEXES_SCALE || 1;
+
+	if (vertScale != 1) {
+		vertexes = vertexes.map(x => [
+			x[0] * vertScale,
+			x[1] * vertScale,
+			x[2] * vertScale
+		]);
+	}
+
 	return (
 		'3d=' +
 		vertexes.flat().join(',') +
 		'/' +
 		faces.map(i => i.join(',')).join(';') +
 		'/' +
-		multiplier
+		(info.SCALE || 1)
 	);
 };
 
-exports.scaleVertexes3D = function (vertexes, scale) {
-	return vertexes.map(x => [x[0] * scale, x[1] * scale, x[2] * scale]);
-};
+/**
+ * @param {{
+ *   VERTEXES?: [number, number, number, number][],
+ *   FACES: number[] | [number, number, number, number][][],
+ *   SCALE?: number,
+ *   VERTEXES_SCALE?: number
+ * }} info
+ * @returns {`4d=${string}`}
+ */
+exports.encode4d = function (info) {
+	let vertexes, faces;
 
-const isPositionEquals = function (a, b) {
-	return a[0] == b[0] && a[1] == b[1] && a[2] == b[2];
-}
+	if (info.VERTEXES) vertexes = info.VERTEXES;
 
-exports.encodeOptimized3D = function (data, multiplier, vertexesScale = 1) {
-	let vertexes = [];
-	const faces = [];
-
-	for (const face of data) {
-		const current = [];
-
-		for (const vertex of face) {
-			let index = vertexes.findIndex(x => isPositionEquals(x, vertex));
-			if (index == -1) {
-				index = vertexes.push(vertex) - 1;
+	if (!info.FACES) {
+		throw new Error('FACES are not set');
+	} else if (!vertexes) {
+		vertexes = [];
+		faces = [];
+		for (const face of info.FACES) {
+			const current = [];
+			for (const vertex of face) {
+				let index = vertexes.findIndex(
+					x => x[0] == vertex[0] && x[1] == vertex[1] && x[2] == vertex[2] && x[3] == vertex[3]
+				);
+				if (index == -1) {
+					index = vertexes.push(vertex) - 1;
+				}
+				current.push(index);
 			}
-			current.push(index);
+			faces.push(current);
 		}
-
-		faces.push(current);
+	} else {
+		faces = info.FACES;
 	}
 
-	if (vertexesScale != 1) {
-		vertexes = exports.scaleVertexes3D(vertexes, vertexesScale);
+	const vertScale = info.VERTEXES_SCALE || 1;
+
+	if (vertScale != 1) {
+		vertexes = vertexes.map(x => [
+			x[0] * vertScale,
+			x[1] * vertScale,
+			x[2] * vertScale,
+			x[3] * vertScale
+		]);
 	}
 
-	return exports.encode3D(vertexes, faces, multiplier);
-}
+	return (
+		'4d=' +
+		vertexes.flat().join(',') +
+		'/' +
+		faces.map(i => i.join(',')).join(';') +
+		'/' +
+		(info.SCALE || 1)
+	);
+};

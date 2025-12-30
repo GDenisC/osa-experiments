@@ -1565,14 +1565,26 @@ import * as socketStuff from './socketinit.js';
 	}
 	// Entity drawing (this is a function that makes a function)
 	const drawEntity = (() => {
+		// READ NOTE: dont copy both 3D and 4D if you dont need 4D. 4D is 3D copy with a few changes
 		let drawPolyImgs = [],
 			drawPoly3D = new Map(),
+			drawPoly4D = new Map(),
 			cameraFor3dProjection = { x: 0, y: 0, z: -1 },
-			projectPoint = p => {
-				return {
-					x: p.x / (p.z - cameraFor3dProjection.z),
-					y: p.y / (p.z - cameraFor3dProjection.z)
-				};
+			cameraFor4dProjection = { x: 0, y: 0, z: 0, w: -1 },
+			projectPoint3d = p => {
+				if (p.z == 0) return p;
+				p.x /= p.z - cameraFor3dProjection.z;
+				p.y /= p.z - cameraFor3dProjection.z;
+				p.z = 0;
+				return p;
+			},
+			projectPoint4d = p => {
+				if (p.w == 0) return projectPoint3d(p);
+				p.x /= p.w - cameraFor4dProjection.w;
+				p.y /= p.w - cameraFor4dProjection.w;
+				p.z /= p.w - cameraFor4dProjection.w;
+				p.w = 0;
+				return projectPoint3d(p);
 			},
 			rotatePointXY = (p, angle) => {
 				let q = {
@@ -1588,33 +1600,92 @@ import * as socketStuff from './socketinit.js';
 				q.z = p.y * sin + q.z * cos;
 				return q;
 			},
-			distanceBetweenPointsSquared = (a, b) => {
+			rotatePointXYZ = (p, angle) => {
+				let q = {
+					x: 0,
+					y: 0,
+					z: 0,
+					w: 0
+				};
+				const cos = Math.cos(angle);
+				const sin = Math.sin(angle);
+				q.x = p.x * cos + p.z * sin;
+				q.z = -p.x * sin + p.z * cos;
+				q.y = p.y * cos - q.z * sin;
+				q.z = p.y * sin + q.z * cos;
+				let y = q.y;
+				q.y = y * cos - p.w * sin;
+				q.w = y * sin + p.w * cos;
+				let z = q.z;
+				q.z = z * cos - p.w * sin;
+				q.w = z * sin + p.w * cos;
+				return q;
+			},
+			distanceBetweenPointsSquared3d = (a, b) => {
 				let dx = b.x - a.x,
 					dy = b.y - a.y,
 					dz = b.z - a.z;
 				return dx * dx + dy * dy + dz * dz;
 			},
-			sort3dSides = (arr, a, b) => {
-				let AavgZ = a.reduce((a, b) => a + arr[b].z, 0);
-				let BavgZ = b.reduce((a, b) => a + arr[b].z, 0);
-				if (BavgZ > AavgZ) return BavgZ - AavgZ;
-				let aDist = 0,
+			distanceBetweenPointsSquared4d = (a, b) => {
+				let dx = b.x - a.x,
+					dy = b.y - a.y,
+					dz = b.z - a.z,
+					dw = b.w - a.w;
+				return dx * dx + dy * dy + dz * dz + dw * dw;
+			},
+			sortSides3d = (arr, a, b) => {
+				let aAvgZ = 0,
+					bAvgZ = 0,
+					aDist = 0,
 					bDist = 0;
 				for (let i = 0; i < a.length; ++i) {
-					aDist += distanceBetweenPointsSquared(
+					aAvgZ += arr[a[i]].z;
+					aDist += distanceBetweenPointsSquared3d(
 						cameraFor3dProjection,
 						arr[a[i]]
 					);
 				}
 				for (let i = 0; i < b.length; ++i) {
-					bDist += distanceBetweenPointsSquared(
+					bAvgZ += arr[b[i]].z;
+					bDist += distanceBetweenPointsSquared3d(
 						cameraFor3dProjection,
 						arr[b[i]]
 					);
 				}
+				aAvgZ /= a.length;
+				bAvgZ /= b.length;
 				aDist /= a.length * a.length;
 				bDist /= b.length * b.length;
-				return bDist - aDist;
+				return (bAvgZ - aAvgZ) * 1e3 + (bDist - aDist);
+			},
+			sortSides4d = (arr, a, b) => {
+				let aAvgW = 0,
+					bAvgW = 0,
+					aDist = 0,
+					bDist = 0;
+				for (let i = 0; i < a.length; ++i) {
+					aAvgW += arr[a[i]].w;
+					aDist += distanceBetweenPointsSquared4d(
+						cameraFor4dProjection,
+						arr[a[i]]
+					);
+				}
+				for (let i = 0; i < b.length; ++i) {
+					bAvgW += arr[b[i]].w;
+					bDist += distanceBetweenPointsSquared4d(
+						cameraFor4dProjection,
+						arr[b[i]]
+					);
+				}
+				aAvgW /= a.length;
+				bAvgW /= b.length;
+				aDist /= a.length * a.length;
+				bDist /= b.length * b.length;
+				return (
+					((bAvgW - aAvgW) * 1e3 + (bDist - aDist)) * 1e3 +
+					sortSides3d(arr, a, b)
+				);
 			},
 			DEAIC = (
 				assignedContext,
@@ -1738,16 +1809,76 @@ import * as socketStuff from './socketinit.js';
 									.map(p => rotatePointXY(p, angle));
 								const sortedSides = polygon3d.indices
 									.slice()
-									.sort((a, b) => sort3dSides(rotated, a, b));
+									.sort((a, b) => sortSides3d(rotated, a, b));
 								context.lineWidth /= 2;
+								const size = radius * polygon3d.multiplier;
 								for (const sides of sortedSides) {
 									context.beginPath();
 									for (let i = 0; i < sides.length; ++i) {
-										const a = projectPoint(rotated[sides[i]]);
-										const b = projectPoint(
+										const a = projectPoint3d(rotated[sides[i]]);
+										const b = projectPoint3d(
 											rotated[sides[(i + 1) % sides.length]]
 										);
-										const size = radius * polygon3d.multiplier;
+										context.lineTo(
+											centerX + a.x * size,
+											centerY + a.y * size,
+											centerX + b.x * size,
+											centerY + b.y * size
+										);
+									}
+									context.closePath();
+									context.fill();
+									context.stroke();
+								}
+								return;
+							}
+							if (sides.startsWith('4d=')) {
+								let polygon4d = drawPoly4D.get(sides);
+								if (!polygon4d) {
+									let dividedParts = sides.slice(3).split('/');
+									let vertexesRaw = dividedParts[0].split(',').map(Number);
+									if (vertexesRaw.length % 4 != 0) {
+										throw new Error(
+											'4D Shape cannot be rendered. Vertexes count: ' +
+												vertexesRaw.length / 4
+										);
+									}
+									let vertexes = Array(vertexesRaw.length / 4);
+									for (let i = 0; i < vertexesRaw.length; i += 4) {
+										vertexes[i / 4] = {
+											x: vertexesRaw[i],
+											y: vertexesRaw[i + 1],
+											z: vertexesRaw[i + 2],
+											w: vertexesRaw[i + 3]
+										};
+									}
+									let indicesRaw = dividedParts[1].split(';');
+									let indices = [];
+									for (let i = 0; i < indicesRaw.length; ++i) {
+										indices.push(indicesRaw[i].split(',').map(Number));
+									}
+									polygon4d = {
+										vertexes,
+										indices,
+										multiplier: Number(dividedParts[2])
+									};
+									drawPoly4D.set(sides, polygon4d);
+								}
+								const rotated = polygon4d.vertexes
+									.slice()
+									.map(p => rotatePointXYZ(p, angle));
+								const sortedSides = polygon4d.indices
+									.slice()
+									.sort((a, b) => sortSides4d(rotated, a, b));
+								context.lineWidth /= 2;
+								const size = radius * polygon4d.multiplier;
+								for (const sides of sortedSides) {
+									context.beginPath();
+									for (let i = 0; i < sides.length; ++i) {
+										const a = projectPoint4d(rotated[sides[i]]);
+										const b = projectPoint4d(
+											rotated[sides[(i + 1) % sides.length]]
+										);
 										context.lineTo(
 											centerX + a.x * size,
 											centerY + a.y * size,

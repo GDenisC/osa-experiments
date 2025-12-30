@@ -22,13 +22,13 @@ module.exports = {
 			featured: false,
 
 			region: 'local', // The region the server is on.
-			gamemode: ['sandbox'], // The selected gamemode.
-			player_cap: 1, // The maximum number of players that can join the server. Not including bots.
+			gamemode: ['tdm'], // The selected gamemode.
+			player_cap: 80, // The maximum number of players that can join the server. Not including bots.
 
 			properties: {
 				// This overrides settings in the config.js file, providing the selected gamemode doesn't also override it.
 				teams: 2,
-				bot_cap: 0
+				bot_cap: 32
 			}
 		}
 	],
@@ -159,7 +159,7 @@ module.exports = {
 	food_group_cap: 1, // Number of foods that random food groups spawn with
 
 	// Bosses
-	bosses_spawn: true,
+	bosses_spawn: false,
 	boss_spawn_cooldown: 260, // The delay (in seconds) between boss spawns.
 	boss_spawn_delay: 6, // The delay (in seconds) between the boss spawn being announced and the boss(es) actually spawning.
 	boss_types: [
