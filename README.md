@@ -1,5 +1,19 @@
 # Open Source Arras
 
+## Experiments
+
+- Added 3d, 4d shapes support
+- New 3D food mockups
+- Updated growth, growth curve, 8 NEW growth curves look at Game/gamemodeconfigs/growth.js
+- Procedural Classes addon (WIP)
+- Weapons addon and `WEAPONS` (WIP)
+- makeFat facilitator
+- sharedHealth facilitator
+- Celestials gamemode
+- Updated laby food (rarities, tier auto-generation, global.js)
+- Updated mothership gamemode (a bit)
+- Major memory leak fix (fixed in unstable branch)
+
 <img alt="Logo" src="public/img/round.png" width="100"/>
 
 ![GitHub Release](https://img.shields.io/github/v/release/AE0Hello/open-source-arras)
@@ -21,7 +35,7 @@ After installing `ws`, [download the source code of the latest release of Open S
 
 > [!NOTE]
 > If you want to stay up to date, create a fork, download a git client (such as GitHub Desktop), and sync the fork whenever there's a major update.
-> 
+>
 > **Major updates may introduce breaking changes that alter how certain things work. It is *your responsibility* to keep your private server up-to-date and functioning.**
 
 ## Server setup
