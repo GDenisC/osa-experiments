@@ -5,6 +5,8 @@
 - Added 3d, 4d shapes support
 - New 3D food mockups
 - Updated growth, growth curve, 8 NEW growth curves look at Game/gamemodeconfigs/growth.js
+- Shapes cannot spawn on players
+- Shapes spawn instantly (`while` loop instead of `if` statement)
 - Procedural Classes addon (WIP)
 - Weapons addon and `WEAPONS` (WIP)
 - makeFat facilitator
