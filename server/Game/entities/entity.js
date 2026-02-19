@@ -261,7 +261,7 @@ class Entity extends EventEmitter {
 						? `Controller ${set.CONTROLLERS} ran into an error!`
 						: `Controller ${set.CONTROLLERS} is attempted to be gotten but does not exist!`
 				);
-				throw new Error(e);
+				throw e;
 			}
 		}
 		if (set.IGNORED_BY_AI != null) this.ignoredByAi = set.IGNORED_BY_AI;
@@ -681,7 +681,7 @@ class Entity extends EventEmitter {
 	refreshBodyAttributes() {
 		const level = Math.min(45, this.level);
 		let speedReduce = Math.min(
-			/*Config.growth ? 3 : */ 2,
+			Config.growth ? 4 : 2,
 			this.size / (this.coreSize || this.SIZE)
 		);
 		this.acceleration =

@@ -4,15 +4,15 @@ module.exports = {
 	host: 'localhost:3000', // Game server domain. If the host is 'localhost:NUMBER', the NUMBER must be the port setting.
 	port: 3000, // Which port to run the web server on.
 
-    // Server
-    visible_list_interval: 250, // How often to update the list of the entities that players can see. Has effects of when entities are activated.
-    startup_logs: true, // Enable startup logs and log speed loop warnings in the terminal
-    load_all_mockups: false, // Set to true if you want every mockup to be loaded when the server starts. May noticeably slow down server startup.
+	// Server
+	visible_list_interval: 250, // How often to update the list of the entities that players can see. Has effects of when entities are activated.
+	startup_logs: true, // Enable startup logs and log speed loop warnings in the terminal
+	load_all_mockups: false, // Set to true if you want every mockup to be loaded when the server starts. May noticeably slow down server startup.
 
 	servers: [
 		// Make sure to change the HOST, PORT and SERVER_ID between servers!
 		{
-			share_client_server: false, // Only one server at a time can have this enabled.
+			share_client_server: true, // Only one server at a time can have this enabled.
 			// The above is required if your VM (the machine that hosts the website stuff) doesn't support multi-ports and forces everything through the main server.
 			// This also overrides the below HOST and PORT settings to be identical to the main server's HOST/PORT (by default, 3000).
 
@@ -22,13 +22,13 @@ module.exports = {
 			featured: false,
 
 			region: 'local', // The region the server is on.
-			gamemode: ['tdm'], // The selected gamemode.
+			gamemode: ['growth', 'tdm'], // The selected gamemode.
 			player_cap: 80, // The maximum number of players that can join the server. Not including bots.
 
 			properties: {
 				// This overrides settings in the config.js file, providing the selected gamemode doesn't also override it.
 				teams: 2,
-				bot_cap: 32
+				bot_cap: 50
 			}
 		}
 	],
@@ -50,8 +50,8 @@ module.exports = {
 	popup_message_duration: 10_000, // How long (in milliseconds) a popup message lasts before fading out.
 	sanitize_chat_input: true, // If you don't want your players to color their messages. They get sanitized after addons interpret them, but before they're added to the chat message dictionary.
 
-    // Seasonal
-    spooky_theme: false, // Toggles the seasonal Halloween theme (adds eyes to walls and replaces rocks to pumpkins)
+	// Seasonal
+	spooky_theme: false, // Toggles the seasonal Halloween theme (adds eyes to walls and replaces rocks to pumpkins)
 
 	// Gameplay
 	game_speed: 1, // General game speed.

@@ -157,13 +157,14 @@ const BRANCH_TIERS = Symbol('BRANCH_TIERS');
 const SEQUENCE = Symbol('SEQUENCE');
 
 const maxTier =
+	Config.tier_cap ||
+	Math.floor(Config.level_cap / Config.tier_multiplier) ||
 	Config.MAX_UPGRADE_TIER ||
 	Math.floor(Config.LEVEL_CAP / Config.TIER_MULTIPLIER);
 const labelSeparator = '-';
 const definitionSeparator = '_';
 
 const defaultOptions = {
-	template: '',
 	mockup: 'genericTank',
 	/** @type {((ctx: ProceduralMockupContext, totalTiers: number) => void) | null} */
 	baseBranch: null,
@@ -431,7 +432,7 @@ class ProceduralClassesContext {
 				sequence
 			);
 
-			this.baseBranch(mockupContext, sequence.length);
+			if (this.baseBranch) this.baseBranch(mockupContext, sequence.length);
 
 			if (this.keepSequence) {
 				for (let tier = 0, l = sequence.length; tier < l; ++tier) {

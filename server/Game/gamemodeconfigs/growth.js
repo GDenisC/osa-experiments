@@ -4,22 +4,22 @@ module.exports = {
 	defineLevelSkillPoints: level => {
 		if (level < 2) return 0;
 		if (level <= 40) return 1;
-		if (level <= 45 && (level & 1) == 1) return 1;
-		if (level <= 51 && level % 2 == 1) return 1;
+		if (level <= 51 && (level & 1) == 1) return 1;
 		if (level % 10 == 1) return 1;
 		return 0;
 	},
 	/**
-	 * Arras new (current) growth: `mult + Math.pow((score - 26263) / 3660, 0.6575 + Math.pow(score, 0.8) / 1e8) / 8`
+	 * note: ~1m = ~3m, ~50m = ~100m, ITS BAD
+	 * Arras new (current) growth: `mult + Math.pow((score - 26263) / 3660, 0.92 - 0.2625 / (1 + (score - 3e6) / 1e8)) / 5.25`
 	 *
 	 * Exploding curve (from a suggestion): `mult + (Math.pow(score / 26263, 0.1 + Math.pow(level / 90 - 1, 3) / 100) - 1) * 10`
 	 *
 	 * Overgrowth (my own version): `mult + ((score % 1e6) / 1e6) * (1 + Math.floor(score / 1e6))`
 	 *
-	 * Overgrowth v2 (my own version):
+	 * Overgrowth v2 (my own version) (favorite):
 	 * ```js
 	 * let wave = 1;
-	 * // 1e6, 2e6, 3e6, 4e6, ...
+	 * // 1e6, 3e6, 6e6, 1e7, ...
 	 * while (score > 1e6 * wave) {
 	 *	 score -= 1e6 * wave;
 	 *	 wave += 1;
@@ -79,17 +79,11 @@ module.exports = {
 	 * ```
 	 */
 	defineGrowthMultiplier: (mult, score) => {
-		let wave = 1;
-		// 1e6, 2e6, 3e6, 4e6, ...
-		while (score > 1e6 * wave) {
-			score -= 1e6 * wave;
-			wave += 1;
-		}
-		return mult + (score / 1e6 / wave) * Math.pow(2, wave);
+		return mult + Math.pow((score - 26263) / 3660, 0.92 - 0.2625 / (1 + (score - 3e6) / 1e8)) / 5.25;
 	},
 	growthStatsMultipliers: {
-		health: level => 0.05 * level,
-		shield: level => 0.02 * level,
-		regen: level => 0.002 * level
+		health: level => 0.06 * level,
+		shield: level => 0.01 * level,
+		regen: level => 0.001 * level
 	}
 };

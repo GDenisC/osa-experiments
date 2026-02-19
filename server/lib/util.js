@@ -48,10 +48,15 @@ exports.sumArray = arr => {
 
 exports.signedSqrt = x => Math.sign(x) * Math.sqrt(Math.abs(x))
 
-exports.getJackpot = x => x > 39450 ? Math.pow(x - 26300, 0.85) + 26300 : x / 1.5
-exports.getReversedJackpot = x => x > 39450 ? Math.pow(x - 26300, 1.15) + 26300 : x * 1.5
+// free to edit
+const JACKPOT_MULTIPLIER = 1; // default: 1.5
+const JACKPOT_EXPONENT = 0; // default: 0.15
 
-exports.getReversedJackpot = x => x > 39450 ? Math.pow(x - 26300, 1.15) + 26300 : x * 1.5
+// dont touch
+const JACKPOT_BASE = 26263 * JACKPOT_MULTIPLIER;
+
+exports.getJackpot = x => x > JACKPOT_BASE ? Math.pow(x - 26263, 1 + JACKPOT_EXPONENT) + 26263 : x / JACKPOT_MULTIPLIER;
+exports.getReversedJackpot = x => x > JACKPOT_BASE ? Math.pow(x - 26263, 1 - JACKPOT_EXPONENT) + 26263 : x * JACKPOT_MULTIPLIER;
 
 exports.rounder = (val, precision = 6) => {
     if (Math.abs(val) < 0.00001) val = 0;
@@ -125,7 +130,7 @@ exports.deepClone = (obj, hash = new WeakMap()) => {
             exports.deepClone(val, hash)));
     else if (obj instanceof Set)
         Array.from(obj, (key) => result.add(exports.deepClone(key, hash)));
-    // Register in hash    
+    // Register in hash
     hash.set(obj, result);
     // Clone and assign enumerable own properties recursively
     return Object.assign(result, ...Object.keys(obj).map(
@@ -205,8 +210,8 @@ exports.flattenDefinition = (output, definition) => {
     return output;
 };
 
-exports.isStringified = (str) => { 
-    try {  
-        return JSON.parse(str);  
-    } catch(e) { return str } 
+exports.isStringified = (str) => {
+    try {
+        return JSON.parse(str);
+    } catch(e) { return str }
 }

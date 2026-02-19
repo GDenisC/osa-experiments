@@ -1,3 +1,6 @@
+/** @import { Entity } from './entities/entity.js' */
+/** @import Config from '../config.js' */
+
 class gameHandler {
 	constructor() {
 		this.loopCounter = 0;

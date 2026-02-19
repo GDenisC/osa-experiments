@@ -12,7 +12,8 @@
 - Celestials gamemode
 - Updated laby food (rarities, tier auto-generation, global.js)
 - Updated mothership gamemode (a bit)
-- Major memory leak fix (fixed in unstable branch)
+- Major memory leak fix (fixed in unstable branch) (not fixed fully lol)
+- Balance changes
 
 <img alt="Logo" src="public/img/round.png" width="100"/>
 

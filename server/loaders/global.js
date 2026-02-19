@@ -234,6 +234,9 @@ global.runMove = (() => {
 			case 'grow':
 				my.SIZE += my.motionTypeArgs.growSpeed ?? 1;
 				break;
+			case 'grower':
+				my.SIZE *= 1.035;
+				break;
 			case 'glide':
 				my.maxSpeed = my.topSpeed;
 				my.damp = 0.05;
@@ -776,7 +779,7 @@ global.activateTieredFood = () => {
 			// Chance of spawning in exponents of 4
 			4 ** (a.length - i),
 			// 4-wide dimension of the 4 shape tiers - regular, beta, alpha, omega
-			Array(6)
+			Array(5)
 				.fill()
 				.map((_, j, b) => [
 					// Chance of spawning in exponents of 5
@@ -786,7 +789,7 @@ global.activateTieredFood = () => {
 						.fill()
 						.map((_, k, c) => [
 							// Chance of spawning, set to 200mil for regular polygons and exponents of 10 otherwise
-							k ? 5 ** (c.length - k - 1) : Math.pow(2 + c.length, 5),
+							k ? 10 ** (c.length - k - 1) : Math.pow(1.75 + c.length, 10),
 
 							disableCrashers // no crashers
 								? `laby_${i}_${j}_${k}_0`
@@ -808,7 +811,7 @@ global.activateTieredFood = () => {
 			// Chance of spawning in exponents of 4
 			4 ** (a.length - i),
 			// 4-wide dimension of the 4 shape tiers - regular, beta, alpha, omega
-			Array(6)
+			Array(5)
 				.fill()
 				.map((_, j, b) => [
 					// Chance of spawning in exponents of 5
@@ -818,7 +821,7 @@ global.activateTieredFood = () => {
 						.fill()
 						.map((_, k, c) => [
 							// Chance of spawning, set to 200mil for regular polygons and exponents of 10 otherwise
-							k ? 5 ** (c.length - k - 1) : Math.pow(2 + c.length, 5),
+							k ? 10 ** (c.length - k - 1) : Math.pow(1.75 + c.length, 10),
 
 							disableCrashers // no crashers
 								? `laby_${i + 3}_${j}_${k}_0`
