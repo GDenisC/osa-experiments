@@ -779,7 +779,7 @@ global.activateTieredFood = () => {
 			// Chance of spawning in exponents of 4
 			4 ** (a.length - i),
 			// 4-wide dimension of the 4 shape tiers - regular, beta, alpha, omega
-			Array(5)
+			Array(4)
 				.fill()
 				.map((_, j, b) => [
 					// Chance of spawning in exponents of 5
@@ -811,7 +811,7 @@ global.activateTieredFood = () => {
 			// Chance of spawning in exponents of 4
 			4 ** (a.length - i),
 			// 4-wide dimension of the 4 shape tiers - regular, beta, alpha, omega
-			Array(5)
+			Array(4)
 				.fill()
 				.map((_, j, b) => [
 					// Chance of spawning in exponents of 5

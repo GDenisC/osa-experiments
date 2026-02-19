@@ -22,13 +22,13 @@ module.exports = {
 			featured: false,
 
 			region: 'local', // The region the server is on.
-			gamemode: ['growth', 'tdm'], // The selected gamemode.
+			gamemode: ['growth', 'ffa'], // The selected gamemode.
 			player_cap: 80, // The maximum number of players that can join the server. Not including bots.
 
 			properties: {
 				// This overrides settings in the config.js file, providing the selected gamemode doesn't also override it.
 				teams: 2,
-				bot_cap: 10
+				bot_cap: 1
 			}
 		}
 	],
@@ -37,8 +37,8 @@ module.exports = {
 	allow_ACAO: false, // Access-Control-Allow-Origin, allows any server/client to access data from the WebServer.
 
 	// Map
-	map_tile_width: 420,
-	map_tile_height: 420,
+	map_tile_width: 220,
+	map_tile_height: 220,
 
 	// The message that appears once a player spawns.
 	spawn_message:
@@ -153,7 +153,7 @@ module.exports = {
 		]
 	],
 
-	food_cap: 70, // Maximum number of regular food at any time.
+	food_cap: 0, // Maximum number of regular food at any time.
 	food_cap_nest: 30, // Maximum number of nest food at any time.
 	enemy_cap_nest: 0, // Maximum number of enemy nest food at any time.
 	food_group_cap: 1, // Number of foods that random food groups spawn with
