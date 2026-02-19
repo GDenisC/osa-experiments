@@ -1426,16 +1426,11 @@ class Entity extends EventEmitter {
 		global.gameManager.views.forEach(v => v.remove(this));
 		// Remove bullet from bullet list if needed and the only reason it exists is for bacteria.
 		if (this.bulletparent != null) {
-			util.remove(
-				this.bulletparent.bulletchildren,
-				this.bulletparent.bulletchildren.indexOf(this)
-			);
-			if (this.bulletparent.guns) {
-				for (let gun of this.bulletparent.guns.values()) {
+			util.remove(this.bulletparent.bulletchildren, this.bulletparent.bulletchildren.indexOf(this));
+			for (let gun of this.bulletparent.guns.values()) {
 					util.remove(gun.bulletchildren, gun.bulletchildren.indexOf(this));
-				}
 			}
-		}
+	}
 		// Remove from parent lists if needed
 		if (this.parent != null)
 			util.remove(this.parent.children, this.parent.children.indexOf(this));

@@ -13,8 +13,6 @@ class turretEntity extends EventEmitter {
         this.color = new Color(16);
         this.borderless = false;
         this.drawFill = true;
-        this.children = [];
-        this.bulletchildren = [];
         this.invisible = [0, 0];
         this.alphaRange = [0, 1];
         this.id = entitiesIdLog++;
@@ -57,17 +55,17 @@ class turretEntity extends EventEmitter {
         this.activation = {
             check: () => {
                 return this.bond.activation.check()
-            }   
+            }
         }
         // Get my position.
         if (Array.isArray(position)) {
-            position = { 
-                SIZE: position[0], 
-                X: position[1], 
-                Y: position[2], 
-                ANGLE: position[3], 
-                ARC: position[4], 
-                LAYER: position[5] 
+            position = {
+                SIZE: position[0],
+                X: position[1],
+                Y: position[2],
+                ANGLE: position[3],
+                ARC: position[4],
+                LAYER: position[5]
             };
         }
         position.SIZE ??= 10;
@@ -77,18 +75,18 @@ class turretEntity extends EventEmitter {
         position.ARC ??= 360;
         position.LAYER ??= 0;
         let _off = new Vector(position.X, position.Y);
-        this.bound = { 
-            size: position.SIZE / 20, 
-            angle: position.ANGLE * Math.PI / 180, 
-            direction: _off.direction, 
-            offset: _off.length / 10, 
-            arc: position.ARC * Math.PI / 180, 
+        this.bound = {
+            size: position.SIZE / 20,
+            angle: position.ANGLE * Math.PI / 180,
+            direction: _off.direction,
+            offset: _off.length / 10,
+            arc: position.ARC * Math.PI / 180,
             layer: position.LAYER
         };
     }
     fixFacing() {
         this.facing = this.bond.facing + this.bound.angle;
-        if (this.facingType.includes('Target') || this.facingType.includes('Speed')) this.facingType = "bound", this.facingTypeArgs = {}; 
+        if (this.facingType.includes('Target') || this.facingType.includes('Speed')) this.facingType = "bound", this.facingTypeArgs = {};
     }
     life() { bringToLife(this); }
 
@@ -228,7 +226,7 @@ class turretEntity extends EventEmitter {
             this.refreshBodyAttributes();
         }
     };
-    
+
     get size() {
         return this.bond.size * this.bound.size;
     };
@@ -236,8 +234,8 @@ class turretEntity extends EventEmitter {
         return this.size * lazyRealSizes[Math.floor(Math.abs(this.shape))];
     };
 
-    updateBodyInfo() { 
-        this.fov = 1 * this.FOV * 275 * Math.sqrt(this.size); 
+    updateBodyInfo() {
+        this.fov = 1 * this.FOV * 275 * Math.sqrt(this.size);
     }
 
     refreshBodyAttributes() {
@@ -265,7 +263,7 @@ class turretEntity extends EventEmitter {
     };
 
     face() { global.runFace(this) };
-    
+
     syncTurrets() {
         for (let gun of this.guns.values()) gun.syncChildren();
         for (let turret of this.turrets.values()) {
@@ -295,8 +293,13 @@ class turretEntity extends EventEmitter {
     };
 
     destroy() {
-        // Remove bullet from bullet list if needed and the only reason it exists is for bacteria.
-        if (this.bulletparent != null) util.remove(this.bulletparent.bulletchildren, this.bulletparent.bulletchildren.indexOf(this))
+        // Remove from bullet lists if needed
+        if (this.bulletparent != null) {
+            util.remove(this.bulletparent.bulletchildren, this.bulletparent.bulletchildren.indexOf(this)); // the only reason this exists is for bacteria.
+            for (let gun of this.bulletparent.guns.values()) {
+                util.remove(gun.bulletchildren, gun.bulletchildren.indexOf(this));
+            }
+        }
         // Remove from parent lists if needed
         if (this.parent != null) util.remove(this.parent.children, this.parent.children.indexOf(this));
         // Kill all of its children
