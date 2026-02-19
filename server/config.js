@@ -1,7 +1,7 @@
 module.exports = {
 	// Main Menu
 	main_menu: 'index.html', // Where the main menu is located (in the /public folder).
-	host: 'localhost:3000', // Game server domain. If the host is 'localhost:NUMBER', the NUMBER must be the port setting.
+	host: process.env.HOST || 'localhost:3000', // Game server domain. If the host is 'localhost:NUMBER', the NUMBER must be the port setting.
 	port: 3000, // Which port to run the web server on.
 
 	// Server
