@@ -777,7 +777,7 @@ global.activateTieredFood = () => {
 		.fill()
 		.map((_, i, a) => [
 			// Chance of spawning in exponents of 4
-			4 ** (a.length - i),
+			4.5 ** (a.length - i),
 			// 4-wide dimension of the 4 shape tiers - regular, beta, alpha, omega
 			Array(4)
 				.fill()
@@ -789,7 +789,7 @@ global.activateTieredFood = () => {
 						.fill()
 						.map((_, k, c) => [
 							// Chance of spawning, set to 200mil for regular polygons and exponents of 10 otherwise
-							k ? 10 ** (c.length - k - 1) : Math.pow(1.75 + c.length, 10),
+							k ? 9 ** (c.length - k - 1) : Math.pow(1.75 + c.length, 9),
 
 							disableCrashers // no crashers
 								? `laby_${i}_${j}_${k}_0`
@@ -809,7 +809,7 @@ global.activateTieredFood = () => {
 		.fill()
 		.map((_, i, a) => [
 			// Chance of spawning in exponents of 4
-			4 ** (a.length - i),
+			4.5 ** (a.length - i),
 			// 4-wide dimension of the 4 shape tiers - regular, beta, alpha, omega
 			Array(4)
 				.fill()
@@ -821,7 +821,7 @@ global.activateTieredFood = () => {
 						.fill()
 						.map((_, k, c) => [
 							// Chance of spawning, set to 200mil for regular polygons and exponents of 10 otherwise
-							k ? 10 ** (c.length - k - 1) : Math.pow(1.75 + c.length, 10),
+							k ? 9 ** (c.length - k - 1) : Math.pow(1.75 + c.length, 9),
 
 							disableCrashers // no crashers
 								? `laby_${i + 3}_${j}_${k}_0`
