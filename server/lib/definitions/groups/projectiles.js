@@ -65,7 +65,7 @@ Class.undertowBullet = {
                     }
                     else if (instance.type == "food") {
                         forceMulti = (6 / instance.size)
-                    }      
+                    }
                     else {
                         forceMulti = (2 / instance.size)
                     }
@@ -100,18 +100,18 @@ Class.satelliteBullet = {
     CONTROLLERS: [["whirlwind", {useOwnMaster: true}]],
     HAS_NO_RECOIL: true,
     AI: {
-        SPEED: 2, 
+        SPEED: 2,
     },
-    GUNS: (() => { 
+    GUNS: (() => {
         let output = []
         for (let i = 0; i < 3; i++) {
             output.push({
                 POSITION: {WIDTH: 16, LENGTH: 1, DELAY: 0},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite, {reload: 0}]), 
-                    TYPE: ["satellite", {ANGLE: i * 120, INDEPENDENT: true}], 
-                    MAX_CHILDREN: 1,   
-                    AUTOFIRE: true,  
+                    SHOOT_SETTINGS: combineStats([g.satellite, {reload: 0}]),
+                    TYPE: ["satellite", {ANGLE: i * 120, INDEPENDENT: true}],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true
                 }
@@ -126,18 +126,18 @@ Class.satelliteTrap = {
     CONTROLLERS: ["whirlwind"],
     HAS_NO_RECOIL: true,
     AI: {
-        SPEED: 2, 
+        SPEED: 2,
     },
-    GUNS: (() => { 
+    GUNS: (() => {
         let output = []
         for (let i = 0; i < 3; i++) {
             output.push({
                 POSITION: {WIDTH: 16, LENGTH: 1, DELAY: 0},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.satellite, {reload: 0}]), 
-                    TYPE: ["satellite", {ANGLE: i * 120, INDEPENDENT: true}], 
-                    MAX_CHILDREN: 1,   
-                    AUTOFIRE: true,  
+                    SHOOT_SETTINGS: combineStats([g.satellite, {reload: 0}]),
+                    TYPE: ["satellite", {ANGLE: i * 120, INDEPENDENT: true}],
+                    MAX_CHILDREN: 1,
+                    AUTOFIRE: true,
                     SYNCS_SKILLS: false,
                     WAIT_TO_CYCLE: true,
                     ALPHA: 0
@@ -575,7 +575,7 @@ Class.minion = {
     LABEL: "Minion",
     TYPE: "minion",
     DAMAGE_CLASS: 0,
-    HITS_OWN_TYPE: "hardWithBuffer",
+    HITS_OWN_TYPE: "droneCollision",
     FACING_TYPE: "smoothToTarget",
     BODY: {
         FOV: 0.5,
@@ -638,7 +638,7 @@ Class.tinyMinion = {
                 SHOOT_SETTINGS: combineStats([g.basic, g.minionGun, g.lowPower]),
                 WAIT_TO_CYCLE: true,
                 TYPE: "bullet",
-            }, 
+            },
         },
     ],
     DIE_AT_RANGE: true,

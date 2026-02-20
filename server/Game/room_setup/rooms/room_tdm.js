@@ -7,50 +7,50 @@ locations = [
 		[[ 1 + spacing,  1 + spacing]]
 	],[
 		[
-			[Config.roomHeight - 1 - spacing, Config.roomWidth - 1 - spacing], 
-			[Config.roomHeight - 2 - spacing, Config.roomWidth - 1 - spacing], 
+			[Config.roomHeight - 1 - spacing, Config.roomWidth - 1 - spacing],
+			[Config.roomHeight - 2 - spacing, Config.roomWidth - 1 - spacing],
 			[Config.roomHeight - 1 - spacing, Config.roomWidth - 2 - spacing]
 		],
 		[[Config.roomHeight - 2 - spacing, Config.roomWidth - 2 - spacing]]
 	],[
 		[
-			[ 0 + spacing, Config.roomWidth - 1 - spacing], 
-			[ 1 + spacing, Config.roomWidth - 1 - spacing], 
+			[ 0 + spacing, Config.roomWidth - 1 - spacing],
+			[ 1 + spacing, Config.roomWidth - 1 - spacing],
 			[ 0 + spacing, Config.roomWidth - 2 - spacing]
 		],
 		[[ 1 + spacing, Config.roomWidth - 2 - spacing]]
 	],[
 		[
-			[Config.roomHeight - 1 - spacing,  0 + spacing], 
-			[Config.roomHeight - 1 - spacing,  1 + spacing], 
+			[Config.roomHeight - 1 - spacing,  0 + spacing],
+			[Config.roomHeight - 1 - spacing,  1 + spacing],
 			[Config.roomHeight - 2 - spacing,  0 + spacing]
 		],
 		[[Config.roomHeight - 2 - spacing,  1 + spacing]]
 	],[
 		[
-			[0 + spacing,  Math.floor(Config.roomWidth / 2) - 1], 
-			[1 + spacing,  Math.floor(Config.roomWidth / 2)], 
+			[0 + spacing,  Math.floor(Config.roomWidth / 2) - 1],
+			[1 + spacing,  Math.floor(Config.roomWidth / 2)],
 			[0 + spacing,  Math.floor(Config.roomWidth / 2) + 1]
 		],
 		[[0 + spacing,  Math.floor(Config.roomWidth / 2)]]
 	],[
 		[
-			[Math.floor(Config.roomHeight / 2) - 1,  Config.roomWidth - 1 - spacing], 
-			[Math.floor(Config.roomHeight / 2),		 Config.roomWidth - 2 - spacing], 
+			[Math.floor(Config.roomHeight / 2) - 1,  Config.roomWidth - 1 - spacing],
+			[Math.floor(Config.roomHeight / 2),		 Config.roomWidth - 2 - spacing],
 			[Math.floor(Config.roomHeight / 2) + 1,  Config.roomWidth - 1 - spacing]
 		],
 		[[Math.floor(Config.roomHeight / 2),  Config.roomWidth - 1 - spacing]]
 	],[
 		[
-			[Config.roomHeight - 1 - spacing,  Math.floor(Config.roomWidth / 2) - 1], 
-			[Config.roomHeight - 2 - spacing,  Math.floor(Config.roomWidth / 2)], 
+			[Config.roomHeight - 1 - spacing,  Math.floor(Config.roomWidth / 2) - 1],
+			[Config.roomHeight - 2 - spacing,  Math.floor(Config.roomWidth / 2)],
 			[Config.roomHeight - 1 - spacing,  Math.floor(Config.roomWidth / 2) + 1]
 		],
 		[[Config.roomHeight - 1 - spacing,  Math.floor(Config.roomWidth / 2)]]
 	],[
 		[
-			[Math.floor(Config.roomHeight / 2) - 1,  0 + spacing], 
-			[Math.floor(Config.roomHeight / 2),  	 1 + spacing], 
+			[Math.floor(Config.roomHeight / 2) - 1,  0 + spacing],
+			[Math.floor(Config.roomHeight / 2),  	 1 + spacing],
 			[Math.floor(Config.roomHeight / 2) + 1,  0 + spacing]
 		],
 		[[Math.floor(Config.roomHeight / 2),  0 + spacing]]
@@ -58,6 +58,28 @@ locations = [
 ];
 
 if (teams === 2 && !spacing) {
+	/**
+	 * 1:
+	 * A---B
+	 * A---B
+	 * A---B
+	 * 2: (todo)
+	 * -----
+	 * A---B
+	 * -----
+	 * 3: (todo)
+	 * --A--
+	 * -----
+	 * --B--
+	 * 4: (todo)
+	 * A----
+	 * -----
+	 * ----B
+	 * 5: (todo)
+	 * ----B
+	 * -----
+	 * A----
+	 */
 	let baseprotGap = Math.ceil((Config.roomHeight - 1) / 6);
 	for (let y = 0; y < Config.roomHeight; y++) {
 		room[y][0] = tileClass.base1;

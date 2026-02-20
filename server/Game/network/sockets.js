@@ -1452,7 +1452,7 @@ class socketManager {
             add: e => { if (check(socket.camera, e)) nearby.set(e.id, e); },
             remove: e => { nearby.delete(e.id) },
             check: (e) => { return check(socket.camera, e); },
-            gazeUpon: (updateCam = false) => {
+            gazeUpon: (updateCam = false) => { // Slow! Takes 8.39% CPU / everything (siege, 1 player)
                 logs.network.set();
                 // If nothing has changed since the last update, wait (approximately) until then to update
                 let lastCycle = global.gameManager.room.lastCycle;

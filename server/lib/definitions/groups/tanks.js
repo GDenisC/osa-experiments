@@ -949,12 +949,13 @@ Class.spawner = {
         {
             POSITION: [1, 12, 1, 15, 0, 0, 0],
             PROPERTIES: {
-                MAX_CHILDREN: 4,
                 SHOOT_SETTINGS: combineStats([g.factory, g.babyfactory]),
                 TYPE: "minion",
+                MAX_CHILDREN: 4,
                 STAT_CALCULATOR: "drone",
                 AUTOFIRE: true,
                 SYNCS_SKILLS: true,
+                WAIT_TO_CYCLE: true
             },
         },
         {
@@ -1579,7 +1580,8 @@ Class.bender = {
                 TYPE: "desmosMinion",
                 STAT_CALCULATOR: "drone",
                 AUTOFIRE: true,
-                SYNCS_SKILLS: true
+                SYNCS_SKILLS: true,
+                WAIT_TO_CYCLE: true
             }
         },
         {
@@ -1630,6 +1632,7 @@ Class.bigCheese = {
                 SYNCS_SKILLS: true,
                 STAT_CALCULATOR: "drone",
                 MAX_CHILDREN: 1,
+                WAIT_TO_CYCLE: true
             },
         },
     ],

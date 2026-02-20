@@ -244,7 +244,7 @@ Class.shottrapTurret = makeTurret({
     }, {
         POSITION: [ 1, 2,   1, 13, -2, 0, 0 ], PROPERTIES: shottrapTurretProperties,
     }, {
-        POSITION: [ 16, 14, -1.4,  0, 0, 0, 0 ], 
+        POSITION: [ 16, 14, -1.4,  0, 0, 0, 0 ],
     }, {
         POSITION: [  6, 14,  1.6, 16, 0, 0, 0 ], PROPERTIES: {
             SHOOT_SETTINGS: combineStats([g.trap, g.setTrap, g.shotgun, g.machineGun, {reload: 0.65}, g.fake]),
@@ -808,7 +808,7 @@ Class.sanctuaryHealer = {
         FOV: base.FOV * 1.2,
     },
     FACING_TYPE: ["spin", { speed: -0.05 }],
-    TURRETS: [{ 
+    TURRETS: [{
         POSITION: { SIZE: 13, LAYER: 1 },
         TYPE: ['healerSymbol', { FACING_TYPE: ["noFacing", { angle: Math.PI / 2 }] }]
     }],
@@ -957,7 +957,7 @@ Class.flagshipTurret = {
                 SYNCS_SKILLS: true,
                 STAT_CALCULATOR: "drone",
                 WAIT_TO_CYCLE: true,
-            }, 
+            },
         },
         {
             POSITION: [12, 7, 1.2, 0, 0, 90, 0],
@@ -968,7 +968,7 @@ Class.flagshipTurret = {
                 SYNCS_SKILLS: true,
                 STAT_CALCULATOR: "drone",
                 WAIT_TO_CYCLE: true,
-            }, 
+            },
         },
         {
             POSITION: [12, 7, 1.2, 0, 0, 180, 0],
@@ -979,7 +979,7 @@ Class.flagshipTurret = {
                 SYNCS_SKILLS: true,
                 STAT_CALCULATOR: "drone",
                 WAIT_TO_CYCLE: true,
-            }, 
+            },
         },
         {
             POSITION: [12, 7, 1.2, 0, 0, -90, 0],
@@ -994,7 +994,7 @@ Class.flagshipTurret = {
         },
         {  // MINIONS
             POSITION: [2.5, 5, 1, 10.5, 0, 45, 0.5],
-        }, 
+        },
         {
             POSITION: [1, 7, 1, 13, 0, 45, 0.5],
             PROPERTIES: {
@@ -1006,13 +1006,13 @@ Class.flagshipTurret = {
                 STAT_CALCULATOR: "drone",
                 WAIT_TO_CYCLE: true,
             },
-        }, 
-        {                        
+        },
+        {
             POSITION: [3.5, 7, 1, 8, 0, 45, 0.5],
         },
         {
             POSITION: [2.5, 5, 1, 10.5, 0, -45, 0.5],
-        }, 
+        },
         {
             POSITION: [1, 7, 1, 13, 0, -45, 0.5],
             PROPERTIES: {
@@ -1023,8 +1023,8 @@ Class.flagshipTurret = {
                 SYNCS_SKILLS: true,
                 STAT_CALCULATOR: "drone",
                 WAIT_TO_CYCLE: true,
-            }, 
-        }, 
+            },
+        },
         {
             POSITION: [3.5, 7, 1, 8, 0, -45, 0.5],
         },
@@ -1042,16 +1042,16 @@ Class.flagshipTurret = {
                 STAT_CALCULATOR: "drone",
                 WAIT_TO_CYCLE: true,
             },
-        }, 
-        {
-            POSITION: [3.5, 7, 1, 8, 0, 135, 0.5], 
         },
         {
-            POSITION: [2.5, 5, 1, 10.5, 0, -135, 0.5], 
+            POSITION: [3.5, 7, 1, 8, 0, 135, 0.5],
+        },
+        {
+            POSITION: [2.5, 5, 1, 10.5, 0, -135, 0.5],
         },
         {
             POSITION: [1, 7, 1, 13, 0, -135, 0.5],
-            PROPERTIES: {          
+            PROPERTIES: {
                 MAX_CHILDREN: 4,
                 SHOOT_SETTINGS: combineStats([g.factory, g.babyfactory]),
                 TYPE: "minion",
@@ -1059,7 +1059,7 @@ Class.flagshipTurret = {
                 SYNCS_SKILLS: true,
                 STAT_CALCULATOR: "drone",
                 WAIT_TO_CYCLE: true,
-            }, 
+            },
         },
         {
             POSITION: [3.5, 7, 1, 8, 0, -135, 0.5],
@@ -1253,7 +1253,7 @@ Class.flailBall = {
         TYPE: "flailBallSpike",
     }],
     GUNS: [
-        { 
+        {
             POSITION: {WIDTH: 10, LENGTH: -10},
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, {
@@ -1276,7 +1276,7 @@ Class.flailBall = {
                             if (body.SIZE < 1) body.kill();
                         }
                     }],
-                }], 
+                }],
                 AUTOFIRE: true,
                 BORDERLESS: true,
                 DRAW_FILL: false,
@@ -1336,7 +1336,7 @@ Class.maceBall = {
         TYPE: ["maceBallSpike", { SHAPE: 3 }]
     }, ],
     GUNS: [
-        { 
+        {
             POSITION: {WIDTH: 10, LENGTH: -10},
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, {
@@ -1359,7 +1359,7 @@ Class.maceBall = {
                             if (body.SIZE < 1) body.kill();
                         }
                     }],
-                }], 
+                }],
                 AUTOFIRE: true,
                 BORDERLESS: true,
                 DRAW_FILL: false,
@@ -1455,7 +1455,7 @@ Class.ihdtiBall = {
         TYPE: "maceBallSpike"
     }],
     GUNS: [
-        { 
+        {
             POSITION: {WIDTH: 10, LENGTH: -10},
             PROPERTIES: {
                 SHOOT_SETTINGS: combineStats([g.basic, {
@@ -1478,7 +1478,7 @@ Class.ihdtiBall = {
                             if (body.SIZE < 1) body.kill();
                         }
                     }],
-                }], 
+                }],
                 AUTOFIRE: true,
                 BORDERLESS: true,
                 DRAW_FILL: false,
@@ -1572,7 +1572,7 @@ Class.crowbarTurretTank = {
                 {
                     POSITION: [22, 10, 1, 0, 0, 0, 0],
                     PROPERTIES: {
-                        SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.autoTurret, { recoil: 0, damage: 0.91 }]),
+                        SHOOT_SETTINGS: combineStats([g.basic, g.flankGuard, g.autoTurret, { recoil: 0, damage: 0.91, speed: 0.7, maxSpeed: 0.7 }]),
                         TYPE: "bullet",
                     },
                 },

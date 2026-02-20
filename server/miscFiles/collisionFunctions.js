@@ -361,7 +361,7 @@ function mooncollide(moon, bounce) {
     let properCollisionRadius = moon.size + bounce.size
     // Exit if too far
     if (collisionRadius >= properCollisionRadius) return;
-    
+
     // Get elasticity
     let elasticity = bounce.type == 'tank' ? 0 : bounce.type == "bullet" ? 1 : bounce.pushability;
 
@@ -369,7 +369,7 @@ function mooncollide(moon, bounce) {
     let angleFromMoonToBounce = Math.atan2(bounce.y - moon.y, bounce.x - moon.x);
     bounce.x = moon.x + properCollisionRadius * Math.cos(angleFromMoonToBounce);
     bounce.y = moon.y + properCollisionRadius * Math.sin(angleFromMoonToBounce);
-    
+
     // Find relative velocity vectors to the moon's surface
     let velocityDirection = bounce.velocity.direction;
     let tangentVelocity = bounce.velocity.length * Math.sin(angleFromMoonToBounce - velocityDirection);
@@ -470,7 +470,7 @@ function mazewallcustomcollide(wall, bounce) {
             bounce.originalFov = bounce.FOV;
         }
     }
-    
+
     const trueWallSize = wall.size * lazyRealSizes[4] / Math.SQRT2 + 2;
     const isColliding = !(
         bounce.x + bounce.size < wall.x - trueWallSize ||
@@ -478,7 +478,7 @@ function mazewallcustomcollide(wall, bounce) {
         bounce.y + bounce.size < wall.y - trueWallSize ||
         bounce.y - bounce.size > wall.y + trueWallSize
     );
-    
+
     if (!isColliding) {
         if (canResize) {
             bounce.touchingSizeWall = false;
@@ -510,7 +510,7 @@ function mazewallcustomcollide(wall, bounce) {
         bounce.touchingSizeWall = false;
         bounce.touchingFovWall = false;
     }
-    
+
     const collisionFaces = [
         bounce.x < wall.x,
         bounce.y < wall.y,
@@ -572,7 +572,7 @@ function mazewallcustomcollide(wall, bounce) {
                 }
                 break;
         }
-        
+
         for (let axis in wallPushPositions[i]) {
             bounce[axis] = wallPushPositions[i][axis];
             if (wall.walltype !== 4) {
@@ -594,7 +594,7 @@ function mazewallcustomcollide(wall, bounce) {
         const cornerY = cornerPositions[i].y;
         if (Math.hypot(bounce.x - cornerX, bounce.y - cornerY) > bounce.size) continue;
         bounce.collisionArray.push(wall);
-        
+
         const angleFromCornerToBounce = Math.atan2(bounce.y - cornerY, bounce.x - cornerX);
         switch (wall.walltype) {
             case 2:
@@ -643,7 +643,7 @@ function mazewallcustomcollide(wall, bounce) {
                 }
                 break;
         }
-        
+
         bounce.x = cornerX + bounce.size * Math.cos(angleFromCornerToBounce);
         bounce.y = cornerY + bounce.size * Math.sin(angleFromCornerToBounce);
         return true;

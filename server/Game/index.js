@@ -132,7 +132,7 @@ class gameHandler {
 				other.settings.hitsOwnType === 'droneCollision':
 				{
 					let a =
-						1 + 10 / Math.max(instance.velocity.length, other.velocity.length);
+						1 + 10 / (1 + Math.max(instance.velocity.length, other.velocity.length));
 					firmcollide(instance, other, a);
 				}
 				break;

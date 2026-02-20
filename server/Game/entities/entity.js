@@ -680,10 +680,10 @@ class Entity extends EventEmitter {
 
 	refreshBodyAttributes() {
 		const level = Math.min(45, this.level);
-		let speedReduce = Math.min(
-			Config.growth ? 4 : 2,
-			this.size / (this.coreSize || this.SIZE)
-		);
+		let speedReduce = Math.min(2, this.size / (this.coreSize || this.SIZE));
+		if (Config.growth && level == 45) {
+			speedReduce += (Math.min(120, this.level) - 45) / (120 - 45) * 2;
+		}
 		this.acceleration =
 			(1 * global.gameManager.runSpeed * this.ACCELERATION) / speedReduce;
 		if (this.settings.reloadToAcceleration) this.acceleration *= this.skill.acl;
@@ -1427,8 +1427,10 @@ class Entity extends EventEmitter {
 		// Remove bullet from bullet list if needed and the only reason it exists is for bacteria.
 		if (this.bulletparent != null) {
 			util.remove(this.bulletparent.bulletchildren, this.bulletparent.bulletchildren.indexOf(this));
-			for (let gun of this.bulletparent.guns.values()) {
-					util.remove(gun.bulletchildren, gun.bulletchildren.indexOf(this));
+			if (this.bulletparent.guns) {
+				for (let gun of this.bulletparent.guns.values()) {
+						util.remove(gun.bulletchildren, gun.bulletchildren.indexOf(this));
+				}
 			}
 	}
 		// Remove from parent lists if needed

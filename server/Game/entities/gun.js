@@ -613,7 +613,8 @@ class Gun extends EventEmitter {
         // Skip if unable to shoot or if we shouldn't care about body stats
         if (!this.canShoot) return;
 
-        let sizeFactor = this.master.size / this.master.SIZE;
+        // level 45 gives you 2x size, so cap it or else it will be OP for growth
+        let sizeFactor = Math.min(2, this.master.size / this.master.SIZE);
         let shoot = this.settings;
         let sk = (this.bulletStats == 'master') ? this.body.skill : this.bulletStats;
         // Defaults
@@ -659,9 +660,9 @@ class Gun extends EventEmitter {
                 break;
             case "drone":
                 out.PUSHABILITY = 1;
-                out.PENETRATION = Math.max(1, shoot.pen * (0.5 * (sk.pen - 1) + 1));
-                out.HEALTH = (shoot.health * sk.str + sizeFactor) / Math.pow(sk.pen, 0.8);
-                out.DAMAGE = shoot.damage * sk.dam * Math.sqrt(sizeFactor) * Math.sqrt(shoot.pen * sk.pen);
+                //out.PENETRATION = Math.max(1, shoot.pen * (0.5 * (sk.pen - 1) + 1));
+                //out.HEALTH = (shoot.health * sk.str + sizeFactor) / Math.pow(sk.pen, 0.8);
+                //out.DAMAGE = shoot.damage * sk.dam * Math.sqrt(sizeFactor) * Math.sqrt(shoot.pen * sk.pen);
                 break;
         }
         if (this.independentChildren) return;

@@ -1,5 +1,9 @@
 # Open Source Arras
 
+> ![WARNING]
+> DO NOT CLONE IT
+> CONTAINS CUSTOM CONFIG, JUST COPY STUFF IF YOU'RE INTERESTED
+
 ## Experiments
 
 - Added 3d, 4d shapes support
@@ -16,6 +20,7 @@
 - Updated mothership gamemode (a bit)
 - Major memory leak fix (fixed in unstable branch)
 - Balance changes
+- Added `getJackpot` constants
 
 <img alt="Logo" src="public/img/round.png" width="100"/>
 

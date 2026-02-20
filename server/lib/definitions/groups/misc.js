@@ -183,13 +183,14 @@ Class.dominator = {
         RESIST: 100,
         SPEED: 1.32,
         ACCELERATION: 0.8,
-        HEALTH: 590,
+        HEALTH: 890,
         DAMAGE: 6,
         PENETRATION: 0.25,
         FOV: 0.5,
         PUSHABILITY: 0,
         HETERO: 0,
-        SHIELD: base.SHIELD * 1.4
+        SHIELD: base.SHIELD * 1.4,
+        REGEN: base.REGEN * 0.1
     },
     CONTROLLERS: ["nearestDifferentMaster", ["spin", { onlyWhenIdle: true }]],
     AI: { IGNORE_SHAPES: true },
@@ -310,6 +311,7 @@ Class.sanctuary = {
         HEALTH: 1280,
         DAMAGE: 5.5,
         SHIELD: base.SHIELD * 1.2,
+        REGEN: base.REGEN * 0.1
     },
     TURRETS: [{
         POSITION: { SIZE: 22 },
@@ -329,7 +331,7 @@ for (let tier of sancTiers) {
             }, {
                 POSITION: {LENGTH: 1.5, WIDTH: 4, ASPECT: 1.7, X: 12},
                 PROPERTIES: {
-                    SHOOT_SETTINGS: combineStats([g.trap, {shudder: 0.15, health: 7, reload: 1.5, speed: 1}]),
+                    SHOOT_SETTINGS: combineStats([g.trap, {shudder: 2.5, health: 7, reload: 1.5, speed: 0.55}]),
                     TYPE: ["trap", {BODY: {PUSHABILITY: 0.5}}],
                     STAT_CALCULATOR: "trap",
                     AUTOFIRE: true,

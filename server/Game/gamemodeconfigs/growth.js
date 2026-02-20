@@ -79,7 +79,7 @@ module.exports = {
 	 * ```
 	 */
 	defineGrowthMultiplier: (mult, score) => {
-		return mult + Math.pow((score - 26263) / 3660, 0.92 - 0.2625 / (1 + (score - 3e6) / 1e8)) / 5.25;
+		return mult + Math.pow((score - 26263) / 3660, 0.92 - 0.2625 / (1 + (score - 3e6) / 1e8)) / 8;
 	},
 	growthStatsMultipliers: {
 		health: level => 0.06 * level,

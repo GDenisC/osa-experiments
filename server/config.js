@@ -22,7 +22,7 @@ module.exports = {
 			featured: false,
 
 			region: 'local', // The region the server is on.
-			gamemode: ['growth', 'ffa'], // The selected gamemode.
+			gamemode: ['growth', 'maze', 'ffa'], // The selected gamemode.
 			player_cap: 80, // The maximum number of players that can join the server. Not including bots.
 
 			properties: {
@@ -37,8 +37,8 @@ module.exports = {
 	allow_ACAO: false, // Access-Control-Allow-Origin, allows any server/client to access data from the WebServer.
 
 	// Map
-	map_tile_width: 220,
-	map_tile_height: 220,
+	map_tile_width: 340,
+	map_tile_height: 340,
 
 	// The message that appears once a player spawns.
 	spawn_message:
@@ -231,6 +231,7 @@ module.exports = {
 	mode: 'ffa',
 	tag: false,
 	teams: 4,
+	teams_new_variant: false,
 	spawn_confinement: {},
 
 	// Room setup

@@ -70,6 +70,7 @@ const makeWeaponTurret = function (GUNS, stats) {
 };
 
 const makeDroneTurret = function (GUNS, drones, stats) {
+	GUNS = structuredClone(GUNS);
 	for (let gun of GUNS) {
 		if (!gun.PROPERTIES) continue;
 		gun.PROPERTIES.STAT_CALCULATOR = 'drone';
@@ -100,7 +101,7 @@ const getClass = function (name) {
 };
 
 // 1ST LAYER
-
+/*
 makeClass(
 	'trapperTurret',
 	makeTrapTurret(
@@ -166,6 +167,7 @@ makeClass('engineerTurret', makeWeaponTurret(Class.engineer.GUNS));
 makeClass('swarmerTurret', makeWeaponTurret(Class.swarmer.GUNS));
 
 makeClass('forkTurret', makeWeaponTurret(Class.fork.GUNS));
+*/
 
 const placeWeapons = function (mockup, type) {
 	mockup.TURRETS = Array.from({ length: mockup.SHAPE }, (_, i) => ({
