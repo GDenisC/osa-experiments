@@ -37,7 +37,12 @@ module.exports = class HashGrid {
 				if (cell !== undefined) {
 					for (const entity of cell) {
 						if (entity.bond) continue;
-						if (entity.minX < maxX && entity.maxX > minX && entity.minY < maxY && entity.maxY > minY) {
+						if (
+							entity.minX < maxX &&
+							entity.maxX > minX &&
+							entity.minY < maxY &&
+							entity.maxY > minY
+						) {
 							output.add(entity);
 						}
 					}
@@ -50,4 +55,4 @@ module.exports = class HashGrid {
 	clear() {
 		this.cells.clear();
 	}
-}
+};

@@ -789,7 +789,7 @@ global.activateTieredFood = () => {
 						.fill()
 						.map((_, k, c) => [
 							// Chance of spawning, set to 200mil for regular polygons and exponents of 10 otherwise
-							k ? 9 ** (c.length - k - 1) : Math.pow(1.75 + c.length, 9),
+							k ? 7 ** (c.length - k - 1) : Math.pow(1.75 + c.length, 7),
 
 							disableCrashers // no crashers
 								? `laby_${i}_${j}_${k}_0`
@@ -821,7 +821,7 @@ global.activateTieredFood = () => {
 						.fill()
 						.map((_, k, c) => [
 							// Chance of spawning, set to 200mil for regular polygons and exponents of 10 otherwise
-							k ? 9 ** (c.length - k - 1) : Math.pow(1.75 + c.length, 9),
+							k ? 7 ** (c.length - k - 1) : Math.pow(1.75 + c.length, 7),
 
 							disableCrashers // no crashers
 								? `laby_${i + 3}_${j}_${k}_0`
