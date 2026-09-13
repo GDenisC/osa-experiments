@@ -9715,6 +9715,7 @@ Class.spectator = {
   LABEL: "Spectator",
   ALPHA: 0,
   CAN_BE_ON_LEADERBOARD: false,
+  //CAN_GO_OUTSIDE_ROOM: true,
   ACCEPTS_SCORE: false,
   DRAW_HEALTH: false,
   HITS_OWN_TYPE: "never",
@@ -9723,10 +9724,12 @@ Class.spectator = {
   IS_IMMUNE_TO_TILES: true,
   FULL_INVISIBLE: true,
   CAN_SEE_INVISIBLE_ENTITIES: true,
+  LAYER: 13,
   BODY: {
     PUSHABILITY: 0,
-    SPEED: 5,
-    FOV: 2.5,
+    SPEED: base.SPEED * 3.5,
+    ACCELERATION: base.ACCEL * 1.5,
+    FOV: 4,
     DAMAGE: 0,
     HEALTH: 1e100,
     SHIELD: 1e100,
@@ -9759,7 +9762,6 @@ Class.spectator = {
 Class.guillotine = {
   PARENT: "spectator",
   LABEL: "Guillotine",
-  CAN_GO_OUTSIDE_ROOM: true,
   TOOLTIP: "Use left click to inspect and right click to teleport. Press F to kill the selected entity.",
   GUNS: [
     {
@@ -9834,33 +9836,15 @@ Class.guillotine = {
         const s = body.store;
         if (!s.selectedEntity) return;
         s.selectedEntity.kill();
+        body.sendMessage("Killed the selected entity.");
       }
     }
   ]
 };
 Class.banHammer = {
-  PARENT: "genericTank",
+  PARENT: "spectator",
   LABEL: "Ban Hammer",
-  ALPHA: 0,
-  CAN_BE_ON_LEADERBOARD: false,
-  CAN_GO_OUTSIDE_ROOM: true,
-  ACCEPTS_SCORE: false,
-  DRAW_HEALTH: false,
-  HITS_OWN_TYPE: "never",
-  IGNORED_BY_AI: true,
-  ARENA_CLOSER: true,
-  IS_IMMUNE_TO_TILES: true,
-  CAN_SEE_INVISIBLE_ENTITIES: true,
   TOOLTIP: "Use left click to inspect and right click to teleport. Press F to ban the selected player.",
-  BODY: {
-    PUSHABILITY: 0,
-    SPEED: 5,
-    FOV: 2.5,
-    DAMAGE: 0,
-    HEALTH: 1e100,
-    SHIELD: 1e100,
-    REGEN: 1e100
-  },
   GUNS: [
     {POSITION: [30, 7, 1.3, 0, 0, 0, 0]},
     {POSITION: [3, 11, 0.75, 7.5, -36, 90, 0]},
@@ -9906,6 +9890,7 @@ Class.banHammer = {
         const e = s.selectedEntity
         if (!e || !e.isPlayer) return;
         global.gameManager.socketManager.ban(e.socket, "Ban Hammer");
+        body.sendMessage("Banned the selected player.");
       }
     }
   ]
@@ -10188,16 +10173,41 @@ Class.baseProtector_alt = {
         X: 8
       },
       PROPERTIES: {
-        SHOOT_SETTINGS: combineStats([g.drone, g.overseer, { reload: 0.5, size: 2/3 }]),
+        SHOOT_SETTINGS: combineStats([g.drone, g.overseer, { reload: 1/3, size: 2/3 }]),
         TYPE: "drone",
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
         STAT_CALCULATOR: "drone",
         WAIT_TO_CYCLE: true,
-        MAX_CHILDREN: 12
+        MAX_CHILDREN: 12,
+        LABEL: "Protector"
       }
     }
   ]
+};
+Class.manager_special = {
+    PARENT: "spectator",
+    LABEL: "Manager",
+    DANGER: 7,
+    STAT_NAMES: statnames.drone,
+    GUNS: [
+        {
+            POSITION: {
+                LENGTH: 6,
+                WIDTH: 12,
+                ASPECT: 1.2,
+                X: 8
+            },
+            PROPERTIES: {
+                SHOOT_SETTINGS: combineStats([g.drone, g.overseer, { reload: 0.05, speed: 2, maxSpeed: 2, damage: 100}]),
+                TYPE: ["drone", { ARENA_CLOSER: false }],
+                SYNCS_SKILLS: true,
+                STAT_CALCULATOR: "drone",
+                WAIT_TO_CYCLE: true,
+                MAX_CHILDREN: 8
+            }
+        }
+    ]
 };
 
 // Admin Tanks
@@ -10409,7 +10419,7 @@ Class.alas = {
         X: 8
       },
       PROPERTIES: {
-        SHOOT_SETTINGS: combineStats([g.drone, g.overseer, { reload: 0.5, speed: 5 }]),
+        SHOOT_SETTINGS: combineStats([g.drone, g.overseer, { reload: 0.5, speed: 2, maxSpeed: 2 }]),
         TYPE: "drone",
         AUTOFIRE: true,
         SYNCS_SKILLS: true,
@@ -10420,7 +10430,7 @@ Class.alas = {
     },
     {
       POSITION: {
-        LENGTH: 5.5,
+        LENGTH: 6,
         WIDTH: 6,
         ASPECT: -1.5,
         X: 8
@@ -10847,6 +10857,7 @@ Class.machineShot = {
   LABEL: "Machine Shot",
   DANGER: 7,
   BODY: Class.pentaShot.BODY,
+  HAS_NO_RECOIL: true,
   GUNS: [
     ...weaponMirror([{
       POSITION: {
@@ -10891,7 +10902,9 @@ Class.meDoingYourMom = {
   LABEL: "Me doing your mom",
   UPGRADE_LABEL: "M.D.Y.M.",
   DANGER: 7,
-  BODY: Class.ranger.BODY,
+  BODY: {
+    FOV: base.FOV * 3.5
+  },
   GUNS: [
     {
       POSITION: {
@@ -11003,7 +11016,7 @@ Class.schoolShooter = {
         Y: 5
       },
       PROPERTIES: {
-        SHOOT_SETTINGS: combineStats([g.basic, g.op, {damage: 20, reload: 0.3, spray: 0, speed: 2}]),
+        SHOOT_SETTINGS: combineStats([g.basic, g.op, {damage: 1e6, reload: 0.3, spray: 0, speed: 2}]),
         TYPE: "developerBullet",
         ALPHA: 0
       }

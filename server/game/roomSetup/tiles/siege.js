@@ -6,7 +6,7 @@ tileClass.outBorder = new Tile({
       if (!entity.isBoss && 
                 !entity.master.master.isBoss && 
                 !entity.isArenaCloser && 
-                !entity.master.master.isArenaCloser &&
+                (!entity.master.master.isArenaCloser || entity.isArenaCloser === false) &&
                 !entity.godmode &&
                 entity.type !== "wall"
       ) entity.kill();
@@ -24,7 +24,7 @@ let bossTick = (tile, pushTo, allow) => {
     if (!entity.isBoss && 
             !entity.master.master.isBoss && 
             !entity.isArenaCloser && 
-            !entity.master.master.isArenaCloser &&
+            (!entity.master.master.isArenaCloser || entity.isArenaCloser === false) &&
             !entity.godmode &&
             entity.type !== "wall"
     ) entity.kill();
