@@ -34,7 +34,7 @@ var gameDraw = {
             const g1 = (c1 >> 8) & 0xFF;
             const b1 = c1 & 0xFF;
             const result = ((1 << 24) | (((r1 + (((c2 >> 16) & 0xFF) - r1) * mix) | 0) << 16) | (((g1 + (((c2 >> 8) & 0xFF) - g1) * mix) | 0) << 8) | ((b1 + ((c2 & 0xFF) - b1) * mix) | 0));
-            const hex = '#' + (result & 0xFFFFFF).toString(16).padStart(6, '0');
+            const hex = "#" + (result & 0xFFFFFF).toString(16).padStart(6, "0");
             mixCache.set(key, hex);
             return hex;
         }
@@ -51,10 +51,10 @@ var gameDraw = {
             g = gameDraw.hueToRgb(p, q, h);
             b = gameDraw.hueToRgb(p, q, h - 1 / 3);
         }
-        return '#' +
-            Math.round(r * 255).toString(16).padStart(2, '0') +
-            Math.round(g * 255).toString(16).padStart(2, '0') +
-            Math.round(b * 255).toString(16).padStart(2, '0');
+        return "#" +
+            Math.round(r * 255).toString(16).padStart(2, "0") +
+            Math.round(g * 255).toString(16).padStart(2, "0") +
+            Math.round(b * 255).toString(16).padStart(2, "0");
     },
     rgbToHsl: (rgb) => {
         let r, g, b, h, s, l;
@@ -119,7 +119,7 @@ var gameDraw = {
         }
 
         // Exit if calculated already
-        let colorId = colorDetails.join(' ');
+        let colorId = colorDetails.join(" ");
         let cachedColor = gameDraw.colorCache[colorId];
         if (cachedColor != undefined) return cachedColor;
 
@@ -130,7 +130,7 @@ var gameDraw = {
         let hueShift = parseFloat(colorDetails[1]) / 360,
             saturationShift = parseFloat(colorDetails[2]),
             brightnessShift = parseFloat(colorDetails[3]) / 100,
-            allowBrightnessInvert = colorDetails[4] == 'true';
+            allowBrightnessInvert = colorDetails[4] == "true";
 
         // Apply config
         let finalHue = (baseColor[0] + hueShift) % 1,
@@ -186,7 +186,7 @@ var gameDraw = {
 
         lesbian_magenta = "#a50062",
         lesbian_oredange = "#d62900",
-        lesbian_white = "#ffffff",
+        lesbian_white = "#FFFFFF",
         lesbian_useSecondSet = five_bars < 2,
 
         gay_transition = (now / 2000) % 1,
@@ -197,7 +197,7 @@ var gameDraw = {
 
         trans_pink = "#f7a8b8",
         trans_blue = "#55cdfc",
-        trans_white = "#ffffff";
+        trans_white = "#FFFFFF";
 
         gameDraw.animatedColor.lesbian = gameDraw.getRainbow(lesbian_useSecondSet ? lesbian_oredange : lesbian_white, lesbian_useSecondSet ? lesbian_white : lesbian_magenta, (lesbian_useSecondSet ? five_bars : five_bars - 3) / 2);
         gameDraw.animatedColor.gay = gameDraw.hslToRgb(gay_transition, 0.75, 0.5);
@@ -256,7 +256,7 @@ var gameDraw = {
     },
     getColor: (colorNumber, ctx, x1, y1, x2, y2) => {
         if (colorNumber == undefined || colorNumber == null) return gameDraw.color.black;
-        if (colorNumber[0] == '#') return colorNumber;
+        if (colorNumber[0] == "#") return colorNumber;
         if (util.isNumeric(colorNumber)) colorNumber = parseInt(colorNumber);
         // Gradient color
         if (colorNumber.gradient && ctx) {
