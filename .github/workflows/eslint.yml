@@ -19,5 +19,4 @@ jobs:
         run:  npm install eslint@10.10.0
 
       - name: Run ESLint
-        run: npx eslint .
-          --config eslint.config.mjs
+        run:  npx eslint

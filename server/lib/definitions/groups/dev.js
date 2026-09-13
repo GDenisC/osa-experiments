@@ -361,7 +361,7 @@ Class.menu_memes = makeMenu("Memes", {
 });
 Class.menu_diep = makeMenu("Diep Tanks", {
   upgrades: [
-    "menu_diep2",
+    "menu_diep2"
     //"tank_diep"
   ]
 });
